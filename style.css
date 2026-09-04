@@ -1,0 +1,573 @@
+/* =========================================================================
+   EvacQuick — Stylesheet
+   Design concept: civic emergency signage. A calm, concrete-grey working
+   surface with a single "safety orange" alert color reserved for calls to
+   action and the user's own position — the same visual logic as a road
+   sign or a fire-exit marker, where one color means "act on this now."
+   Barlow Condensed (tall/compressed) carries headings and status labels,
+   echoing stencilled signage type. Inter carries body copy and data
+   because it stays legible at small sizes on a phone in poor light.
+   ========================================================================= */
+
+:root {
+  /* ---- Color tokens ---- */
+  --color-bg: #EFF1EE;          /* concrete-grey working surface */
+  --color-surface: #FFFFFF;
+  --color-surface-raised: #FBFBFA;
+  --color-ink: #10202C;         /* near-black navy for text */
+  --color-ink-soft: #4B5C66;
+  --color-navy: #16324F;        /* primary brand / header */
+  --color-navy-dark: #0E2138;
+  --color-orange: #E8590C;      /* safety-orange: action + "you are here" */
+  --color-orange-dark: #C24A09;
+  --color-safe: #1E7145;
+  --color-caution: #B98104;
+  --color-danger: #C81E3A;
+  --color-line: #D9DEDA;
+  --color-line-strong: #B7C0BB;
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --shadow-card: 0 1px 2px rgba(16, 32, 44, 0.08), 0 2px 8px rgba(16, 32, 44, 0.06);
+
+  --font-display: 'Barlow Condensed', 'Arial Narrow', sans-serif;
+  --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+/* ---- Reset ---- */
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  color: var(--color-ink);
+  background: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+}
+ul { list-style: none; margin: 0; padding: 0; }
+button { font-family: inherit; }
+p { margin: 0; }
+
+/* Touch-device polish: no lingering tap-highlight flash, no 300ms tap delay */
+button, .facility-card, .chip {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+/* Visible keyboard focus everywhere — non-negotiable for an emergency tool */
+:focus-visible {
+  outline: 3px solid var(--color-orange);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+}
+
+/* =========================================================================
+   APP SHELL
+   ========================================================================= */
+.app {
+  height: 100vh;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---- Header ---- */
+.app-header {
+  background: var(--color-navy);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 20px;
+  padding-top: max(10px, env(safe-area-inset-top));
+  padding-left: max(20px, env(safe-area-inset-left));
+  padding-right: max(20px, env(safe-area-inset-right));
+  flex-wrap: wrap;
+  border-bottom: 3px solid var(--color-orange);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand-mark {
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--color-orange);
+  position: relative;
+}
+.brand-mark::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 12px;
+  height: 12px;
+  border-top: 3px solid var(--color-navy-dark);
+  border-right: 3px solid var(--color-navy-dark);
+  transform: translate(-2px, 1px) rotate(-45deg);
+}
+
+.brand-text h1 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 26px;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  margin: 0;
+}
+.brand-sub {
+  margin: 2px 0 0;
+  font-size: 12px;
+  color: #C9D5DD;
+  letter-spacing: 0.03em;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.status-line {
+  margin: 0;
+  font-size: 13px;
+  color: #DCE5EA;
+  max-width: 260px;
+}
+.status-line.is-ok { color: #8FE0B4; }
+.status-line.is-error { color: #FFB4B4; }
+.status-line.is-loading { color: #FFD98F; }
+
+/* ---- Emergency notice banner ---- */
+.emergency-notice {
+  background: #FFF4E8;
+  color: #7A3E00;
+  border-bottom: 1px solid #F0C88A;
+  font-size: 12.5px;
+  line-height: 1.5;
+  padding: 8px 20px;
+}
+.emergency-notice strong { color: #5C2E00; }
+
+/* ---- Buttons ---- */
+.btn {
+  appearance: none;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 14px;
+  padding: 10px 16px;
+  min-height: 44px; /* WCAG touch-target minimum */
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: background-color 120ms ease, transform 80ms ease;
+  white-space: nowrap;
+}
+.btn:active { transform: translateY(1px); }
+.btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.btn-primary {
+  background: var(--color-orange);
+  color: #fff;
+}
+.btn-primary:hover:not(:disabled) { background: var(--color-orange-dark); }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--color-navy);
+  border: 1px solid var(--color-line-strong);
+}
+.btn-ghost:hover { background: var(--color-surface-raised); }
+
+.btn-sm { padding: 6px 10px; font-size: 12px; min-height: 36px; }
+
+.btn .icon { width: 16px; height: 16px; flex-shrink: 0; }
+
+/* =========================================================================
+   BODY LAYOUT — sidebar + map
+   ========================================================================= */
+.app-body {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+}
+
+.map-wrap {
+  flex: 1;
+  position: relative;
+  order: 2;
+}
+#map {
+  position: absolute;
+  inset: 0;
+}
+
+.sidebar {
+  width: 380px;
+  max-width: 100%;
+  flex-shrink: 0;
+  background: var(--color-surface);
+  border-right: 1px solid var(--color-line);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  order: 1;
+  overflow-y: auto;
+}
+
+/* ---- Info blocks: Location / Search / Count ---- */
+.info-block {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--color-line);
+}
+.info-block-label {
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--color-ink-soft);
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+.info-block-value {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-ink);
+}
+.info-block-value.is-ok { color: var(--color-safe); }
+.info-block-value.is-error { color: var(--color-danger); }
+
+/* ---- Filter chips ---- */
+.filter-row {
+  display: flex;
+  gap: 8px;
+  padding: 10px 16px 4px;
+  flex-wrap: wrap;
+}
+.chip {
+  appearance: none;
+  cursor: pointer;
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-line-strong);
+  color: var(--color-ink-soft);
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 6px 12px;
+  min-height: 36px;
+  flex-shrink: 0;
+}
+.chip.is-active {
+  background: var(--color-navy);
+  border-color: var(--color-navy);
+  color: #fff;
+}
+
+.sidebar-messages {
+  padding: 4px 16px;
+  font-size: 13px;
+  color: var(--color-ink-soft);
+}
+.sidebar-messages:empty { display: none; }
+.sidebar-messages.is-error { color: var(--color-danger); font-weight: 600; }
+.sidebar-messages.is-loading { color: var(--color-ink-soft); }
+
+/* ---- Facility list ---- */
+.facility-list {
+  padding: 8px 12px 16px;
+  flex: 1;
+}
+
+.facility-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-left: 4px solid var(--color-line-strong);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+.facility-card:hover,
+.facility-card:focus-visible {
+  border-color: var(--color-orange);
+  box-shadow: var(--shadow-card);
+}
+.facility-card.is-selected {
+  border-left-color: var(--color-orange);
+  box-shadow: var(--shadow-card);
+}
+
+.facility-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+}
+.facility-rank {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 15px;
+  color: #fff;
+  background: var(--color-navy);
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.facility-name {
+  font-weight: 600;
+  font-size: 14.5px;
+  line-height: 1.3;
+  margin: 0;
+  flex: 1;
+}
+.facility-distance {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--color-navy);
+  white-space: nowrap;
+}
+.facility-distance small {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 11px;
+  color: var(--color-ink-soft);
+}
+
+.facility-badge {
+  display: inline-block;
+  margin-top: 6px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  background: #FFF4E8;
+  color: #7A3E00;
+}
+
+.facility-meta {
+  margin-top: 8px;
+  font-size: 12.5px;
+  color: var(--color-ink-soft);
+  display: grid;
+  gap: 3px;
+}
+.facility-meta-row span.label { font-weight: 600; color: var(--color-ink); }
+
+.tag-type {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 11px;
+  background: #EAF0F4;
+  color: var(--color-navy);
+  margin-top: 6px;
+}
+
+.facility-card-actions {
+  margin-top: 10px;
+}
+.facility-card-actions .btn { width: 100%; justify-content: center; }
+
+/* ---- Route summary card ---- */
+.route-summary {
+  margin: 16px 16px 0;
+  padding: 14px;
+  background: var(--color-navy);
+  color: #fff;
+  border-radius: var(--radius-md);
+}
+.route-summary.hidden { display: none; }
+
+.route-summary-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+.route-summary-head h2 {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0;
+  letter-spacing: 0.01em;
+}
+.route-dest-label {
+  margin-top: 10px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #9FB3C0;
+}
+.route-dest-name {
+  font-weight: 600;
+  font-size: 15px;
+  margin-top: 2px;
+}
+.route-summary .btn-ghost {
+  color: #fff;
+  border-color: rgba(255,255,255,0.4);
+}
+.route-summary .btn-ghost:hover { background: rgba(255,255,255,0.1); }
+
+.route-stats {
+  display: flex;
+  gap: 24px;
+  margin-top: 12px;
+}
+.route-stat { display: flex; align-items: baseline; gap: 6px; }
+.route-stat-value {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--color-orange);
+  line-height: 1;
+}
+.route-stat-label {
+  font-size: 12px;
+  color: #C9D5DD;
+}
+
+/* =========================================================================
+   LEAFLET OVERRIDES
+   ========================================================================= */
+.leaflet-container {
+  font-family: var(--font-body);
+  background: #DCE3DF;
+}
+.leaflet-control-zoom {
+  margin-top: 16px !important;
+  margin-right: 16px !important;
+}
+
+.user-marker {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--color-orange);
+  border: 3px solid #fff;
+  box-shadow: 0 0 0 3px rgba(232, 89, 12, 0.35), 0 1px 4px rgba(0,0,0,0.3);
+}
+
+.facility-marker {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.facility-marker svg { width: 100%; height: 100%; }
+
+.leaflet-popup-content-wrapper {
+  border-radius: var(--radius-md);
+}
+.popup-card { font-family: var(--font-body); min-width: 190px; }
+.popup-card h3 {
+  font-family: var(--font-display);
+  font-size: 16px;
+  margin: 0 0 4px;
+  color: var(--color-navy);
+}
+.popup-card p { margin: 0 0 6px; font-size: 12.5px; color: var(--color-ink-soft); }
+.popup-card .btn { width: 100%; justify-content: center; }
+
+/* =========================================================================
+   RESPONSIVE — mobile-first breakpoints
+   ========================================================================= */
+
+/* ---- Tablet / narrow desktop: stack map above sidebar ---- */
+@media (max-width: 860px) {
+  .app-body {
+    flex-direction: column;
+  }
+  .map-wrap {
+    order: 1;
+    flex: 1 1 42vh;
+    min-height: 240px;
+  }
+  .sidebar {
+    order: 2;
+    width: 100%;
+    border-right: none;
+    border-top: 1px solid var(--color-line);
+    flex: 1 1 auto;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .app-header {
+    padding: 10px 14px;
+    padding-top: max(10px, env(safe-area-inset-top));
+    padding-left: max(14px, env(safe-area-inset-left));
+    padding-right: max(14px, env(safe-area-inset-right));
+  }
+  .brand-text h1 { font-size: 22px; }
+  .status-line { max-width: 100%; order: 3; flex-basis: 100%; }
+
+  /* Filter chips scroll horizontally instead of wrapping, saving
+     vertical space for the map + facility list. */
+  .filter-row {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 8px;
+  }
+  .filter-row::-webkit-scrollbar { display: none; }
+
+  /* Slightly roomier tap targets on touch screens. */
+  .facility-card { padding: 14px; }
+  .facility-card-actions .btn { min-height: 46px; }
+}
+
+/* ---- Phones ---- */
+@media (max-width: 480px) {
+  .app-header { gap: 10px; }
+  .brand-sub { display: none; } /* free up a line on very narrow headers */
+  .header-actions { width: 100%; justify-content: space-between; }
+  .btn-primary { flex: 1; justify-content: center; }
+
+  .emergency-notice {
+    padding: 6px 14px;
+    padding-left: max(14px, env(safe-area-inset-left));
+    padding-right: max(14px, env(safe-area-inset-right));
+    font-size: 12px;
+  }
+
+  .map-wrap { flex-basis: 36vh; min-height: 200px; }
+
+  .route-summary { margin: 12px 12px 0; }
+  .route-stat-value { font-size: 24px; }
+}
+
+/* ---- Short / landscape phones: keep the map from eating the whole
+   screen when height is the constrained dimension ---- */
+@media (max-width: 860px) and (max-height: 480px) and (orientation: landscape) {
+  .app-body { flex-direction: row; }
+  .map-wrap { order: 2; flex: 1 1 55%; min-height: 0; }
+  .sidebar {
+    order: 1;
+    width: 260px;
+    flex: 0 0 260px;
+    border-right: 1px solid var(--color-line);
+    border-top: none;
+  }
+  .emergency-notice { padding: 4px 14px; font-size: 11px; }
+}
