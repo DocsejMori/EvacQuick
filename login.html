@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>EvacQuick | Access</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="logo.png">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <!-- EvacQuick stylesheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="auth-page-body">
+
+    <main class="auth-split-wrapper">
+
+        <!-- =====================================================
+             LEFT BRAND / INFORMATION PANEL
+             ====================================================== -->
+
+        <section class="auth-hero-panel">
+
+            <div class="auth-hero-content">
+
+                <!-- Brand -->
+
+                <div class="auth-brand-large">
+
+                    <div class="brand">
+
+                        <img
+                            src="logo.png"
+                            alt="EvacQuick logo"
+                            class="brand-mark"
+                        >
+
+                        <div class="brand-text">
+
+                            <h1>EvacQuick</h1>
+
+                            <p class="brand-sub">
+                                Disaster Evacuation Facility Locator
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Badge -->
+
+                <div class="auth-hero-badge">
+
+                    ● Emergency evacuation assistance
+
+                </div>
+
+
+                <!-- Main heading -->
+
+                <h2 class="hero-title">
+
+                    Find a safer place.
+                    <br>
+                    Get there faster.
+
+                </h2>
+
+
+                <p class="auth-hero-desc">
+
+                    EvacQuick helps residents locate nearby evacuation
+                    facilities and access routes during disasters and
+                    emergency situations.
+
+                </p>
+
+
+                <!-- Features -->
+
+                <div class="auth-features">
+
+                    <div class="auth-feature">
+
+                        <span class="feature-icon">
+                            ⌖
+                        </span>
+
+                        <div>
+
+                            <strong>Locate</strong>
+
+                            <p>
+                                Find nearby evacuation facilities.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="auth-feature">
+
+                        <span class="feature-icon">
+                            ↗
+                        </span>
+
+                        <div>
+
+                            <strong>Navigate</strong>
+
+                            <p>
+                                Access routes to your selected facility.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="auth-feature">
+
+                        <span class="feature-icon">
+                            ✓
+                        </span>
+
+                        <div>
+
+                            <strong>Stay informed</strong>
+
+                            <p>
+                                View available facility information.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             ACCESS PANEL
+             ====================================================== -->
+
+        <section class="auth-form-panel">
+
+            <div class="auth-card access-card">
+
+                <div class="auth-card-header">
+
+                    <span class="form-eyebrow">
+                        EVACQUICK ACCESS
+                    </span>
+
+                    <h2>
+                        Welcome
+                    </h2>
+
+                    <p>
+                        Choose how you want to access EvacQuick.
+                    </p>
+
+                </div>
+
+
+                <!-- =================================================
+                     GUEST
+                ================================================== -->
+
+                <div class="access-option guest-option">
+
+                    <div class="access-icon">
+                        G
+                    </div>
+
+                    <div class="access-content">
+
+                        <h3>
+                            Continue as Guest
+                        </h3>
+
+                        <p>
+                            Find nearby evacuation facilities and
+                            access navigation without creating an account.
+                        </p>
+
+                    </div>
+
+                    <button
+                        type="button"
+                        class="access-btn access-btn-primary"
+                        id="guestBtn"
+                    >
+                        Continue as Guest
+                        <span>→</span>
+                    </button>
+
+                </div>
+
+
+                <div class="access-divider">
+                    <span>OR</span>
+                </div>
+
+
+                <!-- =================================================
+                     RESIDENT / VOLUNTEER
+                ================================================== -->
+
+                <div class="access-option">
+
+                    <div class="access-icon resident-icon">
+                        R
+                    </div>
+
+                    <div class="access-content">
+
+                        <h3>
+                            Resident / Volunteer
+                        </h3>
+
+                        <p>
+                            Sign in to your resident account or register
+                            if you want to offer assistance during emergencies.
+                        </p>
+
+                    </div>
+
+                    <div class="access-actions">
+
+                        <button
+                            type="button"
+                            class="access-btn access-btn-secondary"
+                            id="residentLoginBtn"
+                        >
+                            Sign In
+                        </button>
+
+                        <button
+                            type="button"
+                            class="text-btn"
+                            id="residentRegisterBtn"
+                        >
+                            Register as Resident
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <div class="access-divider">
+                    <span>ADMINISTRATOR</span>
+                </div>
+
+
+                <!-- =================================================
+                     ADMIN
+                ================================================== -->
+
+                <div class="admin-access">
+
+                    <div class="admin-access-text">
+
+                        <span class="admin-icon">
+                            A
+                        </span>
+
+                        <div>
+
+                            <strong>
+                                Administrator Access
+                            </strong>
+
+                            <p>
+                                Authorized personnel only.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <button
+                        type="button"
+                        class="admin-btn"
+                        id="adminLoginBtn"
+                    >
+                        Admin Sign In
+                        <span>→</span>
+                    </button>
+
+                </div>
+
+
+                <!-- Status -->
+
+                <div
+                    id="accessMessage"
+                    class="login-message"
+                    role="alert"
+                ></div>
+
+
+                <!-- Footer -->
+
+                <div class="auth-footer">
+
+                    <span class="footer-line"></span>
+
+                    <span>EVACQUICK</span>
+
+                    <span class="footer-line"></span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- =========================================================
+         ACCESS LOGIC
+    ========================================================== -->
+
+    <script type="module">
+
+        import { auth } from "./auth.js";
+
+        import { signOut } from
+            "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+
+
+        const guestBtn =
+            document.getElementById("guestBtn");
+
+        const residentLoginBtn =
+            document.getElementById("residentLoginBtn");
+
+        const residentRegisterBtn =
+            document.getElementById("residentRegisterBtn");
+
+        const adminLoginBtn =
+            document.getElementById("adminLoginBtn");
+
+        const accessMessage =
+            document.getElementById("accessMessage");
+
+
+        function showMessage(message, type = "") {
+
+            accessMessage.textContent = message;
+
+            accessMessage.className =
+                "login-message";
+
+            if (type) {
+                accessMessage.classList.add(type);
+            }
+
+        }
+
+
+        /* =====================================================
+           GUEST ACCESS
+           =====================================================
+           Signs out any existing Firebase session first.
+           Otherwise a previously signed-in resident would still
+           be authenticated and would still see the
+           "Add Evacuation Center" button.
+           ===================================================== */
+
+        guestBtn.addEventListener("click", async () => {
+
+            guestBtn.disabled = true;
+
+            guestBtn.textContent = "Loading…";
+
+            try {
+
+                if (auth.currentUser) {
+                    await signOut(auth);
+                }
+
+            } catch (error) {
+
+                console.warn("Sign-out before guest mode failed:", error);
+            }
+
+            window.location.href = "index.html";
+        });
+
+
+        /* =====================================================
+           RESIDENT LOGIN
+           ===================================================== */
+
+        residentLoginBtn.addEventListener("click", () => {
+
+            window.location.href = "resident-login.html";
+
+        });
+
+
+        /* =====================================================
+           RESIDENT REGISTRATION
+           ===================================================== */
+
+        residentRegisterBtn.addEventListener("click", () => {
+
+            window.location.href = "register.html";
+
+        });
+
+
+        /* =====================================================
+           ADMIN LOGIN
+           ===================================================== */
+
+        adminLoginBtn.addEventListener("click", () => {
+
+            window.location.href = "admin-login.html";
+
+        });
+
+    </script>
+
+</body>
+</html>
