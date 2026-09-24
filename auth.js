@@ -6,7 +6,7 @@ import {
     signOut
 } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 
-import { app } from "../firebase-config.js";
+import { app } from "./firebase-config.js";
 
 
 // Initialize Firebase Authentication
