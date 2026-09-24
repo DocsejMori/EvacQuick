@@ -95,7 +95,48 @@ const CONFIG = {
 
 
 /* =========================================================================
-   2. APPLICATION STATE
+   2. RATE LIMITING (soft, per-browser)
+   ========================================================================= */
+
+const RATE_LIMIT_MS = 5 * 60 * 1000; /* 5 minutes */
+
+function checkRateLimit(key) {
+
+    const last = localStorage.getItem(key);
+
+    if (!last) return { allowed: true };
+
+    const elapsed = Date.now() - Number(last);
+    const remaining = RATE_LIMIT_MS - elapsed;
+
+    if (remaining > 0) {
+
+        const seconds = Math.ceil(remaining / 1000);
+        const minutes = Math.floor(seconds / 60);
+        const remSec = seconds % 60;
+
+        const timeText = minutes > 0
+            ? `${minutes} min ${remSec} sec`
+            : `${seconds} sec`;
+
+        return {
+            allowed: false,
+            message: `Please wait ${timeText} before doing this again.`
+        };
+    }
+
+    return { allowed: true };
+}
+
+
+function markRateLimit(key) {
+
+    localStorage.setItem(key, String(Date.now()));
+}
+
+
+/* =========================================================================
+   3. APPLICATION STATE
    ========================================================================= */
 
 const state = {
@@ -139,7 +180,7 @@ const state = {
 
 
 /* =========================================================================
-   3. DOM REFERENCES
+   4. DOM REFERENCES
    ========================================================================= */
 
 const DOM = {
@@ -250,8 +291,6 @@ const DOM = {
     zoomOutButton:
         document.getElementById("map-zoom-out"),
 
-    /* Details modal */
-
     facilityDetailsModal:
         document.getElementById("facility-details-modal"),
 
@@ -269,8 +308,6 @@ const DOM = {
 
     closeFacilityDetailsButton:
         document.getElementById("close-facility-details-btn"),
-
-    /* Report modal */
 
     reportModal:
         document.getElementById("report-modal"),
@@ -299,7 +336,7 @@ const DOM = {
 
 
 /* =========================================================================
-   4. MAP INITIALIZATION
+   5. MAP INITIALIZATION
    ========================================================================= */
 
 function initializeMap() {
@@ -350,7 +387,7 @@ function initializeMap() {
 
 
 /* =========================================================================
-   5. STATUS HELPERS
+   6. STATUS HELPERS
    ========================================================================= */
 
 function setStatus(message, type = "") {
@@ -387,7 +424,7 @@ function clearSidebarMessage() {
 
 
 /* =========================================================================
-   6. AUTHENTICATION + ROLE
+   7. AUTHENTICATION + ROLE
    ========================================================================= */
 
 async function loadUserRole(user) {
@@ -519,7 +556,6 @@ function watchAuthState() {
 
         applyAuthUI();
 
-        /* Refresh data with new role applied */
         if (state.userLocation) {
             fetchAndDisplayFacilities();
         }
@@ -528,7 +564,7 @@ function watchAuthState() {
 
 
 /* =========================================================================
-   7. GEOLOCATION
+   8. GEOLOCATION
    ========================================================================= */
 
 function requestUserLocation() {
@@ -646,7 +682,7 @@ function handleLocationError(error) {
 
 
 /* =========================================================================
-   8. USER MAP MARKER
+   9. USER MAP MARKER
    ========================================================================= */
 
 function renderUserMarker() {
@@ -681,7 +717,7 @@ function renderUserMarker() {
 
 
 /* =========================================================================
-   9. FACILITY NORMALIZATION
+   10. FACILITY NORMALIZATION
    ========================================================================= */
 
 function normalizeCapacity(value) {
@@ -775,7 +811,7 @@ function normalizeResidentFacility(documentSnapshot) {
 
 
 /* =========================================================================
-   10. LOAD FACILITIES (with query filtering to satisfy Firestore rules)
+   11. LOAD FACILITIES (with query filtering to satisfy Firestore rules)
    ========================================================================= */
 
 async function fetchResidentFacilities() {
@@ -788,12 +824,9 @@ async function fetchResidentFacilities() {
     const uid = auth.currentUser?.uid || null;
     const admin = state.currentUserRole === "admin";
 
-    /* Use a Map to deduplicate by doc ID */
     const results = new Map();
 
     try {
-
-        /* ----- 1. Approved facilities: everyone can read ----- */
 
         try {
 
@@ -809,8 +842,6 @@ async function fetchResidentFacilities() {
             console.warn("Could not read approved facilities:", e.message);
         }
 
-
-        /* ----- 2. Own submissions: signed-in users ----- */
 
         if (uid) {
 
@@ -830,8 +861,6 @@ async function fetchResidentFacilities() {
         }
 
 
-        /* ----- 3. All facilities: admins only ----- */
-
         if (admin) {
 
             try {
@@ -847,8 +876,6 @@ async function fetchResidentFacilities() {
             }
         }
 
-
-        /* ----- Convert to facility objects ----- */
 
         const facilities = [];
 
@@ -870,7 +897,7 @@ async function fetchResidentFacilities() {
 
 
 /* =========================================================================
-   11. DEDUPLICATION
+   12. DEDUPLICATION
    ========================================================================= */
 
 function deduplicateFacilities(facilities) {
@@ -897,7 +924,7 @@ function deduplicateFacilities(facilities) {
 
 
 /* =========================================================================
-   12. DISTANCE
+   13. DISTANCE
    ========================================================================= */
 
 function calculateDistanceKm(lat1, lon1, lat2, lon2) {
@@ -950,7 +977,7 @@ function sortFacilities(facilities) {
 
 
 /* =========================================================================
-   13. FILTERS
+   14. FILTERS
    ========================================================================= */
 
 function matchesCapacityFilter(facility) {
@@ -983,7 +1010,7 @@ function getVisibleFacilities() {
 
 
 /* =========================================================================
-   14. FORMATTERS
+   15. FORMATTERS
    ========================================================================= */
 
 function formatDistance(distanceKm) {
@@ -1079,7 +1106,7 @@ function getStatusClass(status) {
 
 
 /* =========================================================================
-   15. VERIFICATION BADGE HELPERS
+   16. VERIFICATION BADGE HELPERS
    ========================================================================= */
 
 function getVerificationBadge(facility) {
@@ -1108,7 +1135,7 @@ function getVerificationBadge(facility) {
 
 
 /* =========================================================================
-   16. RENDER FACILITY MARKERS
+   17. RENDER FACILITY MARKERS
    ========================================================================= */
 
 function clearFacilityMarkers() {
@@ -1166,7 +1193,7 @@ function renderFacilityMarkers() {
 
 
 /* =========================================================================
-   17. FACILITY POPUP
+   18. FACILITY POPUP
    ========================================================================= */
 
 function buildFacilityPopup(facility) {
@@ -1223,7 +1250,7 @@ function buildFacilityPopup(facility) {
 
 
 /* =========================================================================
-   18. RENDER FACILITY LIST
+   19. RENDER FACILITY LIST
    ========================================================================= */
 
 function renderFacilities() {
@@ -1263,7 +1290,7 @@ function renderFacilities() {
 
 
 /* =========================================================================
-   19. FACILITY CARD
+   20. FACILITY CARD
    ========================================================================= */
 
 function buildFacilityCard(facility, rank) {
@@ -1280,8 +1307,6 @@ function buildFacilityCard(facility, rank) {
         card.classList.add("is-selected");
     }
 
-
-    /* Header */
 
     const header = document.createElement("div");
     header.className = "facility-card-header";
@@ -1320,14 +1345,10 @@ function buildFacilityCard(facility, rank) {
     header.appendChild(titleWrap);
 
 
-    /* Type */
-
     const type = document.createElement("div");
     type.className = "facility-type";
     type.textContent = facility.facilityType;
 
-
-    /* Verification badge */
 
     const badgeInfo = getVerificationBadge(facility);
 
@@ -1336,8 +1357,6 @@ function buildFacilityCard(facility, rank) {
     designation.textContent = badgeInfo.text;
 
 
-    /* Meta */
-
     const metadata = document.createElement("div");
     metadata.className = "facility-meta";
 
@@ -1345,8 +1364,6 @@ function buildFacilityCard(facility, rank) {
     appendMetaRow(metadata, "Status", facility.status);
     appendMetaRow(metadata, "Real-Time", facility.realTimeStatus);
 
-
-    /* Actions */
 
     const actions = document.createElement("div");
     actions.className = "facility-card-actions";
@@ -1433,7 +1450,7 @@ function appendMetaRow(container, label, value) {
 
 
 /* =========================================================================
-   20. FACILITY COUNT
+   21. FACILITY COUNT
    ========================================================================= */
 
 function updateFacilityCount(count) {
@@ -1450,7 +1467,7 @@ function updateFacilityCount(count) {
 
 
 /* =========================================================================
-   21. SELECT FACILITY
+   22. SELECT FACILITY
    ========================================================================= */
 
 function selectFacility(facility) {
@@ -1469,7 +1486,7 @@ function selectFacility(facility) {
 
 
 /* =========================================================================
-   22. SEARCH RADIUS
+   23. SEARCH RADIUS
    ========================================================================= */
 
 function setSearchRadius(radiusKm) {
@@ -1502,7 +1519,7 @@ function setSearchRadius(radiusKm) {
 
 
 /* =========================================================================
-   23. FACILITY SEARCH
+   24. FACILITY SEARCH
    ========================================================================= */
 
 async function fetchAndDisplayFacilities() {
@@ -1578,7 +1595,7 @@ async function fetchAndDisplayFacilities() {
 
 
 /* =========================================================================
-   24. FILTERS
+   25. FILTERS
    ========================================================================= */
 
 function applyFilters() {
@@ -1595,7 +1612,7 @@ function applyFilters() {
 
 
 /* =========================================================================
-   25. CLEAR ROUTE
+   26. CLEAR ROUTE
    ========================================================================= */
 
 function clearRoute() {
@@ -1616,7 +1633,7 @@ function clearRoute() {
 
 
 /* =========================================================================
-   26. OSRM ROUTING
+   27. OSRM ROUTING
    ========================================================================= */
 
 async function fetchRoute(origin, destination) {
@@ -1751,7 +1768,7 @@ function renderRoute(route, facility) {
 
 
 /* =========================================================================
-   27. FACILITY DETAILS MODAL
+   28. FACILITY DETAILS MODAL
    ========================================================================= */
 
 function openFacilityDetails(facility) {
@@ -1965,7 +1982,7 @@ function closeFacilityDetails() {
 
 
 /* =========================================================================
-   28. PHOTO LIGHTBOX
+   29. PHOTO LIGHTBOX
    ========================================================================= */
 
 function openLightbox(url) {
@@ -1998,7 +2015,7 @@ function openLightbox(url) {
 
 
 /* =========================================================================
-   29. MODAL OPEN / CLOSE (Add / Edit)
+   30. MODAL OPEN / CLOSE (Add / Edit)
    ========================================================================= */
 
 function openFacilityModal(facility = null) {
@@ -2198,7 +2215,7 @@ function closeFacilityModal() {
 
 
 /* =========================================================================
-   30. FORM MESSAGE HELPERS
+   31. FORM MESSAGE HELPERS
    ========================================================================= */
 
 function showFacilityFormMessage(message, type = "") {
@@ -2234,7 +2251,7 @@ function clearFacilityFormMessage() {
 
 
 /* =========================================================================
-   31. SUBMISSION LOCATION
+   32. SUBMISSION LOCATION
    ========================================================================= */
 
 function captureSubmissionLocation() {
@@ -2351,7 +2368,7 @@ function setSubmissionLocationError(message) {
 
 
 /* =========================================================================
-   32. FORM VALIDATION
+   33. FORM VALIDATION
    ========================================================================= */
 
 function validateFacilitySubmission(formData, isEditing) {
@@ -2446,7 +2463,7 @@ function validateFacilitySubmission(formData, isEditing) {
 
 
 /* =========================================================================
-   33. SUBMIT / UPDATE FACILITY
+   34. SUBMIT / UPDATE FACILITY
    ========================================================================= */
 
 async function submitFacility(event) {
@@ -2456,6 +2473,8 @@ async function submitFacility(event) {
     if (state.isSubmitting) return;
     if (!DOM.facilityForm) return;
 
+
+    /* Rate limit — only for new submissions, not edits */
 
     let isEditing = false;
     let existingFacility = null;
@@ -2470,6 +2489,17 @@ async function submitFacility(event) {
             isEditing = true;
         } else {
             state.editingFacilityId = null;
+        }
+    }
+
+
+    if (!isEditing) {
+
+        const rateCheck = checkRateLimit("evacquick:lastFacilitySubmit");
+
+        if (!rateCheck.allowed) {
+            showFacilityFormMessage(rateCheck.message, "error");
+            return;
         }
     }
 
@@ -2638,6 +2668,8 @@ async function submitFacility(event) {
                 facilityData
             );
 
+            markRateLimit("evacquick:lastFacilitySubmit");
+
             showFacilityFormMessage(
                 "Evacuation center submitted successfully. Your submission is pending verification.",
                 "success"
@@ -2680,7 +2712,7 @@ async function submitFacility(event) {
 
 
 /* =========================================================================
-   34. DELETE FACILITY
+   35. DELETE FACILITY
    ========================================================================= */
 
 async function confirmDeleteFacility(facility) {
@@ -2724,7 +2756,7 @@ async function confirmDeleteFacility(facility) {
 
 
 /* =========================================================================
-   35. REPORT FACILITY
+   36. REPORT FACILITY
    ========================================================================= */
 
 let reportingFacility = null;
@@ -2815,6 +2847,17 @@ async function submitReport(event) {
         return;
     }
 
+
+    /* Rate limit */
+
+    const rateCheck = checkRateLimit("evacquick:lastReportSubmit");
+
+    if (!rateCheck.allowed) {
+        showReportFormMessage(rateCheck.message, "error");
+        return;
+    }
+
+
     const formData = new FormData(DOM.reportForm);
 
     const reason = String(formData.get("reason") || "").trim();
@@ -2845,6 +2888,8 @@ async function submitReport(event) {
             createdAt: serverTimestamp()
         });
 
+        markRateLimit("evacquick:lastReportSubmit");
+
         showReportFormMessage(
             "Report submitted. Thank you — an admin will review this shortly.",
             "success"
@@ -2871,7 +2916,7 @@ async function submitReport(event) {
 
 
 /* =========================================================================
-   36. REFRESH AFTER CHANGE
+   37. REFRESH AFTER CHANGE
    ========================================================================= */
 
 async function refreshFacilitiesAfterSubmission() {
@@ -2902,7 +2947,7 @@ async function refreshFacilitiesAfterSubmission() {
 
 
 /* =========================================================================
-   37. EVENT LISTENERS
+   38. EVENT LISTENERS
    ========================================================================= */
 
 function setupEventListeners() {
@@ -3001,7 +3046,7 @@ function setupEventListeners() {
 
 
 /* =========================================================================
-   38. APPLICATION INITIALIZATION
+   39. APPLICATION INITIALIZATION
    ========================================================================= */
 
 function initializeApplication() {
@@ -3027,7 +3072,7 @@ function initializeApplication() {
 
 
 /* =========================================================================
-   39. START APPLICATION
+   40. START APPLICATION
    ========================================================================= */
 
 if (document.readyState === "loading") {
