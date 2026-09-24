@@ -1,0 +1,614 @@
+/* =========================================
+   EVACQUICK - ADMIN LOGIN
+   admin-login.css
+   ========================================= */
+
+
+/* PAGE */
+
+.admin-login-page {
+    min-height: 100vh;
+    background: var(--color-bg);
+}
+
+
+/* MAIN WRAPPER */
+
+.admin-login-wrapper {
+    min-height: 100vh;
+
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+
+/* =========================================
+   LEFT INFORMATION PANEL
+   ========================================= */
+
+.admin-info-panel {
+    display: flex;
+    align-items: center;
+
+    padding: 60px;
+
+    background: var(--color-navy);
+    color: #ffffff;
+}
+
+
+.admin-info-content {
+    width: 100%;
+    max-width: 520px;
+    margin: 0 auto;
+}
+
+
+/* BRAND */
+
+.admin-brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+
+    margin-bottom: 50px;
+}
+
+
+.admin-brand-mark {
+    width: 46px;
+    height: 46px;
+
+    flex-shrink: 0;
+
+    object-fit: contain;
+    display: block;
+    background: transparent;
+}
+
+
+
+
+
+.admin-brand-name {
+    margin: 0;
+
+    font-family: var(--font-display);
+    font-size: 30px;
+    line-height: 1;
+
+    letter-spacing: 0.5px;
+}
+
+
+.admin-brand-sub {
+    margin: 5px 0 0;
+
+    color: rgba(255, 255, 255, 0.65);
+
+    font-size: 12px;
+}
+
+
+/* BADGE */
+
+.admin-badge {
+    display: inline-block;
+
+    margin-bottom: 22px;
+    padding: 7px 11px;
+
+    border: 1px solid rgba(255, 255, 255, 0.25);
+
+    color: var(--color-orange);
+
+    font-size: 11px;
+    font-weight: 700;
+
+    letter-spacing: 1.2px;
+}
+
+
+/* HEADING */
+
+.admin-info-content h1 {
+    margin: 0 0 20px;
+
+    max-width: 420px;
+
+    font-family: var(--font-display);
+    font-size: clamp(48px, 5vw, 72px);
+    line-height: 0.95;
+
+    letter-spacing: -1px;
+}
+
+
+.admin-description {
+    max-width: 480px;
+
+    margin: 0;
+
+    color: rgba(255, 255, 255, 0.72);
+
+    font-size: 15px;
+    line-height: 1.7;
+}
+
+
+/* BENEFITS */
+
+.admin-benefits {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+
+    margin-top: 42px;
+}
+
+
+.admin-benefit {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+}
+
+
+.admin-benefit-icon {
+    width: 34px;
+    height: 34px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid rgba(255, 255, 255, 0.25);
+
+    color: var(--color-orange);
+
+    font-size: 13px;
+}
+
+
+.admin-benefit strong {
+    display: block;
+
+    margin-bottom: 4px;
+
+    font-size: 14px;
+    font-weight: 700;
+}
+
+
+.admin-benefit span {
+    display: block;
+
+    color: rgba(255, 255, 255, 0.58);
+
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+
+/* =========================================
+   RIGHT FORM PANEL
+   ========================================= */
+
+.admin-form-panel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 50px 60px;
+
+    background: var(--color-surface);
+}
+
+
+.admin-form-container {
+    width: 100%;
+    max-width: 440px;
+}
+
+
+/* FORM HEADER */
+
+.admin-form-header {
+    margin-bottom: 32px;
+}
+
+
+.admin-eyebrow {
+    display: block;
+
+    margin-bottom: 9px;
+
+    color: var(--color-orange);
+
+    font-size: 11px;
+    font-weight: 700;
+
+    letter-spacing: 1.4px;
+}
+
+
+.admin-form-header h2 {
+    margin: 0 0 8px;
+
+    color: var(--color-ink);
+
+    font-family: var(--font-display);
+    font-size: 42px;
+    line-height: 1;
+}
+
+
+.admin-form-header p {
+    margin: 0;
+
+    color: var(--color-ink-soft);
+
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+
+/* =========================================
+   FORM
+   ========================================= */
+
+#adminLoginForm {
+    width: 100%;
+}
+
+
+.admin-form-group {
+    margin-bottom: 20px;
+}
+
+
+.admin-form-group label {
+    display: block;
+
+    margin-bottom: 8px;
+
+    color: var(--color-ink);
+
+    font-size: 13px;
+    font-weight: 700;
+}
+
+
+/* PASSWORD LABEL */
+
+.admin-password-label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    margin-bottom: 8px;
+}
+
+
+.admin-password-label label {
+    margin-bottom: 0;
+}
+
+
+.admin-forgot-password {
+    padding: 0;
+
+    border: none;
+    background: transparent;
+
+    color: var(--color-navy);
+
+    font-family: var(--font-body);
+    font-size: 12px;
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+
+.admin-forgot-password:hover {
+    text-decoration: underline;
+}
+
+
+/* INPUT */
+
+.admin-input {
+    width: 100%;
+    height: 48px;
+
+    padding: 0 14px;
+
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-sm);
+
+    background: var(--color-surface);
+    color: var(--color-ink);
+
+    font-family: var(--font-body);
+    font-size: 14px;
+
+    outline: none;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+.admin-input::placeholder {
+    color: var(--color-ink-soft);
+}
+
+
+.admin-input:focus {
+    border-color: var(--color-navy);
+
+    box-shadow:
+        0 0 0 3px rgba(20, 45, 75, 0.08);
+}
+
+
+/* PASSWORD WRAPPER */
+
+.admin-password-wrapper {
+    position: relative;
+}
+
+
+.admin-password-wrapper .admin-input {
+    padding-right: 70px;
+}
+
+
+/* SHOW / HIDE */
+
+.admin-toggle-password {
+    position: absolute;
+
+    top: 50%;
+    right: 13px;
+
+    transform: translateY(-50%);
+
+    padding: 0;
+
+    border: none;
+    background: transparent;
+
+    color: var(--color-navy);
+
+    font-family: var(--font-body);
+    font-size: 12px;
+    font-weight: 700;
+
+    cursor: pointer;
+}
+
+
+.admin-toggle-password:hover {
+    text-decoration: underline;
+}
+
+
+/* =========================================
+   MESSAGE
+   ========================================= */
+
+.admin-login-message {
+    display: none;
+
+    margin-bottom: 16px;
+    padding: 11px 13px;
+
+    border-radius: var(--radius-sm);
+
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+
+.admin-login-message.error {
+    display: block;
+
+    background: rgba(190, 55, 55, 0.08);
+    color: var(--color-danger);
+}
+
+
+.admin-login-message.success {
+    display: block;
+
+    background: rgba(45, 140, 85, 0.08);
+    color: var(--color-safe);
+}
+
+
+/* =========================================
+   SIGN IN BUTTON
+   ========================================= */
+
+.admin-signin-btn {
+    width: 100%;
+    height: 50px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 17px;
+
+    border: none;
+    border-radius: var(--radius-sm);
+
+    background: var(--color-navy);
+    color: #ffffff;
+
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease;
+}
+
+
+.admin-signin-btn:hover {
+    background: var(--color-navy-dark);
+}
+
+
+.admin-signin-btn:active {
+    transform: translateY(1px);
+}
+
+
+/* =========================================
+   SECURITY NOTICE
+   ========================================= */
+
+.admin-security-notice {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    margin-top: 22px;
+    padding: 13px;
+
+    border: 1px solid var(--color-line);
+
+    background: var(--color-bg);
+}
+
+
+.admin-security-icon {
+    font-size: 15px;
+}
+
+
+.admin-security-notice p {
+    margin: 0;
+
+    color: var(--color-ink-soft);
+
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+
+/* =========================================
+   BACK BUTTON
+   ========================================= */
+
+.admin-back-to-access {
+    margin-top: 22px;
+
+    text-align: center;
+}
+
+
+.admin-back-to-access button {
+    padding: 0;
+
+    border: none;
+    background: transparent;
+
+    color: var(--color-ink-soft);
+
+    font-family: var(--font-body);
+    font-size: 13px;
+
+    cursor: pointer;
+}
+
+
+.admin-back-to-access button:hover {
+    color: var(--color-navy);
+}
+
+
+/* =========================================
+   FOOTER
+   ========================================= */
+
+.admin-footer {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    margin-top: 35px;
+
+    color: var(--color-ink-soft);
+
+    font-size: 9px;
+    font-weight: 700;
+
+    letter-spacing: 1.5px;
+}
+
+
+.admin-footer-line {
+    height: 1px;
+    flex: 1;
+
+    background: var(--color-line);
+}
+
+
+/* =========================================
+   RESPONSIVE
+   ========================================= */
+
+@media (max-width: 900px) {
+
+    .admin-login-wrapper {
+        grid-template-columns: 1fr;
+    }
+
+
+    .admin-info-panel {
+        display: none;
+    }
+
+
+    .admin-form-panel {
+        min-height: 100vh;
+
+        padding: 40px 25px;
+    }
+
+}
+
+
+@media (max-width: 480px) {
+
+    .admin-form-panel {
+        padding: 30px 18px;
+    }
+
+
+    .admin-form-header h2 {
+        font-size: 36px;
+    }
+
+
+    .admin-input {
+        height: 46px;
+    }
+
+
+    .admin-signin-btn {
+        height: 48px;
+    }
+
+}
