@@ -277,7 +277,8 @@
     <script type="module">
 
         import {
-            registerUser
+            registerUser,
+            getFriendlyAuthError
         } from "./auth.js";
 
         import {
@@ -408,26 +409,10 @@
 
                 if (!result.success) {
 
-                    let msg =
-                        "Could not create your account.";
-
-                    const code = result.error?.code || "";
-
-                    if (code === "auth/email-already-in-use") {
-                        msg =
-                            "That email is already registered. Try signing in instead.";
-                    }
-
-                    if (code === "auth/invalid-email") {
-                        msg = "That email address is not valid.";
-                    }
-
-                    if (code === "auth/weak-password") {
-                        msg =
-                            "Your password is too weak. Use at least 6 characters.";
-                    }
-
-                    showMessage(msg, "is-error");
+                    showMessage(
+                        getFriendlyAuthError(result.error),
+                        "is-error"
+                    );
 
                     DOM.submitBtn.disabled = false;
                     DOM.submitBtn.textContent =
@@ -468,7 +453,7 @@
                 console.error("Registration error:", error);
 
                 showMessage(
-                    "Something went wrong. Please try again.",
+                    getFriendlyAuthError(error),
                     "is-error"
                 );
 
