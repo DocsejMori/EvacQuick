@@ -1,130 +1,1159 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="theme-color" content="#16324F" />
-  <title>EvacQuick — Disaster Evacuation Facility Locator</title>
-  <meta name="description" content="Dynamically discovers nearby schools, sports centers, and community facilities that may serve as evacuation points, and provides driving directions." />
+    <meta charset="UTF-8">
 
-  <!-- Leaflet core (map rendering engine) -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-  <!-- Typefaces: Barlow Condensed for signage-style headings/alerts, Inter for legible data/body -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <meta
+        name="description"
+        content="EvacQuick - Web-based Disaster Evacuation Center Locator and Navigation System for Residents"
+    >
 
-  <link rel="stylesheet" href="style.css" />
+    <title>EvacQuick | Disaster Evacuation Locator</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="logo.png">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <!-- Leaflet CSS -->
+    <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    >
+
+    <!-- EvacQuick Styles -->
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
 </head>
+
 <body>
 
-  <!-- ======================= APP SHELL ======================= -->
-  <div class="app">
+    <div class="app">
 
-    <!-- ---------- HEADER / STATUS BAR ---------- -->
-    <header class="app-header">
-      <div class="brand">
-        <span class="brand-mark" aria-hidden="true"></span>
-        <div class="brand-text">
-          <h1>EvacQuick</h1>
-          <p class="brand-sub">Disaster Evacuation Facility Locator</p>
+        <!-- =========================================================
+             HEADER
+             ========================================================= -->
+
+        <header class="app-header">
+
+            <div class="brand">
+
+                <img
+                    src="logo.png"
+                    alt="EvacQuick logo"
+                    class="brand-mark"
+                >
+
+                <div class="brand-text">
+
+                    <h1>EvacQuick</h1>
+
+                    <p class="brand-sub">
+                        Disaster Evacuation Facility Locator
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="header-actions">
+
+                <p
+                    id="status-line"
+                    class="status-line"
+                    aria-live="polite"
+                >
+                    Ready.
+                </p>
+
+                <button
+                    id="locate-btn"
+                    class="btn btn-primary"
+                    type="button"
+                >
+                    Find My Location
+                </button>
+
+            </div>
+
+        </header>
+
+
+        <!-- =========================================================
+             EMERGENCY NOTICE
+             ========================================================= -->
+
+        <div class="emergency-notice">
+
+            <strong>Emergency Notice:</strong>
+
+            Road and facility conditions may change during disasters.
+            Map data and routes may not reflect current emergency
+            conditions. Always follow instructions from local
+            authorities.
+
         </div>
-      </div>
 
-      <div class="header-actions">
-        <p id="status-line" class="status-line" role="status" aria-live="polite">
-          Detecting your location&hellip;
-        </p>
-        <button id="locate-btn" class="btn btn-primary" type="button">
-          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M12 2v3M12 19v3M2 12h3M19 12h3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            <circle cx="12" cy="12" r="6" stroke="currentColor" stroke-width="2" fill="none"/>
-            <circle cx="12" cy="12" r="1.6" fill="currentColor"/>
-          </svg>
-          Find My Location
-        </button>
-      </div>
-    </header>
 
-    <!-- ---------- EMERGENCY DISCLAIMER BANNER ---------- -->
-    <div class="emergency-notice" role="note">
-      <strong>Emergency Notice:</strong>
-      Road and facility conditions may change during disasters. Listed facilities are
-      <strong>potential</strong> evacuation points sourced from OpenStreetMap, not confirmed official
-      designations. Always follow instructions from local authorities.
+        <!-- =========================================================
+             MAIN APPLICATION BODY
+             ========================================================= -->
+
+        <main class="app-body">
+
+
+            <!-- =====================================================
+                 SIDEBAR
+                 ===================================================== -->
+
+            <aside
+                class="sidebar"
+                aria-label="Evacuation facility directory"
+            >
+
+
+                <section
+                    id="route-summary"
+                    class="route-summary hidden"
+                    aria-label="Route summary"
+                >
+
+                    <div class="route-summary-head">
+
+                        <h2>Route Summary</h2>
+
+                        <button
+                            id="clear-route-btn"
+                            class="btn btn-ghost btn-sm"
+                            type="button"
+                        >
+                            Clear Route
+                        </button>
+
+                    </div>
+
+
+                    <div class="route-dest-label">
+                        Destination
+                    </div>
+
+                    <div
+                        id="route-dest-name"
+                        class="route-dest-name"
+                    >
+                        —
+                    </div>
+
+
+                    <div class="route-stats">
+
+                        <div class="route-stat">
+
+                            <span
+                                id="route-distance"
+                                class="route-stat-value"
+                            >
+                                —
+                            </span>
+
+                            <span class="route-stat-label">
+                                km
+                            </span>
+
+                        </div>
+
+
+                        <div class="route-stat">
+
+                            <span
+                                id="route-duration"
+                                class="route-stat-value"
+                            >
+                                —
+                            </span>
+
+                            <span class="route-stat-label">
+                                min
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <section class="info-block">
+
+                    <div class="info-block-label">
+                        Location Status
+                    </div>
+
+                    <div
+                        id="location-status"
+                        class="info-block-value"
+                    >
+                        Waiting for location...
+                    </div>
+
+                </section>
+
+
+                <section class="info-block">
+
+                    <label
+                        class="info-block-label"
+                        for="search-radius-select"
+                    >
+                        Search Area
+                    </label>
+
+                    <select
+                        id="search-radius-select"
+                        class="filter-select"
+                    >
+                        <option value="1">Within 1 km</option>
+                        <option value="2">Within 2 km</option>
+                        <option value="3">Within 3 km</option>
+                        <option value="5" selected>Within 5 km</option>
+                        <option value="10">Within 10 km</option>
+                        <option value="15">Within 15 km</option>
+                    </select>
+
+                </section>
+
+
+                <section class="info-block">
+
+                    <div class="info-block-label">
+                        Facility Directory
+                    </div>
+
+                    <div
+                        id="facility-count"
+                        class="info-block-value"
+                    >
+                        0 nearby facilities found
+                    </div>
+
+                </section>
+
+
+                <section
+                    class="filter-section"
+                    aria-label="Optional facility filters"
+                >
+
+                    <div class="filter-heading">
+                        Optional Filters
+                    </div>
+
+
+                    <div class="filter-group">
+
+                        <label
+                            class="filter-group-label"
+                            for="facility-type-select"
+                        >
+                            Facility Type
+                        </label>
+
+                        <select
+                            id="facility-type-select"
+                            class="filter-select"
+                        >
+
+                            <option value="all">All</option>
+                            <option value="Government Evacuation Center">
+                                Government Evacuation Center
+                            </option>
+                            <option value="School / Campus">
+                                School / Campus
+                            </option>
+                            <option value="Barangay / Community Center">
+                                Barangay / Community Center
+                            </option>
+                            <option value="Sports / Covered Court">
+                                Sports / Covered Court
+                            </option>
+                            <option value="Other">Other</option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="filter-group">
+
+                        <label
+                            class="filter-group-label"
+                            for="availability-select"
+                        >
+                            Availability
+                        </label>
+
+                        <select
+                            id="availability-select"
+                            class="filter-select"
+                        >
+
+                            <option value="all">All</option>
+                            <option value="Available">Available</option>
+                            <option value="Limited Capacity">Limited Capacity</option>
+                            <option value="Full">Full</option>
+                            <option value="Temporarily Closed">Temporarily Closed</option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="filter-group">
+
+                        <label
+                            class="filter-group-label"
+                            for="capacity-select"
+                        >
+                            Capacity
+                        </label>
+
+                        <select
+                            id="capacity-select"
+                            class="filter-select"
+                        >
+
+                            <option value="all">All</option>
+                            <option value="small">Small (&lt;100)</option>
+                            <option value="medium">Medium (100–500)</option>
+                            <option value="large">Large (&gt;500)</option>
+
+                        </select>
+
+                    </div>
+
+
+                    <p class="filter-help">
+                        Filters are optional. Choose only the information
+                        you want to use when comparing facilities.
+                    </p>
+
+                </section>
+
+
+                <div
+                    id="sidebar-messages"
+                    class="sidebar-messages"
+                    aria-live="polite"
+                ></div>
+
+
+                <ul
+                    id="facility-list"
+                    class="facility-list"
+                    aria-label="Nearby facilities"
+                ></ul>
+
+            </aside>
+
+
+            <!-- =====================================================
+                 MAP
+                 ===================================================== -->
+
+            <section
+                class="map-wrap"
+                aria-label="Interactive evacuation facility map"
+            >
+
+                <div
+                    id="map"
+                    role="application"
+                    aria-label="EvacQuick interactive map"
+                ></div>
+
+
+                <div
+                    class="map-zoom-controls"
+                    aria-label="Map zoom controls"
+                >
+
+                    <button
+                        type="button"
+                        class="map-zoom-btn"
+                        id="map-zoom-in"
+                        aria-label="Zoom in"
+                    >
+                        +
+                    </button>
+
+                    <button
+                        type="button"
+                        class="map-zoom-btn"
+                        id="map-zoom-out"
+                        aria-label="Zoom out"
+                    >
+                        −
+                    </button>
+
+                </div>
+
+            </section>
+
+        </main>
+
     </div>
 
-    <!-- ---------- MAIN BODY: SIDEBAR + MAP ---------- -->
-    <main class="app-body">
 
-      <!-- ----- SIDEBAR ----- -->
-      <aside class="sidebar" id="sidebar" aria-label="Nearby facilities and routing">
+    <!-- =============================================================
+         ADD / EDIT EVACUATION CENTER MODAL
+         ============================================================= -->
 
-        <!-- Route summary card (hidden until a route is calculated) -->
-        <section id="route-summary" class="route-summary hidden" aria-live="polite">
-          <div class="route-summary-head">
-            <h2>Route Summary</h2>
-            <button id="clear-route-btn" class="btn btn-ghost btn-sm" type="button">Clear Route</button>
-          </div>
-          <p class="route-dest-label">Destination</p>
-          <p id="route-dest-name" class="route-dest-name">—</p>
-          <div class="route-stats">
-            <div class="route-stat">
-              <span class="route-stat-value" id="route-distance">—</span>
-              <span class="route-stat-label">km driving</span>
+    <div
+        id="facility-modal"
+        class="modal hidden"
+        aria-hidden="true"
+    >
+
+        <div
+            class="modal-backdrop"
+            id="facility-modal-backdrop"
+        ></div>
+
+
+        <section
+            class="modal-dialog"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="facility-modal-title"
+        >
+
+            <div class="modal-header">
+
+                <div>
+
+                    <span class="modal-eyebrow">
+                        RESIDENT SUBMISSION
+                    </span>
+
+                    <h2 id="facility-modal-title">
+                        Add Evacuation Center
+                    </h2>
+
+                    <p id="facility-modal-subtitle">
+                        Submit an evacuation facility for administrator
+                        verification. Both photos are required.
+                    </p>
+
+                </div>
+
+
+                <button
+                    id="close-facility-modal-btn"
+                    class="modal-close"
+                    type="button"
+                    aria-label="Close form"
+                >
+                    &times;
+                </button>
+
             </div>
-            <div class="route-stat">
-              <span class="route-stat-value" id="route-duration">—</span>
-              <span class="route-stat-label">min estimated</span>
+
+
+            <form
+                id="facility-submission-form"
+                novalidate
+            >
+
+
+                <div class="form-section">
+
+                    <h3>Evacuation Center Information</h3>
+
+
+                    <div class="form-group">
+
+                        <label for="facility-name">
+                            Evacuation Center Name
+                            <span aria-hidden="true">*</span>
+                        </label>
+
+                        <input
+                            id="facility-name"
+                            name="name"
+                            class="form-input"
+                            type="text"
+                            placeholder="Enter evacuation center name"
+                            autocomplete="organization"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="facility-manager">
+                            Name of Resident / Manager in Charge
+                            <span aria-hidden="true">*</span>
+                        </label>
+
+                        <input
+                            id="facility-manager"
+                            name="managerName"
+                            class="form-input"
+                            type="text"
+                            placeholder="Full name of person managing this center"
+                            autocomplete="name"
+                            required
+                        >
+
+                        <small class="form-help">
+                            The person responsible for this evacuation
+                            center.
+                        </small>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="facility-address">
+                            Address
+                            <span aria-hidden="true">*</span>
+                        </label>
+
+                        <textarea
+                            id="facility-address"
+                            name="address"
+                            class="form-input form-textarea"
+                            rows="3"
+                            placeholder="Enter complete address"
+                            required
+                        ></textarea>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="facility-type">
+                            Facility Type
+                            <span aria-hidden="true">*</span>
+                        </label>
+
+                        <select
+                            id="facility-type"
+                            name="facilityType"
+                            class="form-input"
+                            required
+                        >
+
+                            <option value="">Select facility type</option>
+                            <option value="Government Evacuation Center">Government Evacuation Center</option>
+                            <option value="School / Campus">School / Campus</option>
+                            <option value="Barangay / Community Center">Barangay / Community Center</option>
+                            <option value="Sports / Covered Court">Sports / Covered Court</option>
+                            <option value="Other">Other</option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+
+                <div class="form-section">
+
+                    <h3>Capacity &amp; Real-Time Availability</h3>
+
+
+                    <div class="form-group">
+
+                        <label for="facility-capacity">
+                            Total Capacity
+                            <span aria-hidden="true">*</span>
+                        </label>
+
+                        <input
+                            id="facility-capacity"
+                            name="capacity"
+                            class="form-input"
+                            type="number"
+                            min="1"
+                            step="1"
+                            placeholder="Example: 350"
+                            required
+                        >
+
+                        <small class="form-help">
+                            Maximum number of people the facility can
+                            accommodate.
+                        </small>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="facility-current-occupancy">
+                            Current Number of Evacuees
+                            <span aria-hidden="true">*</span>
+                        </label>
+
+                        <input
+                            id="facility-current-occupancy"
+                            name="currentOccupancy"
+                            class="form-input"
+                            type="number"
+                            min="0"
+                            step="1"
+                            placeholder="Example: 42"
+                            required
+                        >
+
+                        <small class="form-help">
+                            How many people are sheltering here right
+                            now.
+                        </small>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="facility-status">
+                            Availability Status
+                            <span aria-hidden="true">*</span>
+                        </label>
+
+                        <select
+                            id="facility-status"
+                            name="status"
+                            class="form-input"
+                            required
+                        >
+
+                            <option value="">Select availability status</option>
+                            <option value="Available">Available</option>
+                            <option value="Limited Capacity">Limited Capacity</option>
+                            <option value="Full">Full</option>
+                            <option value="Temporarily Closed">Temporarily Closed</option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="facility-real-time">
+                            Real-Time Status
+                            <span aria-hidden="true">*</span>
+                        </label>
+
+                        <select
+                            id="facility-real-time"
+                            name="realTimeStatus"
+                            class="form-input"
+                            required
+                        >
+
+                            <option value="">Select real-time status</option>
+                            <option value="Accepting Evacuees Now">Accepting Evacuees Now</option>
+                            <option value="Open – Accepting Soon">Open – Accepting Soon</option>
+                            <option value="Open – Standing By">Open – Standing By</option>
+                            <option value="At Capacity – Not Accepting">At Capacity – Not Accepting</option>
+                            <option value="Closed Temporarily">Closed Temporarily</option>
+
+                        </select>
+
+                        <small class="form-help">
+                            Update this field any time the situation
+                            changes.
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <div class="form-section">
+
+                    <h3>Verification Photos</h3>
+
+                    <p class="location-help" id="photo-section-help">
+                        Both photos are required. They help administrators
+                        verify that the evacuation center is real and
+                        that you are authorized to register it.
+                    </p>
+
+
+                    <div class="form-group">
+
+                        <label for="facility-id-photo">
+                            Photo of a Valid ID
+                            <span aria-hidden="true" id="id-photo-required">*</span>
+                        </label>
+
+                        <input
+                            id="facility-id-photo"
+                            name="idPhoto"
+                            class="form-input"
+                            type="file"
+                            accept="image/*"
+                            capture="environment"
+                            required
+                        >
+
+                        <small class="form-help">
+                            National ID, driver's license, barangay ID,
+                            or similar. Take a clear, well-lit photo.
+                        </small>
+
+                        <div id="current-id-photo-preview"></div>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="facility-center-photo">
+                            Photo of the Evacuation Center
+                            <span aria-hidden="true" id="center-photo-required">*</span>
+                        </label>
+
+                        <input
+                            id="facility-center-photo"
+                            name="centerPhoto"
+                            class="form-input"
+                            type="file"
+                            accept="image/*"
+                            capture="environment"
+                            required
+                        >
+
+                        <small class="form-help">
+                            A clear photo showing the building or
+                            entrance.
+                        </small>
+
+                        <div id="current-center-photo-preview"></div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="form-section">
+
+                    <h3>Operating Information</h3>
+
+
+                    <div class="form-row">
+
+                        <div class="form-group">
+
+                            <label for="facility-opening-time">
+                                Opening Time
+                                <span class="optional">Optional</span>
+                            </label>
+
+                            <input
+                                id="facility-opening-time"
+                                name="openingTime"
+                                class="form-input"
+                                type="time"
+                            >
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="facility-closing-time">
+                                Closing Time
+                                <span class="optional">Optional</span>
+                            </label>
+
+                            <input
+                                id="facility-closing-time"
+                                name="closingTime"
+                                class="form-input"
+                                type="time"
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="facility-contact">
+                            Contact Number
+                            <span class="optional">Optional</span>
+                        </label>
+
+                        <input
+                            id="facility-contact"
+                            name="contactNumber"
+                            class="form-input"
+                            type="tel"
+                            placeholder="Example: 09XXXXXXXXX"
+                            autocomplete="tel"
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <div class="form-section">
+
+                    <h3>Location</h3>
+
+                    <p class="location-help">
+                        Use your current location to identify the
+                        evacuation center's exact map position.
+                    </p>
+
+
+                    <button
+                        id="use-my-location-btn"
+                        class="btn btn-ghost location-button"
+                        type="button"
+                    >
+                        Use My Location
+                    </button>
+
+
+                    <div
+                        id="submission-location-status"
+                        class="submission-location-status"
+                        aria-live="polite"
+                    >
+                        Location not selected.
+                    </div>
+
+
+                    <input
+                        id="facility-latitude"
+                        name="latitude"
+                        type="hidden"
+                    >
+
+                    <input
+                        id="facility-longitude"
+                        name="longitude"
+                        type="hidden"
+                    >
+
+                </div>
+
+
+                <div class="form-section">
+
+                    <h3>Additional Information</h3>
+
+
+                    <div class="form-group">
+
+                        <label for="facility-notes">
+                            Additional Notes
+                            <span class="optional">Optional</span>
+                        </label>
+
+                        <textarea
+                            id="facility-notes"
+                            name="notes"
+                            class="form-input form-textarea"
+                            rows="4"
+                            placeholder="Anything else evacuees should know..."
+                        ></textarea>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="facility-form-message"
+                    class="form-message"
+                    aria-live="polite"
+                ></div>
+
+
+                <div class="modal-actions">
+
+                    <button
+                        id="cancel-facility-btn"
+                        class="btn btn-ghost"
+                        type="button"
+                    >
+                        Cancel
+                    </button>
+
+                    <button
+                        id="submit-facility-btn"
+                        class="btn btn-primary"
+                        type="submit"
+                    >
+                        Submit Evacuation Center
+                    </button>
+
+                </div>
+
+
+                <p class="verification-notice">
+                    Submitted evacuation centers are marked
+                    <strong>Pending Verification</strong> and are not
+                    treated as verified facilities until reviewed by
+                    an administrator.
+                </p>
+
+            </form>
+
+        </section>
+
+    </div>
+
+
+    <!-- =============================================================
+         FACILITY DETAILS MODAL
+         ============================================================= -->
+
+    <div
+        id="facility-details-modal"
+        class="modal hidden"
+        aria-hidden="true"
+    >
+
+        <div
+            class="modal-backdrop"
+            id="facility-details-backdrop"
+        ></div>
+
+
+        <section
+            class="modal-dialog modal-dialog-wide"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="facility-details-title"
+        >
+
+            <div class="modal-header">
+
+                <div>
+
+                    <span class="modal-eyebrow">
+                        EVACUATION CENTER DETAILS
+                    </span>
+
+                    <h2 id="facility-details-title">
+                        Facility Name
+                    </h2>
+
+                    <p id="facility-details-subtitle">
+                        Loading…
+                    </p>
+
+                </div>
+
+
+                <button
+                    id="close-facility-details-btn"
+                    class="modal-close"
+                    type="button"
+                    aria-label="Close details"
+                >
+                    &times;
+                </button>
+
             </div>
-          </div>
+
+
+            <div
+                class="facility-details-body"
+                id="facility-details-body"
+            >
+                <!-- Filled by app.js -->
+            </div>
+
         </section>
 
-        <!-- Location status block -->
-        <section class="info-block" aria-label="Location status">
-          <p class="info-block-label">Your Location</p>
-          <p id="location-status" class="info-block-value">Not yet detected</p>
+    </div>
+
+
+    <!-- =============================================================
+         REPORT FACILITY MODAL
+         ============================================================= -->
+
+    <div
+        id="report-modal"
+        class="modal hidden"
+        aria-hidden="true"
+    >
+
+        <div
+            class="modal-backdrop"
+            id="report-modal-backdrop"
+        ></div>
+
+
+        <section
+            class="modal-dialog"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="report-modal-title"
+        >
+
+            <div class="modal-header">
+
+                <div>
+
+                    <span class="modal-eyebrow">
+                        REPORT FACILITY
+                    </span>
+
+                    <h2 id="report-modal-title">
+                        Report an issue
+                    </h2>
+
+                    <p id="report-modal-subtitle">
+                        Tell us what's wrong with this facility.
+                    </p>
+
+                </div>
+
+
+                <button
+                    id="close-report-modal-btn"
+                    class="modal-close"
+                    type="button"
+                    aria-label="Close report form"
+                >
+                    &times;
+                </button>
+
+            </div>
+
+
+            <form id="report-form" novalidate>
+
+                <div class="form-section">
+
+                    <div class="form-group">
+
+                        <label for="report-reason">
+                            Reason
+                            <span aria-hidden="true">*</span>
+                        </label>
+
+                        <select
+                            id="report-reason"
+                            name="reason"
+                            class="form-input"
+                            required
+                        >
+                            <option value="">Select a reason</option>
+                            <option value="Wrong location">Wrong location</option>
+                            <option value="Fake facility">Fake facility</option>
+                            <option value="Already closed">Already closed</option>
+                            <option value="Wrong information">Wrong information</option>
+                            <option value="Other">Other</option>
+                        </select>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="report-note">
+                            Additional details
+                            <span class="optional">Optional</span>
+                        </label>
+
+                        <textarea
+                            id="report-note"
+                            name="note"
+                            class="form-input form-textarea"
+                            rows="4"
+                            placeholder="Add any details that help us verify the issue..."
+                        ></textarea>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="report-form-message"
+                    class="form-message"
+                    aria-live="polite"
+                ></div>
+
+
+                <div class="modal-actions">
+
+                    <button
+                        id="cancel-report-btn"
+                        class="btn btn-ghost"
+                        type="button"
+                    >
+                        Cancel
+                    </button>
+
+                    <button
+                        id="submit-report-btn"
+                        class="btn btn-primary"
+                        type="submit"
+                    >
+                        Submit Report
+                    </button>
+
+                </div>
+
+            </form>
+
         </section>
 
-        <!-- Search radius block -->
-        <section class="info-block" aria-label="Search radius">
-          <p class="info-block-label">Search Area</p>
-          <p id="search-status" class="info-block-value">Searching within <span id="search-radius-value">5</span> km</p>
-        </section>
+    </div>
 
-        <!-- Facility count block -->
-        <section class="info-block" aria-label="Facility count">
-          <p class="info-block-label">Facilities Found</p>
-          <p id="facility-count" class="info-block-value">0 nearby facilities found</p>
-        </section>
 
-        <!-- Facility type filter -->
-        <div class="filter-row" role="group" aria-label="Filter by facility type">
-          <button class="chip is-active" data-filter="all" type="button">All</button>
-          <button class="chip" data-filter="school" type="button">Schools</button>
-          <button class="chip" data-filter="sports_centre" type="button">Sports Centers</button>
-          <button class="chip" data-filter="social_facility" type="button">Community Facilities</button>
-        </div>
+    <!-- =============================================================
+         LEAFLET JS
+         ============================================================= -->
 
-        <div id="sidebar-messages" class="sidebar-messages" aria-live="polite"></div>
+    <script
+        src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    ></script>
 
-        <ul id="facility-list" class="facility-list"></ul>
-      </aside>
 
-      <!-- ----- MAP ----- -->
-      <section class="map-wrap" aria-label="Map">
-        <div id="map"></div>
-      </section>
+    <!-- =============================================================
+         APPLICATION JS
+         ============================================================= -->
 
-    </main>
-  </div>
+    <script
+        type="module"
+        src="app.js"
+    ></script>
 
-  <!-- Leaflet core JS -->
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-          integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-
-  <script src="app.js"></script>
 </body>
+
 </html>
