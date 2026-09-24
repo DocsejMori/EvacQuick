@@ -19,7 +19,8 @@ import {
 } from "./firebase-config.js";
 
 import {
-    onAuthStateChanged
+    onAuthStateChanged,
+    signOut
 } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 
 import {
@@ -136,6 +137,31 @@ function markRateLimit(key) {
 
 
 /* =========================================================================
+   2.5 SPINNER / BUTTON LOADING HELPERS
+   ========================================================================= */
+
+function setButtonLoading(button, text) {
+
+    if (!button) return;
+
+    button.disabled = true;
+
+    button.innerHTML =
+        `<span class="spinner"></span>${text}`;
+}
+
+
+function resetButton(button, text) {
+
+    if (!button) return;
+
+    button.disabled = false;
+
+    button.textContent = text;
+}
+
+
+/* =========================================================================
    3. APPLICATION STATE
    ========================================================================= */
 
@@ -191,6 +217,18 @@ const DOM = {
 
     headerActions:
         document.querySelector(".header-actions"),
+
+    authUserLabel:
+        document.getElementById("auth-user-label"),
+
+    signInButton:
+        document.getElementById("signin-btn"),
+
+    signOutButton:
+        document.getElementById("signout-btn"),
+
+    adminDashboardButton:
+        document.getElementById("admin-dashboard-btn"),
 
     locationStatus:
         document.getElementById("location-status"),
@@ -336,6 +374,54 @@ const DOM = {
 
 
 /* =========================================================================
+   4.5 FILE INPUT PREVIEW
+   ========================================================================= */
+
+function attachFilePreview(inputId, previewId) {
+
+    const input = document.getElementById(inputId);
+    const preview = document.getElementById(previewId);
+
+    if (!input || !preview) return;
+
+    input.addEventListener("change", () => {
+
+        preview.innerHTML = "";
+
+        const file = input.files?.[0];
+
+        if (!file) return;
+
+        if (!file.type.startsWith("image/")) {
+            preview.textContent = "Selected file is not an image.";
+            return;
+        }
+
+        const wrapper = document.createElement("div");
+        wrapper.className = "file-preview-wrap";
+
+        const img = document.createElement("img");
+        img.className = "file-preview-thumb";
+        img.alt = "Selected photo preview";
+
+        const url = URL.createObjectURL(file);
+        img.src = url;
+
+        img.onload = () => URL.revokeObjectURL(url);
+
+        const label = document.createElement("div");
+        label.className = "file-preview-label";
+        label.textContent = file.name;
+
+        wrapper.appendChild(img);
+        wrapper.appendChild(label);
+
+        preview.appendChild(wrapper);
+    });
+}
+
+
+/* =========================================================================
    5. MAP INITIALIZATION
    ========================================================================= */
 
@@ -382,6 +468,17 @@ function initializeMap() {
     if (typeof ResizeObserver !== "undefined") {
         const observer = new ResizeObserver(refresh);
         observer.observe(document.getElementById("map"));
+    }
+
+
+    /* Hide the map loading overlay once Leaflet is ready */
+
+    const overlay = document.getElementById("map-loading-overlay");
+
+    if (overlay) {
+        setTimeout(() => {
+            overlay.classList.add("hidden");
+        }, 400);
     }
 }
 
@@ -506,31 +603,60 @@ function applyAuthUI() {
 
     if (!DOM.headerActions) return;
 
-    let existingButton = document.getElementById("add-facility-btn");
+
+    let existingAddBtn = document.getElementById("add-facility-btn");
 
     if (isResident() || isAdmin()) {
 
-        if (!existingButton) {
+        if (!existingAddBtn) {
 
             const button = document.createElement("button");
-
             button.id = "add-facility-btn";
             button.type = "button";
             button.className = "btn btn-ghost";
             button.textContent = "Add Evacuation Center";
-
             button.addEventListener("click", () => openFacilityModal(null));
-
             DOM.headerActions.appendChild(button);
         }
 
     } else {
 
-        if (existingButton) existingButton.remove();
+        if (existingAddBtn) existingAddBtn.remove();
 
         if (DOM.facilityModal &&
             !DOM.facilityModal.classList.contains("hidden")) {
             closeFacilityModal();
+        }
+    }
+
+
+    const signedIn = !!state.currentUser;
+
+    if (DOM.signInButton) {
+        DOM.signInButton.hidden = signedIn;
+    }
+
+    if (DOM.signOutButton) {
+        DOM.signOutButton.hidden = !signedIn;
+    }
+
+    if (DOM.adminDashboardButton) {
+        DOM.adminDashboardButton.hidden = !isAdmin();
+    }
+
+
+    if (DOM.authUserLabel) {
+
+        if (signedIn) {
+
+            const email = state.currentUser.email || "";
+            const role = state.currentUserRole || "user";
+
+            DOM.authUserLabel.textContent = `${email} (${role})`;
+
+        } else {
+
+            DOM.authUserLabel.textContent = "Guest";
         }
     }
 }
@@ -2474,8 +2600,6 @@ async function submitFacility(event) {
     if (!DOM.facilityForm) return;
 
 
-    /* Rate limit — only for new submissions, not edits */
-
     let isEditing = false;
     let existingFacility = null;
 
@@ -2550,11 +2674,10 @@ async function submitFacility(event) {
 
     state.isSubmitting = true;
 
-    if (DOM.submitFacilityButton) {
-        DOM.submitFacilityButton.disabled = true;
-        DOM.submitFacilityButton.textContent =
-            isEditing ? "Saving..." : "Submitting...";
-    }
+    setButtonLoading(
+        DOM.submitFacilityButton,
+        isEditing ? "Saving…" : "Submitting…"
+    );
 
     showFacilityFormMessage(
         isEditing
@@ -2698,15 +2821,12 @@ async function submitFacility(event) {
 
         state.isSubmitting = false;
 
-        if (DOM.submitFacilityButton) {
-
-            DOM.submitFacilityButton.disabled = false;
-
-            DOM.submitFacilityButton.textContent =
-                state.editingFacilityId
-                    ? "Save Changes"
-                    : "Submit Evacuation Center";
-        }
+        resetButton(
+            DOM.submitFacilityButton,
+            state.editingFacilityId
+                ? "Save Changes"
+                : "Submit Evacuation Center"
+        );
     }
 }
 
@@ -2848,8 +2968,6 @@ async function submitReport(event) {
     }
 
 
-    /* Rate limit */
-
     const rateCheck = checkRateLimit("evacquick:lastReportSubmit");
 
     if (!rateCheck.allowed) {
@@ -2868,10 +2986,10 @@ async function submitReport(event) {
         return;
     }
 
-    if (DOM.submitReportButton) {
-        DOM.submitReportButton.disabled = true;
-        DOM.submitReportButton.textContent = "Submitting...";
-    }
+    setButtonLoading(
+        DOM.submitReportButton,
+        "Submitting…"
+    );
 
     showReportFormMessage("Submitting report...", "loading");
 
@@ -2907,10 +3025,7 @@ async function submitReport(event) {
 
     } finally {
 
-        if (DOM.submitReportButton) {
-            DOM.submitReportButton.disabled = false;
-            DOM.submitReportButton.textContent = "Submit Report";
-        }
+        resetButton(DOM.submitReportButton, "Submit Report");
     }
 }
 
@@ -3042,6 +3157,30 @@ function setupEventListeners() {
     DOM.zoomOutButton?.addEventListener("click", () => {
         state.map?.zoomOut();
     });
+
+
+    DOM.signInButton?.addEventListener("click", () => {
+        window.location.href = "index.html";
+    });
+
+    DOM.signOutButton?.addEventListener("click", async () => {
+
+        const confirmed = window.confirm("Sign out?");
+
+        if (!confirmed) return;
+
+        try {
+            await signOut(auth);
+        } catch (e) {
+            console.warn("Sign out failed:", e);
+        }
+
+        window.location.href = "index.html";
+    });
+
+    DOM.adminDashboardButton?.addEventListener("click", () => {
+        window.location.href = "admin.html";
+    });
 }
 
 
@@ -3054,6 +3193,16 @@ function initializeApplication() {
     initializeMap();
 
     setupEventListeners();
+
+    attachFilePreview(
+        "facility-id-photo",
+        "current-id-photo-preview"
+    );
+
+    attachFilePreview(
+        "facility-center-photo",
+        "current-center-photo-preview"
+    );
 
     state.filters = {
         type: "all",
