@@ -347,7 +347,8 @@
 
         import {
             loginUser,
-            resetPassword
+            resetPassword,
+            getFriendlyAuthError
         } from "./auth.js";
 
 
@@ -463,8 +464,7 @@
                 console.error(result.error);
 
                 message.textContent =
-                    "Sign in failed: " +
-                    result.error.message;
+                    getFriendlyAuthError(result.error);
 
                 message.className =
                     "admin-login-message error";
@@ -522,8 +522,7 @@
                 console.error(result.error);
 
                 message.textContent =
-                    "Password reset failed: " +
-                    result.error.message;
+                    getFriendlyAuthError(result.error);
 
                 message.className =
                     "admin-login-message error";
