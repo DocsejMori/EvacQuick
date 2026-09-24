@@ -82,12 +82,46 @@
                     Ready.
                 </p>
 
+                <span
+                    id="auth-user-label"
+                    class="auth-user-label"
+                >
+                    Guest
+                </span>
+
                 <button
                     id="locate-btn"
                     class="btn btn-primary"
                     type="button"
                 >
                     Find My Location
+                </button>
+
+                <button
+                    id="signin-btn"
+                    class="btn btn-ghost"
+                    type="button"
+                    hidden
+                >
+                    Sign In
+                </button>
+
+                <button
+                    id="signout-btn"
+                    class="btn btn-ghost"
+                    type="button"
+                    hidden
+                >
+                    Sign Out
+                </button>
+
+                <button
+                    id="admin-dashboard-btn"
+                    class="btn btn-ghost"
+                    type="button"
+                    hidden
+                >
+                    Admin Dashboard
                 </button>
 
             </div>
@@ -386,6 +420,20 @@
                     role="application"
                     aria-label="EvacQuick interactive map"
                 ></div>
+
+
+                <!-- Map loading overlay -->
+
+                <div
+                    id="map-loading-overlay"
+                    class="loading-overlay"
+                    aria-live="polite"
+                >
+                    <div class="spinner"></div>
+                    <div class="loading-overlay-text">
+                        Loading map…
+                    </div>
+                </div>
 
 
                 <div
