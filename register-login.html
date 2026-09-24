@@ -22,10 +22,7 @@
         rel="stylesheet"
     >
 
-    <!-- Global styles -->
     <link rel="stylesheet" href="style.css">
-
-    <!-- Resident login styles -->
     <link rel="stylesheet" href="resident-login.css">
 </head>
 
@@ -448,10 +445,12 @@
                 );
 
 
+                /* Go to the map after successful login */
+
                 setTimeout(function () {
 
                     window.location.href =
-                        "index.html";
+                        "map.html";
 
                 }, 1000);
 
@@ -544,7 +543,7 @@
         backToAccessBtn.addEventListener("click", function () {
 
             window.location.href =
-                "login.html";
+                "index.html";
 
         });
 
