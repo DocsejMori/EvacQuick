@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>EvacQuick | Admin Dashboard</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="logo.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="admin.css">
+</head>
+
+<body class="admin-page-body">
+
+    <!-- =========================================================
+         HEADER
+         ========================================================= -->
+
+    <header class="admin-header">
+
+        <div class="admin-brand">
+
+            <img
+                src="logo.png"
+                alt="EvacQuick logo"
+                class="brand-mark"
+            >
+
+            <div class="brand-text">
+                <h1>EvacQuick</h1>
+                <p class="brand-sub">Admin Dashboard</p>
+            </div>
+
+        </div>
+
+
+        <div class="admin-header-actions">
+
+            <span
+                id="admin-email"
+                class="admin-email"
+            >
+                Loading…
+            </span>
+
+            <button
+                id="admin-signout-btn"
+                class="btn btn-ghost admin-signout"
+                type="button"
+            >
+                Sign Out
+            </button>
+
+        </div>
+
+    </header>
+
+
+    <!-- =========================================================
+         ACCESS DENIED (shown if not admin)
+         ========================================================= -->
+
+    <main
+        id="admin-denied"
+        class="admin-denied hidden"
+    >
+
+        <h2>Access Denied</h2>
+
+        <p>
+            You must be signed in as an administrator to view
+            this dashboard.
+        </p>
+
+        <a href="login.html" class="btn btn-primary">
+            Back to Sign In
+        </a>
+
+    </main>
+
+
+    <!-- =========================================================
+         DASHBOARD
+         ========================================================= -->
+
+    <main
+        id="admin-dashboard"
+        class="admin-dashboard hidden"
+    >
+
+        <!-- =====================================================
+             STATS
+             ===================================================== -->
+
+        <section class="admin-stats">
+
+            <div class="admin-stat is-pending">
+                <span class="admin-stat-value" id="stat-pending">0</span>
+                <span class="admin-stat-label">Pending</span>
+            </div>
+
+            <div class="admin-stat is-approved">
+                <span class="admin-stat-value" id="stat-approved">0</span>
+                <span class="admin-stat-label">Approved</span>
+            </div>
+
+            <div class="admin-stat is-rejected">
+                <span class="admin-stat-value" id="stat-rejected">0</span>
+                <span class="admin-stat-label">Rejected</span>
+            </div>
+
+            <div class="admin-stat">
+                <span class="admin-stat-value" id="stat-total">0</span>
+                <span class="admin-stat-label">Total</span>
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             TABS
+             ===================================================== -->
+
+        <section class="admin-tabs">
+
+            <button
+                type="button"
+                class="admin-tab is-active"
+                data-tab="Pending"
+            >
+                Pending
+            </button>
+
+            <button
+                type="button"
+                class="admin-tab"
+                data-tab="Approved"
+            >
+                Approved
+            </button>
+
+            <button
+                type="button"
+                class="admin-tab"
+                data-tab="Rejected"
+            >
+                Rejected
+            </button>
+
+            <button
+                type="button"
+                class="admin-tab"
+                data-tab="All"
+            >
+                All
+            </button>
+
+            <button
+                type="button"
+                class="admin-tab"
+                data-tab="Reports"
+            >
+                Reports
+                <span
+                    id="report-count-badge"
+                    class="admin-tab-badge hidden"
+                >
+                    0
+                </span>
+            </button>
+
+            <button
+                type="button"
+                class="btn btn-ghost btn-sm admin-refresh"
+                id="admin-refresh-btn"
+            >
+                Refresh
+            </button>
+
+        </section>
+
+
+        <!-- =====================================================
+             QUEUE
+             ===================================================== -->
+
+        <section
+            id="admin-queue"
+            class="admin-queue"
+            aria-live="polite"
+        ></section>
+
+    </main>
+
+
+    <!-- =========================================================
+         PHOTO LIGHTBOX
+         ========================================================= -->
+
+    <div
+        id="admin-lightbox"
+        class="photo-lightbox hidden"
+    >
+        <img id="admin-lightbox-img" src="" alt="Enlarged photo">
+    </div>
+
+
+    <!-- =========================================================
+         ADMIN LOGIC
+         ========================================================= -->
+
+    <script type="module" src="admin.js"></script>
+
+</body>
+
+</html>
