@@ -771,7 +771,7 @@ function setupEvents() {
             console.warn(e);
         }
 
-        window.location.href = "login.html";
+        window.location.href = "index.html";
     });
 
 
