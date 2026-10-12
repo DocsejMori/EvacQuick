@@ -24,8 +24,8 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 
 import {
-    uploadImageToImgBB
-} from "./imgbb-config.js";
+    uploadImageToSupabase
+} from "./supabase-storage.js";
 
 
 /* =========================================================================
@@ -2706,7 +2706,7 @@ async function submitFacility(event) {
 
         if (hasIdPhoto) {
             uploads.push(
-                uploadImageToImgBB(idPhoto).then(url => {
+                uploadImageToSupabase(idPhoto).then(url => {
                     idPhotoUrl = url;
                 })
             );
@@ -2714,7 +2714,7 @@ async function submitFacility(event) {
 
         if (hasCenterPhoto) {
             uploads.push(
-                uploadImageToImgBB(centerPhoto).then(url => {
+                uploadImageToSupabase(centerPhoto).then(url => {
                     centerPhotoUrl = url;
                 })
             );
