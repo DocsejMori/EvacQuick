@@ -94,7 +94,7 @@
                     class="btn btn-primary"
                     type="button"
                 >
-                    Find My Location
+                    Use My Location
                 </button>
 
                 <button
@@ -243,7 +243,7 @@
                         id="location-status"
                         class="info-block-value"
                     >
-                        Waiting for location...
+                        Location not detected yet.
                     </div>
 
                 </section>
@@ -591,7 +591,7 @@
                             name="address"
                             class="form-input form-textarea"
                             rows="3"
-                            placeholder="Enter complete address"
+                            placeholder="Barangay Hall, Cabuyao, Laguna"
                             required
                         ></textarea>
 
@@ -628,7 +628,7 @@
 
                 <div class="form-section">
 
-                    <h3>Capacity &amp; Real-Time Availability</h3>
+                    <h3>Capacity &amp; Availability</h3>
 
 
                     <div class="form-group">
@@ -705,35 +705,8 @@
 
                         </select>
 
-                    </div>
-
-
-                    <div class="form-group">
-
-                        <label for="facility-real-time">
-                            Real-Time Status
-                            <span aria-hidden="true">*</span>
-                        </label>
-
-                        <select
-                            id="facility-real-time"
-                            name="realTimeStatus"
-                            class="form-input"
-                            required
-                        >
-
-                            <option value="">Select real-time status</option>
-                            <option value="Accepting Evacuees Now">Accepting Evacuees Now</option>
-                            <option value="Open – Accepting Soon">Open – Accepting Soon</option>
-                            <option value="Open – Standing By">Open – Standing By</option>
-                            <option value="At Capacity – Not Accepting">At Capacity – Not Accepting</option>
-                            <option value="Closed Temporarily">Closed Temporarily</option>
-
-                        </select>
-
                         <small class="form-help">
-                            Update this field any time the situation
-                            changes.
+                            Update this field any time the situation changes.
                         </small>
 
                     </div>
@@ -872,33 +845,62 @@
                 </div>
 
 
+                <!-- =========================================================
+                     LOCATION (with mini-map)
+                     ========================================================= -->
+
                 <div class="form-section">
 
                     <h3>Location</h3>
 
                     <p class="location-help">
-                        Use your current location to identify the
-                        evacuation center's exact map position.
+                        Tap the map to drop a pin on the facility, or use
+                        your current location. Drag the pin to fine-tune it.
                     </p>
 
+                    <div class="submission-map-wrap">
 
-                    <button
-                        id="use-my-location-btn"
-                        class="btn btn-ghost location-button"
-                        type="button"
-                    >
-                        Use My Location
-                    </button>
+                        <div
+                            id="submission-map"
+                            class="submission-map"
+                            role="application"
+                            aria-label="Tap map to set facility location"
+                        ></div>
 
+                        <div class="submission-map-hint">
+                            Tap to place pin
+                        </div>
+
+                    </div>
+
+                    <div class="location-actions">
+
+                        <button
+                            id="use-my-location-btn"
+                            class="btn btn-ghost location-button"
+                            type="button"
+                        >
+                            📍 Use My Location
+                        </button>
+
+                        <button
+                            id="clear-location-btn"
+                            class="btn btn-ghost location-button"
+                            type="button"
+                            disabled
+                        >
+                            ✕ Clear Pin
+                        </button>
+
+                    </div>
 
                     <div
                         id="submission-location-status"
                         class="submission-location-status"
                         aria-live="polite"
                     >
-                        Location not selected.
+                        No location selected yet.
                     </div>
-
 
                     <input
                         id="facility-latitude"
