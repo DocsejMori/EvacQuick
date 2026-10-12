@@ -1007,6 +1007,8 @@ function normalizeResidentFacility(documentSnapshot) {
 
         status: data.status || "Unknown",
 
+        statusUpdatedAt: data.statusUpdatedAt || null,
+
         openingTime: data.openingTime || null,
         closingTime: data.closingTime || null,
 
@@ -1278,6 +1280,38 @@ function formatTime(time) {
 }
 
 
+function formatRelativeTime(timestamp) {
+
+    if (!timestamp) return null;
+
+    const date = timestamp.toDate
+        ? timestamp.toDate()
+        : new Date(timestamp);
+
+    if (!Number.isFinite(date.getTime())) return null;
+
+    const diffMs = Date.now() - date.getTime();
+
+    const diffMinutes = Math.floor(diffMs / (1000 * 60));
+    const diffHours   = Math.floor(diffMs / (1000 * 60 * 60));
+    const diffDays    = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+    if (diffMinutes < 1) return "just now";
+    if (diffMinutes < 60) return `${diffMinutes} min ago`;
+    if (diffHours < 24) return `${diffHours} hr ago`;
+    if (diffDays === 1) return "yesterday";
+    if (diffDays < 30) return `${diffDays} days ago`;
+
+    if (diffDays < 365) {
+        const months = Math.floor(diffDays / 30);
+        return months === 1 ? "1 month ago" : `${months} months ago`;
+    }
+
+    const years = Math.floor(diffDays / 365);
+    return years === 1 ? "1 year ago" : `${years} years ago`;
+}
+
+
 function getStatusClass(status) {
 
     switch (status) {
@@ -1524,10 +1558,14 @@ function buildFacilityCard(facility, rank) {
     metadata.className = "facility-meta";
 
     appendMetaRow(metadata, "Manager", facility.managerName);
+
+    const statusUpdated = formatRelativeTime(facility.statusUpdatedAt);
+
     appendMetaRow(
         metadata,
         "Status",
-        facility.status || facility.realTimeStatus || "Unknown"
+        (facility.status || facility.realTimeStatus || "Unknown") +
+            (statusUpdated ? ` · ${statusUpdated}` : "")
     );
 
     const actions = document.createElement("div");
@@ -1579,7 +1617,6 @@ function buildFacilityCard(facility, rank) {
 
     card.addEventListener("click", () => selectFacility(facility));
 
-    // Stagger the entrance animation based on position
     if (typeof rank === "number") {
         card.style.animationDelay = `${Math.min(rank - 1, 12) * 35}ms`;
     }
@@ -1654,6 +1691,30 @@ function selectFacility(facility) {
 
 function setSearchRadius(radiusKm) {
 
+    if (radiusKm === "any") {
+
+        state.searchRadiusKm = "any";
+
+        if (DOM.searchRadiusSelect) {
+            DOM.searchRadiusSelect.value = "any";
+        }
+
+        state.facilities = [];
+        state.selectedFacility = null;
+
+        renderFacilities();
+        clearFacilityMarkers();
+        clearRoute();
+
+        if (state.userLocation) {
+            fetchAndDisplayFacilities();
+        } else {
+            setStatus("Search area set to any distance.", "ok");
+        }
+
+        return;
+    }
+
     const numeric = Number(radiusKm);
 
     if (!Number.isFinite(numeric) || numeric <= 0) return;
@@ -1703,11 +1764,16 @@ async function fetchAndDisplayFacilities() {
         let facilities = await fetchResidentFacilities();
 
         if (state.userLocation) {
-            facilities = calculateFacilityDistances(facilities)
-                .filter(f =>
+
+            facilities = calculateFacilityDistances(facilities);
+
+            if (state.searchRadiusKm !== "any") {
+
+                facilities = facilities.filter(f =>
                     Number.isFinite(f.distanceKm) &&
                     f.distanceKm <= state.searchRadiusKm
                 );
+            }
         }
 
         facilities = deduplicateFacilities(facilities);
@@ -1718,10 +1784,15 @@ async function fetchAndDisplayFacilities() {
         renderFacilities();
         renderFacilityMarkers();
 
+        const scopeLabel =
+            state.searchRadiusKm === "any"
+                ? "anywhere"
+                : `within ${state.searchRadiusKm} km`;
+
         if (!facilities.length) {
 
             showSidebarMessage(
-                `No resident-submitted evacuation centers within ${state.searchRadiusKm} km.`
+                `No resident-submitted evacuation centers found ${scopeLabel}.`
             );
 
             setStatus("No nearby facilities found.", "ok");
@@ -1729,7 +1800,7 @@ async function fetchAndDisplayFacilities() {
         } else {
 
             setStatus(
-                `${facilities.length} facilities found within ${state.searchRadiusKm} km.`,
+                `${facilities.length} facilities found ${scopeLabel}.`,
                 "ok"
             );
         }
@@ -1944,11 +2015,16 @@ function openFacilityDetails(facility) {
         appendDetail(grid, "Manager in Charge", facility.managerName);
         appendDetail(grid, "Address", facility.address, true);
         appendDetail(grid, "Facility Type", facility.facilityType);
+
+        const updatedText = formatRelativeTime(facility.statusUpdatedAt);
+
         appendDetail(
             grid,
             "Availability",
-            facility.status || facility.realTimeStatus || CONFIG.NOT_AVAILABLE
+            (facility.status || facility.realTimeStatus || CONFIG.NOT_AVAILABLE) +
+                (updatedText ? ` · updated ${updatedText}` : "")
         );
+
         appendDetail(grid, "Capacity", formatCapacity(facility.capacity));
         appendDetail(grid, "Current Occupancy", formatOccupancy(facility));
         appendDetail(grid, "Operating Hours", formatOperatingHours(facility));
@@ -2187,7 +2263,6 @@ function openFacilityModal(facility = null) {
     if (DOM.currentIdPhotoPreview) DOM.currentIdPhotoPreview.innerHTML = "";
     if (DOM.currentCenterPhotoPreview) DOM.currentCenterPhotoPreview.innerHTML = "";
 
-    // Reset the submission mini-map
     if (submissionMarker && submissionMap) {
         submissionMap.removeLayer(submissionMarker);
         submissionMarker = null;
@@ -2736,6 +2811,8 @@ async function submitFacility(event) {
             idPhotoUrl,
             centerPhotoUrl,
 
+            statusUpdatedAt: serverTimestamp(),
+
             submittedBy: currentUser.uid,
             submittedByEmail: currentUser.email || ""
         };
@@ -3004,11 +3081,15 @@ async function refreshFacilitiesAfterSubmission() {
 
         let facilities = await fetchResidentFacilities();
 
-        facilities = calculateFacilityDistances(facilities)
-            .filter(f =>
+        facilities = calculateFacilityDistances(facilities);
+
+        if (state.searchRadiusKm !== "any") {
+
+            facilities = facilities.filter(f =>
                 Number.isFinite(f.distanceKm) &&
                 f.distanceKm <= state.searchRadiusKm
             );
+        }
 
         facilities = deduplicateFacilities(facilities);
         state.facilities = sortFacilities(facilities);
