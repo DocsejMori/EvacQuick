@@ -1,0 +1,806 @@
+/* ============================================================
+   EVACQUICK — RESIDENT LOGIN
+   ============================================================ */
+
+
+/* ============================================================
+   PAGE
+   ============================================================ */
+
+.resident-login-page {
+    min-height: 100vh;
+    min-height: 100dvh;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 30px 20px;
+
+    background: var(--color-bg);
+}
+
+
+/* ============================================================
+   MAIN LOGIN WRAPPER
+   ============================================================ */
+
+.resident-login-wrapper {
+    width: 100%;
+    max-width: 1050px;
+    min-height: 620px;
+
+    display: grid;
+    grid-template-columns: 0.9fr 1.1fr;
+
+    background: var(--color-surface);
+
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-md);
+
+    overflow: hidden;
+
+    box-shadow:
+        0 20px 50px rgba(16, 32, 44, 0.10);
+}
+
+
+/* ============================================================
+   LEFT INFORMATION PANEL
+   ============================================================ */
+
+.resident-info-panel {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+
+    padding: 45px;
+
+    background:
+        linear-gradient(
+            145deg,
+            var(--color-navy-dark),
+            var(--color-navy)
+        );
+
+    color: white;
+
+    border-right:
+        4px solid var(--color-orange);
+
+    overflow: hidden;
+}
+
+
+.resident-info-panel::before {
+    content: "";
+
+    position: absolute;
+
+    width: 350px;
+    height: 350px;
+
+    border-radius: 50%;
+
+    border:
+        1px solid rgba(255, 255, 255, 0.07);
+
+    right: -170px;
+    top: -100px;
+}
+
+
+.resident-info-content {
+    position: relative;
+    z-index: 2;
+
+    width: 100%;
+    max-width: 400px;
+
+    margin: 0 auto;
+}
+
+
+/* ============================================================
+   BRAND
+   ============================================================ */
+
+.resident-brand {
+    display: flex;
+    align-items: center;
+
+    gap: 11px;
+
+    margin-bottom: 48px;
+}
+
+
+.resident-brand-mark {
+    width: 46px;
+    height: 46px;
+    flex-shrink: 0;
+    object-fit: contain;
+    display: block;
+    background: transparent;
+}
+
+
+
+
+.resident-brand-name {
+    margin: 0;
+
+    font-family: var(--font-display);
+
+    font-size: 32px;
+    line-height: 0.9;
+
+    color: white;
+}
+
+
+.resident-brand-sub {
+    margin: 4px 0 0;
+
+    font-size: 10px;
+
+    color: #c9d5dd;
+
+    letter-spacing: 0.03em;
+}
+
+
+/* ============================================================
+   RESIDENT BADGE
+   ============================================================ */
+
+.resident-badge {
+    display: inline-flex;
+    align-items: center;
+
+    padding: 7px 12px;
+
+    margin-bottom: 18px;
+
+    border-radius: 999px;
+
+    background:
+        rgba(232, 89, 12, 0.13);
+
+    border:
+        1px solid rgba(232, 89, 12, 0.35);
+
+    color: #ffb98c;
+
+    font-size: 11px;
+    font-weight: 700;
+}
+
+
+/* ============================================================
+   LEFT HEADING
+   ============================================================ */
+
+.resident-info-content h1 {
+    margin: 0 0 18px;
+
+    font-family: var(--font-display);
+
+    font-size: clamp(40px, 4vw, 56px);
+
+    line-height: 0.95;
+
+    color: white;
+}
+
+
+.resident-description {
+    margin: 0 0 32px;
+
+    color: #dce5ea;
+
+    font-size: 13.5px;
+
+    line-height: 1.7;
+}
+
+
+/* ============================================================
+   RESIDENT BENEFITS
+   ============================================================ */
+
+.resident-benefits {
+    display: grid;
+
+    gap: 14px;
+}
+
+
+.resident-benefit {
+    display: flex;
+    align-items: center;
+
+    gap: 11px;
+}
+
+
+.resident-benefit-icon {
+    width: 34px;
+    height: 34px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 6px;
+
+    background:
+        rgba(255, 255, 255, 0.06);
+
+    border:
+        1px solid rgba(255, 255, 255, 0.12);
+
+    color: #ff9c65;
+
+    font-weight: 700;
+}
+
+
+.resident-benefit strong {
+    display: block;
+
+    margin-bottom: 2px;
+
+    font-size: 12px;
+
+    color: white;
+}
+
+
+.resident-benefit span {
+    font-size: 10.5px;
+
+    color: #afc0cb;
+}
+
+
+/* ============================================================
+   RIGHT LOGIN PANEL
+   ============================================================ */
+
+.resident-form-panel {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 45px;
+}
+
+
+.resident-form-container {
+    width: 100%;
+    max-width: 410px;
+}
+
+
+/* ============================================================
+   FORM HEADER
+   ============================================================ */
+
+.resident-form-header {
+    margin-bottom: 28px;
+}
+
+
+.resident-eyebrow {
+    display: block;
+
+    margin-bottom: 8px;
+
+    font-family: var(--font-display);
+
+    font-size: 11px;
+    font-weight: 700;
+
+    letter-spacing: 0.12em;
+
+    color: var(--color-orange);
+}
+
+
+.resident-form-header h2 {
+    margin: 0 0 7px;
+
+    font-family: var(--font-display);
+
+    font-size: 34px;
+
+    line-height: 1;
+
+    color: var(--color-navy);
+}
+
+
+.resident-form-header p {
+    margin: 0;
+
+    color: var(--color-ink-soft);
+
+    font-size: 13px;
+
+    line-height: 1.5;
+}
+
+
+/* ============================================================
+   FORM GROUP
+   ============================================================ */
+
+.resident-form-group {
+    margin-bottom: 18px;
+}
+
+
+.resident-form-group label {
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: var(--color-ink);
+
+    font-size: 12.5px;
+
+    font-weight: 600;
+}
+
+
+/* ============================================================
+   INPUT
+   ============================================================ */
+
+.resident-input {
+    width: 100%;
+    height: 48px;
+
+    padding: 0 14px;
+
+    border:
+        1px solid var(--color-line-strong);
+
+    border-radius: var(--radius-sm);
+
+    outline: none;
+
+    background: var(--color-surface-raised);
+
+    color: var(--color-ink);
+
+    font-family: var(--font-body);
+
+    font-size: 14px;
+
+    box-sizing: border-box;
+
+    transition:
+        border-color 150ms ease,
+        box-shadow 150ms ease,
+        background 150ms ease;
+}
+
+
+.resident-input::placeholder {
+    color: #89969d;
+}
+
+
+.resident-input:hover {
+    border-color: #aab5ba;
+}
+
+
+.resident-input:focus {
+    background: white;
+
+    border-color: var(--color-orange);
+
+    box-shadow:
+        0 0 0 3px
+        rgba(232, 89, 12, 0.12);
+}
+
+
+/* ============================================================
+   PASSWORD LABEL
+   ============================================================ */
+
+.resident-password-label {
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+}
+
+
+.forgot-password {
+    border: 0;
+
+    padding: 0;
+
+    background: transparent;
+
+    color: var(--color-navy);
+
+    font-family: var(--font-body);
+
+    font-size: 11px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+
+.forgot-password:hover {
+    color: var(--color-orange);
+
+    text-decoration: underline;
+}
+
+
+/* ============================================================
+   PASSWORD INPUT
+   ============================================================ */
+
+.resident-password-wrapper {
+    position: relative;
+}
+
+
+.resident-password-wrapper .resident-input {
+    padding-right: 65px;
+}
+
+
+.resident-toggle-password {
+    position: absolute;
+
+    right: 12px;
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    border: 0;
+
+    background: transparent;
+
+    color: var(--color-navy);
+
+    font-family: var(--font-body);
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+}
+
+
+.resident-toggle-password:hover {
+    color: var(--color-orange);
+}
+
+
+/* ============================================================
+   LOGIN MESSAGE
+   ============================================================ */
+
+.resident-login-message {
+    min-height: 18px;
+
+    margin-bottom: 7px;
+
+    font-size: 12px;
+
+    line-height: 1.4;
+}
+
+
+.resident-login-message:empty {
+    display: none;
+}
+
+
+.resident-login-message.error {
+    color: var(--color-danger);
+}
+
+
+.resident-login-message.success {
+    color: var(--color-safe);
+}
+
+
+/* ============================================================
+   SIGN IN BUTTON
+   ============================================================ */
+
+.resident-signin-btn {
+    width: 100%;
+    min-height: 50px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    margin-top: 5px;
+
+    border: 0;
+
+    border-radius: var(--radius-sm);
+
+    background: var(--color-orange);
+
+    color: white;
+
+    font-family: var(--font-body);
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        background 120ms ease,
+        transform 80ms ease,
+        box-shadow 120ms ease;
+}
+
+
+.resident-signin-btn:hover {
+    background: var(--color-orange-dark);
+
+    box-shadow:
+        0 5px 14px
+        rgba(232, 89, 12, 0.18);
+}
+
+
+.resident-signin-btn:active {
+    transform: translateY(1px);
+}
+
+
+.resident-signin-btn:disabled {
+    opacity: 0.65;
+
+    cursor: not-allowed;
+
+    box-shadow: none;
+}
+
+
+/* ============================================================
+   REGISTER
+   ============================================================ */
+
+.resident-register {
+    margin-top: 24px;
+
+    text-align: center;
+
+    color: var(--color-ink-soft);
+
+    font-size: 12px;
+}
+
+
+.resident-register button {
+    border: 0;
+
+    padding: 0;
+
+    margin-left: 4px;
+
+    background: transparent;
+
+    color: var(--color-navy);
+
+    font-family: var(--font-body);
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+}
+
+
+.resident-register button:hover {
+    color: var(--color-orange);
+
+    text-decoration: underline;
+}
+
+
+/* ============================================================
+   BACK TO ACCESS
+   ============================================================ */
+
+.back-to-access {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    margin-top: 24px;
+}
+
+
+.back-to-access button {
+    border: 0;
+
+    background: transparent;
+
+    color: var(--color-ink-soft);
+
+    font-family: var(--font-body);
+
+    font-size: 11px;
+
+    cursor: pointer;
+
+    transition: color 120ms ease;
+}
+
+
+.back-to-access button:hover {
+    color: var(--color-navy);
+}
+
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+
+.resident-footer {
+    display: flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+    margin-top: 28px;
+
+    color: #a4afb4;
+
+    font-family: var(--font-display);
+
+    font-size: 9px;
+
+    font-weight: 700;
+
+    letter-spacing: 0.12em;
+}
+
+
+.resident-footer-line {
+    flex: 1;
+
+    height: 1px;
+
+    background: var(--color-line);
+}
+
+
+/* ============================================================
+   RESPONSIVE — TABLET
+   ============================================================ */
+
+@media (max-width: 850px) {
+
+    .resident-login-wrapper {
+        grid-template-columns: 1fr;
+
+        max-width: 520px;
+    }
+
+
+    .resident-info-panel {
+        padding: 35px;
+
+        border-right: 0;
+
+        border-bottom:
+            4px solid var(--color-orange);
+    }
+
+
+    .resident-info-content {
+        max-width: 450px;
+    }
+
+
+    .resident-brand {
+        margin-bottom: 30px;
+    }
+
+
+    .resident-info-content h1 {
+        font-size: 44px;
+    }
+
+
+    .resident-form-panel {
+        padding: 40px 30px;
+    }
+}
+
+
+/* ============================================================
+   RESPONSIVE — MOBILE
+   ============================================================ */
+
+@media (max-width: 550px) {
+
+    .resident-login-page {
+        padding: 0;
+    }
+
+
+    .resident-login-wrapper {
+        min-height: 100vh;
+
+        border: 0;
+
+        border-radius: 0;
+
+        box-shadow: none;
+    }
+
+
+    .resident-info-panel {
+        padding: 30px 22px;
+    }
+
+
+    .resident-brand {
+        margin-bottom: 25px;
+    }
+
+
+    .resident-brand-name {
+        font-size: 28px;
+    }
+
+
+    .resident-info-content h1 {
+        font-size: 38px;
+    }
+
+
+    .resident-description {
+        font-size: 12.5px;
+
+        margin-bottom: 24px;
+    }
+
+
+    .resident-form-panel {
+        padding: 30px 20px;
+
+        align-items: flex-start;
+    }
+
+
+    .resident-form-header h2 {
+        font-size: 30px;
+    }
+}

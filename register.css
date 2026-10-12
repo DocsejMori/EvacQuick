@@ -1,0 +1,266 @@
+/* =========================================
+   EVACQUICK - REGISTER PAGE
+   register.css
+   ========================================= */
+
+
+/* REGISTER PAGE */
+
+.register-page {
+    min-height: 100vh;
+}
+
+
+/* REGISTER FORM */
+
+.register-form {
+    width: 100%;
+}
+
+
+/* FORM GROUP */
+
+.register-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 18px;
+}
+
+
+/* LABEL */
+
+.register-form-group label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-ink);
+}
+
+
+/* INPUT */
+
+.register-input {
+    width: 100%;
+    padding: 13px 14px;
+
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-sm);
+
+    background: var(--color-surface);
+    color: var(--color-ink);
+
+    font-family: var(--font-body);
+    font-size: 14px;
+
+    outline: none;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+/* INPUT FOCUS */
+
+.register-input:focus {
+    border-color: var(--color-navy);
+
+    box-shadow:
+        0 0 0 3px rgba(20, 45, 75, 0.08);
+}
+
+
+/* PLACEHOLDER */
+
+.register-input::placeholder {
+    color: var(--color-ink-soft);
+}
+
+
+/* PASSWORD FIELD */
+
+.register-password-wrapper {
+    position: relative;
+}
+
+
+/* PASSWORD INPUT */
+
+.register-password-wrapper .register-input {
+    padding-right: 70px;
+}
+
+
+/* SHOW PASSWORD BUTTON */
+
+.register-toggle-password {
+    position: absolute;
+
+    top: 50%;
+    right: 12px;
+
+    transform: translateY(-50%);
+
+    border: none;
+    background: transparent;
+
+    color: var(--color-navy);
+
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+
+/* REGISTER BUTTON */
+
+.register-submit-btn {
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 14px 16px;
+
+    border: none;
+    border-radius: var(--radius-sm);
+
+    background: var(--color-navy);
+    color: #ffffff;
+
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease;
+}
+
+
+.register-submit-btn:hover {
+    background: var(--color-navy-dark);
+}
+
+
+.register-submit-btn:active {
+    transform: translateY(1px);
+}
+
+
+/* MESSAGE */
+
+.register-message {
+    display: none;
+
+    margin-bottom: 16px;
+    padding: 11px 13px;
+
+    border-radius: var(--radius-sm);
+
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+
+/* ERROR */
+
+.register-message.error {
+    display: block;
+
+    background: rgba(190, 55, 55, 0.08);
+    color: var(--color-danger);
+}
+
+
+/* SUCCESS */
+
+.register-message.success {
+    display: block;
+
+    background: rgba(45, 140, 85, 0.08);
+    color: var(--color-safe);
+}
+
+
+/* LOGIN LINK */
+
+.register-login {
+    margin-top: 22px;
+
+    text-align: center;
+
+    color: var(--color-ink-soft);
+
+    font-size: 13px;
+}
+
+
+.register-login button {
+    border: none;
+    background: transparent;
+
+    color: var(--color-navy);
+
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 700;
+
+    cursor: pointer;
+}
+
+
+.register-login button:hover {
+    text-decoration: underline;
+}
+
+
+/* BACK BUTTON */
+
+.register-back {
+    margin-top: 14px;
+
+    text-align: center;
+}
+
+
+.register-back button {
+    border: none;
+    background: transparent;
+
+    color: var(--color-ink-soft);
+
+    font-family: var(--font-body);
+    font-size: 13px;
+
+    cursor: pointer;
+}
+
+
+.register-back button:hover {
+    color: var(--color-navy);
+}
+
+
+/* RESPONSIVE */
+
+@media (max-width: 768px) {
+
+    .register-form-group {
+        margin-bottom: 15px;
+    }
+
+    .register-input {
+        padding: 12px 13px;
+    }
+
+    .register-submit-btn {
+        padding: 13px 15px;
+    }
+
+}
