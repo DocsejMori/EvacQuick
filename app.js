@@ -3177,9 +3177,6 @@ function setupEventListeners() {
 
     DOM.signOutButton?.addEventListener("click", async () => {
 
-        const confirmed = window.confirm("Sign out?");
-        if (!confirmed) return;
-
         try {
             await signOut(auth);
         } catch (e) {
