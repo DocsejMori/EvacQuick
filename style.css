@@ -1,7 +1,7 @@
 :root {
-    --color-bg: #EFF1EE;
+    --color-bg: #EDF0EE;
     --color-surface: #FFFFFF;
-    --color-surface-raised: #FBFBFA;
+    --color-surface-raised: #F9FAF9;
 
     --color-ink: #10202C;
     --color-ink-soft: #4B5C66;
@@ -13,21 +13,32 @@
     --color-orange-dark: #C24A09;
 
     --color-safe: #1E7145;
-    --color-caution: #B98104;
+    --color-caution: #A87400;
     --color-danger: #C81E3A;
 
-    --color-line: #D9DEDA;
+    --color-line: #DCE1DE;
     --color-line-strong: #B7C0BB;
 
-    --radius-sm: 5px;
-    --radius-md: 10px;
+    --radius-sm: 6px;
+    --radius-md: 12px;
 
     --shadow-card:
-        0 1px 2px rgba(16, 32, 44, 0.08),
-        0 2px 8px rgba(16, 32, 44, 0.06);
+        0 1px 2px rgba(16, 32, 44, 0.06),
+        0 4px 12px rgba(16, 32, 44, 0.07);
+
+    --shadow-card-hover:
+        0 2px 4px rgba(16, 32, 44, 0.06),
+        0 8px 20px rgba(16, 32, 44, 0.10);
 
     --shadow-modal:
-        0 20px 60px rgba(16, 32, 44, 0.20);
+        0 24px 64px rgba(16, 32, 44, 0.22),
+        0 4px 12px rgba(16, 32, 44, 0.08);
+
+    --ease-out: cubic-bezier(0.22, 0.61, 0.36, 1);
+    --transition-fast: 140ms var(--ease-out);
+    --transition-base: 200ms var(--ease-out);
+
+    --focus-ring: 0 0 0 3px rgba(232, 89, 12, 0.18);
 
     --font-display:
         'Barlow Condensed',
@@ -61,9 +72,19 @@ body {
 
 body {
     font-family: var(--font-body);
+    font-size: 14px;
+    line-height: 1.5;
     color: var(--color-ink);
     background: var(--color-bg);
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    -webkit-text-size-adjust: 100%;
+}
+
+::selection {
+    background: rgba(232, 89, 12, 0.22);
+    color: var(--color-ink);
 }
 
 button,
@@ -96,6 +117,40 @@ button,
 :focus-visible {
     outline: 3px solid var(--color-orange);
     outline-offset: 2px;
+    border-radius: var(--radius-sm);
+}
+
+/* Subtle, modern scrollbars */
+
+.sidebar,
+.modal-dialog {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-line-strong) transparent;
+}
+
+.sidebar::-webkit-scrollbar,
+.modal-dialog::-webkit-scrollbar {
+    width: 8px;
+}
+
+.sidebar::-webkit-scrollbar-track,
+.modal-dialog::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.sidebar::-webkit-scrollbar-thumb,
+.modal-dialog::-webkit-scrollbar-thumb {
+    background: var(--color-line-strong);
+    border-radius: 999px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover,
+.modal-dialog::-webkit-scrollbar-thumb:hover {
+    background: #9DA9A5;
+    background-clip: content-box;
+    border: 2px solid transparent;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -127,7 +182,15 @@ button,
    ========================================================================== */
 
 .app-header {
-    background: var(--color-navy);
+    position: relative;
+    z-index: 600;
+
+    background:
+        linear-gradient(
+            180deg,
+            #1A3A5C 0%,
+            var(--color-navy) 100%
+        );
     color: #fff;
 
     display: flex;
@@ -145,12 +208,14 @@ button,
     flex-shrink: 0;
 
     border-bottom: 3px solid var(--color-orange);
+
+    box-shadow: 0 2px 10px rgba(14, 33, 56, 0.18);
 }
 
 .brand {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
 }
 
 .brand-mark {
@@ -164,8 +229,6 @@ button,
     background: transparent;
 }
 
-
-
 .brand-text h1 {
     margin: 0;
 
@@ -174,11 +237,11 @@ button,
     font-weight: 700;
 
     line-height: 1;
-    letter-spacing: 0.02em;
+    letter-spacing: 0.03em;
 }
 
 .brand-sub {
-    margin: 3px 0 0;
+    margin: 4px 0 0;
 
     font-size: 12px;
     color: #C9D5DD;
@@ -189,7 +252,7 @@ button,
 .header-actions {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
     flex-wrap: wrap;
 }
 
@@ -199,7 +262,10 @@ button,
     max-width: 260px;
 
     font-size: 13px;
+    line-height: 1.4;
     color: #DCE5EA;
+
+    transition: color var(--transition-base);
 }
 
 .status-line.is-ok {
@@ -225,16 +291,17 @@ button,
 
     border-bottom: 1px solid #F0C88A;
 
-    padding: 8px 20px;
+    padding: 9px 20px;
 
     font-size: 12.5px;
-    line-height: 1.5;
+    line-height: 1.55;
 
     flex-shrink: 0;
 }
 
 .emergency-notice strong {
     color: #5C2E00;
+    font-weight: 700;
 }
 
 
@@ -245,11 +312,12 @@ button,
 .btn {
     appearance: none;
 
-    border: none;
+    border: 1px solid transparent;
     border-radius: var(--radius-sm);
 
     font-size: 14px;
     font-weight: 600;
+    letter-spacing: 0.005em;
 
     padding: 10px 16px;
     min-height: 44px;
@@ -262,31 +330,39 @@ button,
     cursor: pointer;
 
     transition:
-        background-color 120ms ease,
-        border-color 120ms ease,
-        color 120ms ease,
+        background-color var(--transition-fast),
+        border-color var(--transition-fast),
+        color var(--transition-fast),
         transform 80ms ease,
-        box-shadow 120ms ease;
+        box-shadow var(--transition-fast);
 
     white-space: nowrap;
 }
 
-.btn:active {
-    transform: translateY(1px);
+.btn:active:not(:disabled) {
+    transform: translateY(1px) scale(0.99);
 }
 
 .btn:disabled {
-    opacity: 0.6;
+    opacity: 0.55;
     cursor: not-allowed;
 }
 
 .btn-primary {
     background: var(--color-orange);
     color: #fff;
+
+    box-shadow:
+        0 1px 2px rgba(194, 74, 9, 0.30),
+        inset 0 1px 0 rgba(255, 255, 255, 0.14);
 }
 
 .btn-primary:hover:not(:disabled) {
     background: var(--color-orange-dark);
+
+    box-shadow:
+        0 3px 10px rgba(232, 89, 12, 0.28),
+        inset 0 1px 0 rgba(255, 255, 255, 0.10);
 }
 
 .btn-ghost {
@@ -298,6 +374,7 @@ button,
 
 .btn-ghost:hover:not(:disabled) {
     background: var(--color-surface-raised);
+    border-color: var(--color-navy);
 }
 
 .btn-sm {
@@ -351,6 +428,8 @@ button,
 
     border-right: 1px solid var(--color-line);
 
+    box-shadow: 2px 0 12px rgba(16, 32, 44, 0.04);
+
     display: flex;
     flex-direction: column;
 
@@ -360,6 +439,7 @@ button,
 
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
 }
 
 
@@ -368,7 +448,7 @@ button,
    ========================================================================== */
 
 .info-block {
-    padding: 10px 16px;
+    padding: 12px 16px;
 
     border-bottom: 1px solid var(--color-line);
 }
@@ -382,7 +462,7 @@ button,
     font-size: 12px;
     font-weight: 700;
 
-    letter-spacing: 0.04em;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
 
     color: var(--color-ink-soft);
@@ -409,7 +489,7 @@ button,
    ========================================================================== */
 
 .filter-section {
-    padding: 14px 16px 12px;
+    padding: 16px 16px 14px;
 
     border-bottom: 1px solid var(--color-line);
 
@@ -423,14 +503,14 @@ button,
     font-size: 13px;
     font-weight: 700;
 
-    letter-spacing: 0.06em;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
 
     color: var(--color-navy);
 }
 
 .filter-group {
-    margin-bottom: 11px;
+    margin-bottom: 12px;
 }
 
 .filter-group:last-of-type {
@@ -440,10 +520,11 @@ button,
 .filter-group-label {
     display: block;
 
-    margin-bottom: 5px;
+    margin-bottom: 6px;
 
     font-size: 11.5px;
     font-weight: 700;
+    letter-spacing: 0.01em;
 
     color: var(--color-ink);
 }
@@ -452,45 +533,53 @@ button,
     width: 100%;
     height: 40px;
 
-    padding: 0 34px 0 11px;
+    padding: 0 34px 0 12px;
 
     border: 1px solid var(--color-line-strong);
     border-radius: var(--radius-sm);
 
-    background: var(--color-surface-raised);
+    background-color: var(--color-surface-raised);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%234B5C66' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 12px 8px;
+
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
 
     color: var(--color-ink);
 
-    font-size: 12.5px;
+    font-size: 13px;
 
     cursor: pointer;
 
     outline: none;
 
     transition:
-        border-color 120ms ease,
-        box-shadow 120ms ease,
-        background-color 120ms ease;
+        border-color var(--transition-fast),
+        box-shadow var(--transition-fast),
+        background-color var(--transition-fast);
 }
 
 .filter-select:hover {
-    border-color: #9DA9A5;
+    border-color: #8F9C97;
+    background-color: #fff;
 }
 
 .filter-select:focus {
-    background: #fff;
+    background-color: #fff;
 
     border-color: var(--color-orange);
 
-    box-shadow:
-        0 0 0 3px rgba(232, 89, 12, 0.12);
+    box-shadow: var(--focus-ring);
 }
 
 .filter-help {
     margin-top: 10px;
 
-    font-size: 10.5px;
-    line-height: 1.45;
+    font-size: 11px;
+    line-height: 1.5;
 
     color: var(--color-ink-soft);
 }
@@ -501,9 +590,10 @@ button,
    ========================================================================== */
 
 .sidebar-messages {
-    padding: 6px 16px;
+    padding: 8px 16px;
 
     font-size: 13px;
+    line-height: 1.5;
     color: var(--color-ink-soft);
 }
 
@@ -526,7 +616,7 @@ button,
    ========================================================================== */
 
 .facility-list {
-    padding: 8px 12px 16px;
+    padding: 10px 12px 18px;
 
     flex: 1;
 }
@@ -539,25 +629,37 @@ button,
 
     border-radius: var(--radius-md);
 
-    padding: 12px 14px;
+    padding: 13px 14px;
 
     margin-bottom: 10px;
 
     cursor: pointer;
 
+    box-shadow: 0 1px 2px rgba(16, 32, 44, 0.04);
+
     transition:
-        border-color 120ms ease,
-        box-shadow 120ms ease;
+        border-color var(--transition-base),
+        box-shadow var(--transition-base),
+        transform var(--transition-base),
+        background-color var(--transition-base);
+
+    animation: facility-card-enter 260ms var(--ease-out) both;
 }
 
 .facility-card:hover,
 .facility-card:focus-visible {
     border-color: var(--color-orange);
-    box-shadow: var(--shadow-card);
+    box-shadow: var(--shadow-card-hover);
+    transform: translateY(-1px);
+}
+
+.facility-card:active {
+    transform: translateY(0);
 }
 
 .facility-card.is-selected {
     border-left-color: var(--color-orange);
+    background: #FFFCFA;
     box-shadow: var(--shadow-card);
 }
 
@@ -614,6 +716,15 @@ button,
     font-family: var(--font-display);
     font-size: 15px;
     font-weight: 700;
+
+    box-shadow: 0 1px 3px rgba(14, 33, 56, 0.25);
+
+    transition: background-color var(--transition-fast);
+}
+
+.facility-card:hover .facility-rank,
+.facility-card.is-selected .facility-rank {
+    background: var(--color-orange);
 }
 
 .facility-name {
@@ -625,6 +736,7 @@ button,
     font-weight: 600;
 
     line-height: 1.3;
+    letter-spacing: -0.005em;
 }
 
 .facility-distance {
@@ -662,11 +774,12 @@ button,
 
 .facility-meta {
     display: grid;
-    gap: 3px;
+    gap: 4px;
 
     margin-top: 8px;
 
     font-size: 12.5px;
+    line-height: 1.45;
     color: var(--color-ink-soft);
 }
 
@@ -679,7 +792,7 @@ button,
     display: inline-block;
 
     margin-top: 6px;
-    padding: 2px 8px;
+    padding: 2px 9px;
 
     border-radius: 999px;
 
@@ -691,7 +804,7 @@ button,
 }
 
 .facility-card-actions {
-    margin-top: 10px;
+    margin-top: 12px;
 
     display: flex;
     gap: 8px;
@@ -711,16 +824,37 @@ button,
 
 .route-summary {
     margin: 16px 16px 0;
-    padding: 14px;
+    padding: 16px;
 
-    background: var(--color-navy);
+    background:
+        linear-gradient(
+            160deg,
+            #1B3C60 0%,
+            var(--color-navy) 100%
+        );
     color: #fff;
 
     border-radius: var(--radius-md);
+
+    box-shadow: var(--shadow-card);
+
+    animation: surface-enter 220ms var(--ease-out);
 }
 
 .route-summary.hidden {
     display: none;
+}
+
+@keyframes surface-enter {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .route-summary-head {
@@ -736,25 +870,28 @@ button,
     margin: 0;
 
     font-family: var(--font-display);
-    font-size: 16px;
+    font-size: 17px;
     font-weight: 700;
+    letter-spacing: 0.02em;
 }
 
 .route-dest-label {
-    margin-top: 10px;
+    margin-top: 12px;
 
     font-size: 11px;
+    font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.06em;
 
     color: #9FB3C0;
 }
 
 .route-dest-name {
-    margin-top: 2px;
+    margin-top: 3px;
 
     font-size: 15px;
     font-weight: 600;
+    line-height: 1.35;
 }
 
 .route-summary .btn-ghost {
@@ -763,14 +900,18 @@ button,
 }
 
 .route-summary .btn-ghost:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.7);
 }
 
 .route-stats {
     display: flex;
-    gap: 24px;
+    gap: 28px;
 
-    margin-top: 12px;
+    margin-top: 14px;
+    padding-top: 14px;
+
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 .route-stat {
@@ -839,6 +980,14 @@ button,
     top: 0;
 }
 
+.leaflet-control-attribution {
+    font-size: 10px;
+    background: rgba(255, 255, 255, 0.78) !important;
+    border-radius: var(--radius-sm) 0 0 0;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+}
+
 
 /* =========================================================================
    MAP CONTROLS Z-INDEX
@@ -896,23 +1045,26 @@ button,
 
     cursor: pointer;
 
-    box-shadow:
-        0 2px 6px rgba(16, 32, 44, 0.12);
+    box-shadow: 0 2px 8px rgba(16, 32, 44, 0.14);
 
     transition:
-        background-color 120ms ease,
-        color 120ms ease,
-        border-color 120ms ease;
+        background-color var(--transition-fast),
+        color var(--transition-fast),
+        border-color var(--transition-fast),
+        box-shadow var(--transition-fast),
+        transform 80ms ease;
 }
 
 .map-zoom-btn:hover {
-    background: #F5F7F6;
+    background: #FFF9F5;
     color: var(--color-orange);
     border-color: var(--color-orange);
+    box-shadow: 0 3px 10px rgba(16, 32, 44, 0.16);
 }
 
 .map-zoom-btn:active {
-    background: #EEF1EE;
+    background: #FFF1E6;
+    transform: scale(0.96);
 }
 
 
@@ -931,7 +1083,7 @@ button,
     border: 3px solid #fff;
 
     box-shadow:
-        0 0 0 3px rgba(232, 89, 12, 0.35),
+        0 0 0 3px rgba(232, 89, 12, 0.30),
         0 1px 4px rgba(0, 0, 0, 0.3);
 }
 
@@ -946,7 +1098,7 @@ button,
     border: 3px solid #fff;
 
     box-shadow:
-        0 0 0 4px rgba(232, 89, 12, 0.28),
+        0 0 0 4px rgba(232, 89, 12, 0.25),
         0 1px 4px rgba(0, 0, 0, 0.3);
 }
 
@@ -957,6 +1109,12 @@ button,
     display: flex;
     align-items: center;
     justify-content: center;
+
+    transition: transform var(--transition-fast);
+}
+
+.facility-marker:hover {
+    transform: scale(1.08);
 }
 
 .facility-marker svg {
@@ -976,8 +1134,7 @@ button,
 
     transform: rotate(-45deg);
 
-    box-shadow:
-        0 2px 6px rgba(16, 32, 44, 0.35);
+    box-shadow: 0 2px 8px rgba(16, 32, 44, 0.35);
 }
 
 .facility-map-marker::after {
@@ -1006,10 +1163,17 @@ button,
 
 .leaflet-popup-content-wrapper {
     border-radius: var(--radius-md);
+
+    box-shadow: 0 8px 24px rgba(16, 32, 44, 0.18);
 }
 
 .leaflet-popup-content {
-    margin: 12px 14px;
+    margin: 14px 16px;
+    line-height: 1.45;
+}
+
+.leaflet-popup-tip {
+    box-shadow: 0 4px 10px rgba(16, 32, 44, 0.10);
 }
 
 .popup-card {
@@ -1047,6 +1211,7 @@ button,
 
     font-family: var(--font-display);
     font-size: 17px;
+    letter-spacing: 0.01em;
 
     color: var(--color-navy);
 }
@@ -1059,12 +1224,12 @@ button,
 }
 
 .map-popup-designation {
-    margin: 0 0 9px;
+    margin: 0 0 10px;
 
     font-size: 10.5px;
     font-weight: 700;
 
-    letter-spacing: 0.04em;
+    letter-spacing: 0.05em;
     text-transform: uppercase;
 
     color: var(--color-orange-dark);
@@ -1101,10 +1266,12 @@ button,
     position: absolute;
     inset: 0;
 
-    background: rgba(14, 33, 56, 0.68);
+    background: rgba(14, 33, 56, 0.62);
 
-    backdrop-filter: blur(3px);
-    -webkit-backdrop-filter: blur(3px);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+
+    animation: lightbox-enter 180ms ease-out;
 }
 
 
@@ -1123,6 +1290,7 @@ button,
     max-height: calc(100dvh - 48px);
 
     overflow-y: auto;
+    overscroll-behavior: contain;
 
     background: var(--color-surface);
 
@@ -1132,7 +1300,7 @@ button,
 
     box-shadow: var(--shadow-modal);
 
-    animation: modal-enter 160ms ease-out;
+    animation: modal-enter 200ms var(--ease-out);
 }
 
 .modal-dialog-wide {
@@ -1142,7 +1310,7 @@ button,
 @keyframes modal-enter {
     from {
         opacity: 0;
-        transform: translateY(8px) scale(0.99);
+        transform: translateY(10px) scale(0.985);
     }
 
     to {
@@ -1157,6 +1325,10 @@ button,
    ========================================================================== */
 
 .modal-header {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+
     display: flex;
 
     align-items: flex-start;
@@ -1168,7 +1340,10 @@ button,
 
     border-bottom: 1px solid var(--color-line);
 
-    background: var(--color-surface);
+    background: rgba(255, 255, 255, 0.96);
+
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
 }
 
 .modal-eyebrow {
@@ -1180,26 +1355,27 @@ button,
     font-size: 11px;
     font-weight: 700;
 
-    letter-spacing: 0.12em;
+    letter-spacing: 0.14em;
 
     color: var(--color-orange);
 }
 
 .modal-header h2 {
-    margin: 0 0 5px;
+    margin: 0 0 6px;
 
     font-family: var(--font-display);
     font-size: 30px;
     font-weight: 700;
 
     line-height: 1;
+    letter-spacing: 0.01em;
 
     color: var(--color-navy);
 }
 
 .modal-header p {
     font-size: 12.5px;
-    line-height: 1.5;
+    line-height: 1.55;
 
     color: var(--color-ink-soft);
 }
@@ -1227,9 +1403,10 @@ button,
     cursor: pointer;
 
     transition:
-        background-color 120ms ease,
-        color 120ms ease,
-        border-color 120ms ease;
+        background-color var(--transition-fast),
+        color var(--transition-fast),
+        border-color var(--transition-fast),
+        transform 80ms ease;
 }
 
 .modal-close:hover {
@@ -1238,6 +1415,10 @@ button,
     border-color: #F0C88A;
 
     color: var(--color-orange-dark);
+}
+
+.modal-close:active {
+    transform: scale(0.94);
 }
 
 
@@ -1250,8 +1431,8 @@ button,
 }
 
 .form-section {
-    padding: 0 0 20px;
-    margin-bottom: 20px;
+    padding: 0 0 22px;
+    margin-bottom: 22px;
 
     border-bottom: 1px solid var(--color-line);
 }
@@ -1267,12 +1448,13 @@ button,
     font-family: var(--font-display);
     font-size: 18px;
     font-weight: 700;
+    letter-spacing: 0.02em;
 
     color: var(--color-navy);
 }
 
 .form-group {
-    margin-bottom: 15px;
+    margin-bottom: 16px;
 }
 
 .form-group:last-child {
@@ -1298,7 +1480,7 @@ button,
 .optional {
     margin-left: 5px;
 
-    font-size: 10px;
+    font-size: 10.5px;
     font-weight: 500;
 
     color: var(--color-ink-soft);
@@ -1328,13 +1510,14 @@ button,
     outline: none;
 
     transition:
-        border-color 150ms ease,
-        box-shadow 150ms ease,
-        background-color 150ms ease;
+        border-color var(--transition-fast),
+        box-shadow var(--transition-fast),
+        background-color var(--transition-fast);
 }
 
 .form-input:hover {
-    border-color: #9DA9A5;
+    border-color: #8F9C97;
+    background: #fff;
 }
 
 .form-input:focus {
@@ -1342,16 +1525,32 @@ button,
 
     border-color: var(--color-orange);
 
-    box-shadow:
-        0 0 0 3px rgba(232, 89, 12, 0.12);
+    box-shadow: var(--focus-ring);
 }
 
 .form-input::placeholder {
-    color: #89969D;
+    color: #87949B;
+}
+
+.form-input:disabled {
+    background: #F0F2F1;
+    color: var(--color-ink-soft);
+    cursor: not-allowed;
 }
 
 select.form-input {
     cursor: pointer;
+
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+
+    padding-right: 36px;
+
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%234B5C66' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 13px center;
+    background-size: 12px 8px;
 }
 
 textarea.form-input {
@@ -1359,7 +1558,7 @@ textarea.form-input {
 
     resize: vertical;
 
-    line-height: 1.5;
+    line-height: 1.55;
 }
 
 .form-textarea {
@@ -1392,8 +1591,8 @@ input[type="file"].form-input::file-selector-button {
     cursor: pointer;
 
     transition:
-        background-color 120ms ease,
-        border-color 120ms ease;
+        background-color var(--transition-fast),
+        border-color var(--transition-fast);
 }
 
 input[type="file"].form-input::file-selector-button:hover {
@@ -1404,10 +1603,10 @@ input[type="file"].form-input::file-selector-button:hover {
 .form-help {
     display: block;
 
-    margin-top: 5px;
+    margin-top: 6px;
 
-    font-size: 10.5px;
-    line-height: 1.45;
+    font-size: 11px;
+    line-height: 1.5;
 
     color: var(--color-ink-soft);
 }
@@ -1425,7 +1624,7 @@ input[type="file"].form-input::file-selector-button:hover {
 .current-photo-preview {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
 
     padding: 8px 10px;
 
@@ -1443,6 +1642,14 @@ input[type="file"].form-input::file-selector-button:hover {
     border: 1px solid var(--color-line);
     flex-shrink: 0;
     cursor: zoom-in;
+    transition:
+        transform var(--transition-fast),
+        box-shadow var(--transition-fast);
+}
+
+.current-photo-preview img:hover {
+    transform: scale(1.04);
+    box-shadow: var(--shadow-card);
 }
 
 .current-photo-preview .current-photo-label {
@@ -1480,7 +1687,7 @@ input[type="file"].form-input::file-selector-button:hover {
     margin-bottom: 12px;
 
     font-size: 12px;
-    line-height: 1.5;
+    line-height: 1.55;
 
     color: var(--color-ink-soft);
 }
@@ -1491,9 +1698,9 @@ input[type="file"].form-input::file-selector-button:hover {
 }
 
 .submission-location-status {
-    margin-top: 9px;
+    margin-top: 10px;
 
-    padding: 9px 11px;
+    padding: 9px 12px;
 
     border: 1px solid var(--color-line);
 
@@ -1502,9 +1709,14 @@ input[type="file"].form-input::file-selector-button:hover {
     background: var(--color-surface-raised);
 
     font-size: 11.5px;
-    line-height: 1.4;
+    line-height: 1.45;
 
     color: var(--color-ink-soft);
+
+    transition:
+        background-color var(--transition-base),
+        border-color var(--transition-base),
+        color var(--transition-base);
 }
 
 .submission-location-status.is-success {
@@ -1550,7 +1762,7 @@ input[type="file"].form-input::file-selector-button:hover {
     padding: 0;
 
     font-size: 12px;
-    line-height: 1.5;
+    line-height: 1.55;
 }
 
 .form-message:not(:empty) {
@@ -1560,6 +1772,8 @@ input[type="file"].form-input::file-selector-button:hover {
 
     background: #F7F8F7;
     border: 1px solid var(--color-line);
+
+    animation: surface-enter 180ms var(--ease-out);
 }
 
 .form-message.is-error {
@@ -1594,7 +1808,7 @@ input[type="file"].form-input::file-selector-button:hover {
 
     gap: 10px;
 
-    padding-top: 4px;
+    padding-top: 6px;
 }
 
 .modal-actions .btn {
@@ -1612,13 +1826,14 @@ input[type="file"].form-input::file-selector-button:hover {
     padding: 10px 12px;
 
     border-left: 3px solid var(--color-orange);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
 
     background: #FFF9F5;
 
     color: var(--color-ink-soft);
 
-    font-size: 10.5px;
-    line-height: 1.5;
+    font-size: 11px;
+    line-height: 1.55;
 }
 
 .verification-notice strong {
@@ -1652,7 +1867,16 @@ input[type="file"].form-input::file-selector-button:hover {
 
     background: var(--color-surface-raised);
 
-    padding: 10px 12px;
+    padding: 11px 13px;
+
+    transition:
+        border-color var(--transition-fast),
+        background-color var(--transition-fast);
+}
+
+.facility-detail-item:hover {
+    border-color: var(--color-line-strong);
+    background: #fff;
 }
 
 .facility-detail-label {
@@ -1664,7 +1888,7 @@ input[type="file"].form-input::file-selector-button:hover {
     font-size: 11px;
     font-weight: 700;
 
-    letter-spacing: 0.05em;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
 
     color: var(--color-ink-soft);
@@ -1673,6 +1897,7 @@ input[type="file"].form-input::file-selector-button:hover {
 .facility-detail-value {
     font-size: 14px;
     font-weight: 600;
+    line-height: 1.4;
 
     color: var(--color-ink);
 
@@ -1698,6 +1923,15 @@ input[type="file"].form-input::file-selector-button:hover {
     overflow: hidden;
 
     background: var(--color-surface-raised);
+
+    transition:
+        box-shadow var(--transition-base),
+        border-color var(--transition-base);
+}
+
+.facility-detail-photo:hover {
+    box-shadow: var(--shadow-card);
+    border-color: var(--color-line-strong);
 }
 
 .facility-detail-photo img {
@@ -1710,11 +1944,11 @@ input[type="file"].form-input::file-selector-button:hover {
 
     cursor: zoom-in;
 
-    transition: transform 160ms ease;
+    transition: transform 260ms var(--ease-out);
 }
 
 .facility-detail-photo img:hover {
-    transform: scale(1.02);
+    transform: scale(1.03);
 }
 
 .facility-detail-photo-label {
@@ -1723,7 +1957,7 @@ input[type="file"].form-input::file-selector-button:hover {
     font-size: 11px;
     font-weight: 700;
 
-    letter-spacing: 0.05em;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
 
     color: var(--color-ink-soft);
@@ -1736,7 +1970,7 @@ input[type="file"].form-input::file-selector-button:hover {
     flex-wrap: wrap;
     gap: 10px;
 
-    padding-top: 12px;
+    padding-top: 16px;
 
     border-top: 1px solid var(--color-line);
 }
@@ -1748,7 +1982,7 @@ input[type="file"].form-input::file-selector-button:hover {
 }
 
 .facility-details-empty {
-    padding: 14px;
+    padding: 16px;
 
     border: 1px dashed var(--color-line-strong);
     border-radius: var(--radius-sm);
@@ -1771,7 +2005,10 @@ input[type="file"].form-input::file-selector-button:hover {
 
     z-index: 3000;
 
-    background: rgba(0, 0, 0, 0.92);
+    background: rgba(5, 10, 16, 0.92);
+
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
 
     display: flex;
     align-items: center;
@@ -1781,7 +2018,7 @@ input[type="file"].form-input::file-selector-button:hover {
 
     cursor: zoom-out;
 
-    animation: lightbox-enter 140ms ease-out;
+    animation: lightbox-enter 160ms ease-out;
 }
 
 @keyframes lightbox-enter {
@@ -1798,6 +2035,8 @@ input[type="file"].form-input::file-selector-button:hover {
     border-radius: var(--radius-md);
 
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+
+    animation: modal-enter 220ms var(--ease-out);
 }
 
 
@@ -1921,7 +2160,7 @@ input[type="file"].form-input::file-selector-button:hover {
 
     align-items: center;
 
-    padding: 8px 13px;
+    padding: 8px 14px;
 
     margin-bottom: 22px;
 
@@ -1935,6 +2174,7 @@ input[type="file"].form-input::file-selector-button:hover {
 
     font-size: 12px;
     font-weight: 600;
+    letter-spacing: 0.02em;
 }
 
 .hero-title {
@@ -1947,6 +2187,8 @@ input[type="file"].form-input::file-selector-button:hover {
     line-height: 0.94;
 
     font-weight: 700;
+
+    letter-spacing: -0.005em;
 
     color: #fff;
 }
@@ -1975,7 +2217,7 @@ input[type="file"].form-input::file-selector-button:hover {
 
     align-items: center;
 
-    gap: 13px;
+    gap: 14px;
 }
 
 .feature-icon {
@@ -1992,12 +2234,21 @@ input[type="file"].form-input::file-selector-button:hover {
 
     background: rgba(255, 255, 255, 0.05);
 
-    border-radius: 7px;
+    border-radius: 8px;
 
     color: #FF9C65;
 
     font-size: 19px;
     font-weight: 700;
+
+    transition:
+        background-color var(--transition-base),
+        border-color var(--transition-base);
+}
+
+.auth-feature:hover .feature-icon {
+    background: rgba(255, 255, 255, 0.09);
+    border-color: rgba(255, 156, 101, 0.4);
 }
 
 .auth-feature strong {
@@ -2044,7 +2295,10 @@ input[type="file"].form-input::file-selector-button:hover {
     border-radius: var(--radius-md);
 
     box-shadow:
+        0 1px 3px rgba(16, 32, 44, 0.04),
         0 20px 50px rgba(16, 32, 44, 0.08);
+
+    animation: surface-enter 300ms var(--ease-out);
 }
 
 .auth-card-header {
@@ -2061,7 +2315,7 @@ input[type="file"].form-input::file-selector-button:hover {
     font-size: 12px;
     font-weight: 700;
 
-    letter-spacing: 0.12em;
+    letter-spacing: 0.14em;
 
     color: var(--color-orange);
 }
@@ -2085,7 +2339,7 @@ input[type="file"].form-input::file-selector-button:hover {
     color: var(--color-ink-soft);
 
     font-size: 13.5px;
-    line-height: 1.5;
+    line-height: 1.55;
 }
 
 .auth-form .form-group {
@@ -2130,6 +2384,8 @@ input[type="file"].form-input::file-selector-button:hover {
     font-weight: 600;
 
     cursor: pointer;
+
+    transition: color var(--transition-fast);
 }
 
 .forgot-password:hover {
@@ -2166,6 +2422,8 @@ input[type="file"].form-input::file-selector-button:hover {
     font-weight: 700;
 
     cursor: pointer;
+
+    transition: color var(--transition-fast);
 }
 
 .password-toggle:hover {
@@ -2178,7 +2436,7 @@ input[type="file"].form-input::file-selector-button:hover {
     margin: 0 0 8px;
 
     font-size: 12.5px;
-    line-height: 1.4;
+    line-height: 1.45;
 
     color: var(--color-ink-soft);
 }
@@ -2221,28 +2479,44 @@ input[type="file"].form-input::file-selector-button:hover {
 
     font-size: 14px;
     font-weight: 700;
+    letter-spacing: 0.005em;
 
     cursor: pointer;
 
+    box-shadow:
+        0 1px 2px rgba(194, 74, 9, 0.30),
+        inset 0 1px 0 rgba(255, 255, 255, 0.14);
+
     transition:
-        background-color 120ms ease,
+        background-color var(--transition-fast),
         transform 80ms ease,
-        box-shadow 120ms ease;
+        box-shadow var(--transition-fast);
 }
 
 .auth-submit-btn:hover {
     background: var(--color-orange-dark);
 
     box-shadow:
-        0 5px 14px rgba(232, 89, 12, 0.22);
+        0 6px 16px rgba(232, 89, 12, 0.26);
 }
 
 .auth-submit-btn:active {
-    transform: translateY(1px);
+    transform: translateY(1px) scale(0.995);
+}
+
+.auth-submit-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
 }
 
 .button-arrow {
     font-size: 18px;
+
+    transition: transform var(--transition-fast);
+}
+
+.auth-submit-btn:hover .button-arrow {
+    transform: translateX(3px);
 }
 
 .auth-switch-container {
@@ -2263,6 +2537,8 @@ input[type="file"].form-input::file-selector-button:hover {
     font-weight: 700;
 
     text-decoration: none;
+
+    transition: color var(--transition-fast);
 }
 
 .btn-link:hover {
@@ -2319,16 +2595,17 @@ input[type="file"].form-input::file-selector-button:hover {
     margin-bottom: 14px;
 
     transition:
-        border-color 150ms ease,
-        box-shadow 150ms ease,
-        transform 100ms ease;
+        border-color var(--transition-base),
+        box-shadow var(--transition-base),
+        transform var(--transition-base);
 }
 
 .access-option:hover {
     border-color: var(--color-line-strong);
 
-    box-shadow:
-        0 4px 14px rgba(16, 32, 44, 0.05);
+    box-shadow: 0 6px 18px rgba(16, 32, 44, 0.07);
+
+    transform: translateY(-1px);
 }
 
 .guest-option {
@@ -2351,7 +2628,7 @@ input[type="file"].form-input::file-selector-button:hover {
 
     margin-bottom: 11px;
 
-    border-radius: 7px;
+    border-radius: 8px;
 
     background: var(--color-orange);
 
@@ -2361,10 +2638,14 @@ input[type="file"].form-input::file-selector-button:hover {
 
     font-size: 18px;
     font-weight: 700;
+
+    box-shadow: 0 2px 6px rgba(232, 89, 12, 0.25);
 }
 
 .resident-icon {
     background: var(--color-navy);
+
+    box-shadow: 0 2px 6px rgba(22, 50, 79, 0.25);
 }
 
 .access-content h3 {
@@ -2383,7 +2664,7 @@ input[type="file"].form-input::file-selector-button:hover {
     color: var(--color-ink-soft);
 
     font-size: 12.5px;
-    line-height: 1.55;
+    line-height: 1.6;
 }
 
 .access-btn {
@@ -2399,8 +2680,9 @@ input[type="file"].form-input::file-selector-button:hover {
     cursor: pointer;
 
     transition:
-        background-color 120ms ease,
-        border-color 120ms ease,
+        background-color var(--transition-fast),
+        border-color var(--transition-fast),
+        box-shadow var(--transition-fast),
         transform 80ms ease;
 }
 
@@ -2408,10 +2690,18 @@ input[type="file"].form-input::file-selector-button:hover {
     margin-left: 7px;
 
     font-size: 17px;
+
+    display: inline-block;
+
+    transition: transform var(--transition-fast);
+}
+
+.access-btn:hover span {
+    transform: translateX(3px);
 }
 
 .access-btn:active {
-    transform: translateY(1px);
+    transform: translateY(1px) scale(0.995);
 }
 
 .access-btn-primary {
@@ -2424,6 +2714,8 @@ input[type="file"].form-input::file-selector-button:hover {
 
 .access-btn-primary:hover {
     background: var(--color-orange-dark);
+
+    box-shadow: 0 4px 12px rgba(232, 89, 12, 0.24);
 }
 
 .access-btn-secondary {
@@ -2438,6 +2730,8 @@ input[type="file"].form-input::file-selector-button:hover {
     background: var(--color-navy-dark);
 
     border-color: var(--color-navy-dark);
+
+    box-shadow: 0 4px 12px rgba(22, 50, 79, 0.24);
 }
 
 .access-actions {
@@ -2465,6 +2759,8 @@ input[type="file"].form-input::file-selector-button:hover {
     cursor: pointer;
 
     white-space: nowrap;
+
+    transition: color var(--transition-fast);
 }
 
 .text-btn:hover {
@@ -2522,6 +2818,15 @@ input[type="file"].form-input::file-selector-button:hover {
     border-radius: var(--radius-sm);
 
     background: #F7F8F7;
+
+    transition:
+        border-color var(--transition-fast),
+        background-color var(--transition-fast);
+}
+
+.admin-access:hover {
+    border-color: var(--color-line-strong);
+    background: #fff;
 }
 
 .admin-access-text {
@@ -2595,14 +2900,19 @@ input[type="file"].form-input::file-selector-button:hover {
     cursor: pointer;
 
     transition:
-        background-color 120ms ease,
-        color 120ms ease;
+        background-color var(--transition-fast),
+        color var(--transition-fast),
+        transform 80ms ease;
 }
 
 .admin-btn:hover {
     background: var(--color-navy);
 
     color: #fff;
+}
+
+.admin-btn:active {
+    transform: translateY(1px);
 }
 
 .admin-btn span {
@@ -2627,9 +2937,10 @@ input[type="file"].form-input::file-selector-button:hover {
     cursor: pointer;
     white-space: nowrap;
     transition:
-        background-color 120ms ease,
-        border-color 120ms ease,
-        color 120ms ease;
+        background-color var(--transition-fast),
+        border-color var(--transition-fast),
+        color var(--transition-fast),
+        transform 80ms ease;
 }
 
 .header-actions #add-facility-btn:hover {
@@ -2667,6 +2978,7 @@ input[type="file"].form-input::file-selector-button:hover {
         min-height: 0;
         border-right: none;
         border-top: 1px solid var(--color-line);
+        box-shadow: 0 -2px 12px rgba(16, 32, 44, 0.05);
         padding-bottom: env(safe-area-inset-bottom);
     }
 
@@ -2763,6 +3075,10 @@ input[type="file"].form-input::file-selector-button:hover {
             0;
 
         border-bottom: none;
+
+        padding-bottom: env(safe-area-inset-bottom);
+
+        animation: sheet-enter 260ms var(--ease-out);
     }
 
     .modal-header {
@@ -2805,6 +3121,18 @@ input[type="file"].form-input::file-selector-button:hover {
 
     .facility-detail-photo img {
         height: 180px;
+    }
+}
+
+@keyframes sheet-enter {
+    from {
+        opacity: 0.6;
+        transform: translateY(24px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }
 
@@ -3013,6 +3341,7 @@ input[type="file"].form-input::file-selector-button:hover {
 
         border-right: 1px solid var(--color-line);
         border-top: none;
+        box-shadow: 2px 0 12px rgba(16, 32, 44, 0.04);
     }
 
     .emergency-notice {
@@ -3021,6 +3350,12 @@ input[type="file"].form-input::file-selector-button:hover {
         font-size: 11px;
     }
 }
+
+
+/* =========================================================================
+   ADMIN TAB BADGE
+   ========================================================================== */
+
 .admin-tab-badge {
     display: inline-block;
     margin-left: 6px;
@@ -3030,11 +3365,15 @@ input[type="file"].form-input::file-selector-button:hover {
     color: #fff;
     font-size: 11px;
     font-weight: 700;
+    line-height: 1.6;
+    box-shadow: 0 1px 3px rgba(200, 30, 58, 0.30);
 }
 
 .admin-tab-badge.hidden {
     display: none !important;
 }
+
+
 /* =========================================================================
    VERIFICATION BADGES
    ========================================================================== */
@@ -3066,6 +3405,7 @@ input[type="file"].form-input::file-selector-button:hover {
     color: var(--color-danger);
     border: 1px solid #F2BBC5;
 }
+
 .auth-user-label {
     font-size: 12px;
     color: #C9D5DD;
@@ -3081,6 +3421,12 @@ input[type="file"].form-input::file-selector-button:hover {
         display: none;
     }
 }
+
+
+/* =========================================================================
+   HEADER AUTH BUTTONS
+   ========================================================================== */
+
 /* Make sure hidden buttons stay hidden */
 .header-actions button[hidden],
 #signin-btn[hidden],
@@ -3088,6 +3434,7 @@ input[type="file"].form-input::file-selector-button:hover {
 #admin-dashboard-btn[hidden] {
     display: none !important;
 }
+
 .header-actions #signin-btn,
 .header-actions #signout-btn,
 .header-actions #admin-dashboard-btn {
@@ -3103,9 +3450,10 @@ input[type="file"].form-input::file-selector-button:hover {
     cursor: pointer;
     white-space: nowrap;
     transition:
-        background-color 120ms ease,
-        border-color 120ms ease,
-        color 120ms ease;
+        background-color var(--transition-fast),
+        border-color var(--transition-fast),
+        color var(--transition-fast),
+        transform 80ms ease;
 }
 
 .header-actions #signin-btn:hover,
@@ -3121,6 +3469,8 @@ input[type="file"].form-input::file-selector-button:hover {
 .header-actions #admin-dashboard-btn:active {
     transform: translateY(1px);
 }
+
+
 /* =========================================================================
    FILE INPUT PREVIEW
    ========================================================================== */
@@ -3140,16 +3490,20 @@ input[type="file"].form-input::file-selector-button:hover {
     border-radius: var(--radius-sm);
 
     background: var(--color-surface-raised);
+
+    box-shadow: 0 1px 3px rgba(16, 32, 44, 0.06);
 }
 
 .file-preview-label {
-    margin-top: 5px;
+    margin-top: 6px;
 
     font-size: 11px;
     color: var(--color-ink-soft);
 
     word-break: break-all;
 }
+
+
 /* =========================================================================
    LOADING SPINNER
    ========================================================================== */
@@ -3207,10 +3561,10 @@ input[type="file"].form-input::file-selector-button:hover {
 
     background: rgba(239, 241, 238, 0.85);
 
-    backdrop-filter: blur(2px);
-    -webkit-backdrop-filter: blur(2px);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
 
-    transition: opacity 200ms ease;
+    transition: opacity 240ms ease;
 }
 
 .loading-overlay.hidden {
@@ -3231,5 +3585,158 @@ input[type="file"].form-input::file-selector-button:hover {
 
 .loading-overlay-text {
     font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.01em;
     color: var(--color-ink-soft);
+}
+
+
+/* =========================================================
+   SUBMISSION MINI-MAP
+   ========================================================= */
+
+.submission-map-wrap {
+    position: relative;
+    margin: 10px 0 12px;
+}
+
+.submission-map {
+    width: 100%;
+    height: 240px;
+    border-radius: 8px;
+    border: 1px solid var(--color-line);
+    background: #eaeaea;
+    cursor: crosshair;
+    z-index: 0;
+    overflow: hidden;
+}
+
+.submission-map-hint {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(16, 32, 44, 0.78);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    padding: 4px 12px;
+    border-radius: 999px;
+    pointer-events: none;
+    z-index: 500;
+    transition: opacity 0.2s ease;
+}
+
+.submission-map-wrap.has-pin .submission-map-hint {
+    opacity: 0;
+}
+
+.location-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.location-actions .location-button {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.location-actions .location-button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.submission-location-status {
+    padding: 10px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    background: #f4f4f4;
+    border: 1px solid #e0e0e0;
+    color: #555;
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.submission-location-status.is-success {
+    background: #EFF8F2;
+    border-color: #B7DCC5;
+    color: var(--color-safe);
+    font-weight: 600;
+}
+
+.submission-location-status.is-error {
+    background: #FFF1F3;
+    border-color: #F2BBC5;
+    color: var(--color-danger);
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   MICRO-ANIMATIONS
+   ========================================================= */
+
+/* 1. Facility card entrance (staggered via JS animation-delay) */
+
+@keyframes facility-card-enter {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 2. Success form message pulse */
+
+@keyframes pulse-success {
+    0% {
+        transform: scale(0.98);
+        box-shadow: 0 0 0 0 rgba(30, 113, 69, 0.35);
+    }
+    60% {
+        transform: scale(1);
+        box-shadow: 0 0 0 8px rgba(30, 113, 69, 0);
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(30, 113, 69, 0);
+    }
+}
+
+.form-message.is-success:not(:empty) {
+    animation: pulse-success 420ms var(--ease-out);
+}
+
+/* 3. Location status pop */
+
+@keyframes status-pop {
+    0% { transform: scale(0.97); }
+    60% { transform: scale(1.02); }
+    100% { transform: scale(1); }
+}
+
+.submission-location-status.is-success {
+    animation: status-pop 320ms var(--ease-out);
+}
+
+/* 4. Route polyline fade-in */
+
+@keyframes fade-route {
+    from { opacity: 0; }
+    to { opacity: 0.88; }
+}
+
+.leaflet-interactive {
+    animation: fade-route 400ms ease-out;
 }
