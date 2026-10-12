@@ -34,7 +34,13 @@ const state = {
 
     reports: [],
 
-    activeTab: "Pending"
+    activeTab: "Pending",
+
+    selectedIds: new Set(),
+
+    rejectTarget: null,
+
+    rejectInProgress: false
 };
 
 
@@ -68,7 +74,33 @@ const DOM = {
 
     statTotal: document.getElementById("stat-total"),
 
-    reportCountBadge: document.getElementById("report-count-badge")
+    reportCountBadge: document.getElementById("report-count-badge"),
+
+    bulkApproveBtn: document.getElementById("admin-bulk-approve-btn"),
+
+    exportCsvBtn: document.getElementById("admin-export-csv-btn"),
+
+    bulkBar: document.getElementById("admin-bulk-bar"),
+
+    selectAllCheckbox: document.getElementById("admin-select-all"),
+
+    selectedCount: document.getElementById("admin-selected-count"),
+
+    rejectModal: document.getElementById("admin-reject-modal"),
+
+    rejectBackdrop: document.getElementById("admin-reject-backdrop"),
+
+    rejectCloseBtn: document.getElementById("admin-reject-close-btn"),
+
+    rejectCancelBtn: document.getElementById("admin-reject-cancel-btn"),
+
+    rejectConfirmBtn: document.getElementById("admin-reject-confirm-btn"),
+
+    rejectReason: document.getElementById("admin-reject-reason"),
+
+    rejectMessage: document.getElementById("admin-reject-message"),
+
+    rejectSubtitle: document.getElementById("admin-reject-subtitle")
 };
 
 
@@ -106,7 +138,6 @@ function watchAuth() {
         state.currentUser = user || null;
 
         if (!user) {
-
             showDenied();
             return;
         }
@@ -114,7 +145,6 @@ function watchAuth() {
         state.currentRole = await loadRole(user);
 
         if (state.currentRole !== "admin") {
-
             showDenied();
             return;
         }
@@ -186,6 +216,8 @@ async function loadFacilities() {
 
                 verificationStatus:
                     data.verificationStatus || "Pending",
+
+                rejectionReason: data.rejectionReason || "",
 
                 submittedBy: data.submittedBy || "",
                 submittedByEmail: data.submittedByEmail || ""
@@ -274,6 +306,39 @@ async function loadReports() {
 
 
 /* =========================================================================
+   BULK UI
+   ========================================================================= */
+
+function updateBulkUI() {
+
+    const count = state.selectedIds.size;
+
+    if (DOM.selectedCount) {
+        DOM.selectedCount.textContent =
+            count === 1 ? "1 selected" : `${count} selected`;
+    }
+
+    if (DOM.bulkApproveBtn) {
+        DOM.bulkApproveBtn.hidden = count === 0;
+    }
+
+    if (DOM.bulkBar) {
+        const pendingCount =
+            state.facilities.filter(f =>
+                f.verificationStatus === "Pending"
+            ).length;
+
+        DOM.bulkBar.hidden = pendingCount === 0;
+
+        if (DOM.selectAllCheckbox) {
+            DOM.selectAllCheckbox.checked =
+                pendingCount > 0 && count === pendingCount;
+        }
+    }
+}
+
+
+/* =========================================================================
    RENDER QUEUE
    ========================================================================= */
 
@@ -283,6 +348,7 @@ function renderQueue() {
 
     if (state.activeTab === "Reports") {
         renderReports();
+        updateBulkUI();
         return;
     }
 
@@ -301,12 +367,15 @@ function renderQueue() {
         DOM.queue.innerHTML =
             `<p class="admin-empty">No facilities in this category.</p>`;
 
+        updateBulkUI();
         return;
     }
 
     for (const f of list) {
         DOM.queue.appendChild(buildFacilityCard(f));
     }
+
+    updateBulkUI();
 }
 
 
@@ -358,15 +427,40 @@ function buildFacilityCard(f) {
     const header = document.createElement("div");
     header.className = "admin-card-header";
 
+    const headerLeft = document.createElement("div");
+    headerLeft.className = "admin-card-header-left";
+
+    if (f.verificationStatus === "Pending") {
+
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.className = "admin-card-checkbox";
+        checkbox.dataset.id = f.id;
+        checkbox.checked = state.selectedIds.has(f.id);
+
+        checkbox.addEventListener("change", () => {
+            if (checkbox.checked) {
+                state.selectedIds.add(f.id);
+            } else {
+                state.selectedIds.delete(f.id);
+            }
+            updateBulkUI();
+        });
+
+        headerLeft.appendChild(checkbox);
+    }
+
     const title = document.createElement("h3");
     title.className = "admin-card-title";
     title.textContent = f.name;
+
+    headerLeft.appendChild(title);
 
     const badge = document.createElement("span");
     badge.className = "admin-badge";
     badge.textContent = f.verificationStatus;
 
-    header.appendChild(title);
+    header.appendChild(headerLeft);
     header.appendChild(badge);
 
 
@@ -390,6 +484,26 @@ function buildFacilityCard(f) {
     if (f.notes) addMeta(meta, "Notes", f.notes);
 
 
+    const rejectNote = null;
+
+    if (f.verificationStatus === "Rejected" && f.rejectionReason) {
+
+        const note = document.createElement("div");
+        note.className = "admin-reject-note";
+
+        const label = document.createElement("strong");
+        label.textContent = "Reason for rejection";
+
+        const text = document.createElement("div");
+        text.textContent = f.rejectionReason;
+
+        note.appendChild(label);
+        note.appendChild(text);
+
+        card.appendChild(note);
+    }
+
+
     const photos = document.createElement("div");
     photos.className = "admin-photos";
 
@@ -410,34 +524,38 @@ function buildFacilityCard(f) {
     actions.className = "admin-card-actions";
 
 
-    if (f.verificationStatus !== "Approved") {
+    const approveBtn = document.createElement("button");
+    approveBtn.type = "button";
+    approveBtn.className = "btn btn-primary admin-approve";
+    approveBtn.textContent = "✓ Approve";
 
-        const approveBtn = document.createElement("button");
-        approveBtn.type = "button";
-        approveBtn.className = "btn btn-primary admin-approve";
-        approveBtn.textContent = "✓ Approve";
-
+    if (f.verificationStatus === "Approved") {
+        approveBtn.disabled = true;
+        approveBtn.title = "Already approved";
+    } else {
         approveBtn.addEventListener("click", () => {
             setStatus(f.id, "Approved");
         });
-
-        actions.appendChild(approveBtn);
     }
 
+    actions.appendChild(approveBtn);
 
-    if (f.verificationStatus !== "Rejected") {
 
-        const rejectBtn = document.createElement("button");
-        rejectBtn.type = "button";
-        rejectBtn.className = "btn btn-ghost admin-reject";
-        rejectBtn.textContent = "✗ Reject";
+    const rejectBtn = document.createElement("button");
+    rejectBtn.type = "button";
+    rejectBtn.className = "btn btn-ghost admin-reject";
+    rejectBtn.textContent = "✗ Reject";
 
+    if (f.verificationStatus === "Rejected") {
+        rejectBtn.disabled = true;
+        rejectBtn.title = "Already rejected";
+    } else {
         rejectBtn.addEventListener("click", () => {
-            setStatus(f.id, "Rejected");
+            openRejectModal(f);
         });
-
-        actions.appendChild(rejectBtn);
     }
+
+    actions.appendChild(rejectBtn);
 
 
     const deleteBtn = document.createElement("button");
@@ -626,6 +744,141 @@ function buildNoPhoto(caption) {
 
 
 /* =========================================================================
+   REJECT WITH REASON
+   ========================================================================= */
+
+function openRejectModal(f) {
+
+    if (!DOM.rejectModal) return;
+
+    state.rejectTarget = f;
+    state.rejectInProgress = false;
+
+    if (DOM.rejectReason) DOM.rejectReason.value = "";
+
+    if (DOM.rejectSubtitle) {
+        DOM.rejectSubtitle.textContent =
+            `Rejecting: ${f.name}. This reason will be shown to the submitter.`;
+    }
+
+    if (DOM.rejectMessage) {
+        DOM.rejectMessage.textContent = "";
+        DOM.rejectMessage.classList.remove(
+            "is-success", "is-error", "is-loading"
+        );
+    }
+
+    if (DOM.rejectConfirmBtn) {
+        DOM.rejectConfirmBtn.disabled = false;
+        DOM.rejectConfirmBtn.textContent = "✗ Reject Facility";
+    }
+
+    DOM.rejectModal.classList.remove("hidden");
+    DOM.rejectModal.setAttribute("aria-hidden", "false");
+
+    document.body.style.overflow = "hidden";
+
+    setTimeout(() => DOM.rejectReason?.focus(), 50);
+}
+
+
+function closeRejectModal() {
+
+    if (!DOM.rejectModal) return;
+
+    DOM.rejectModal.classList.add("hidden");
+    DOM.rejectModal.setAttribute("aria-hidden", "true");
+
+    document.body.style.overflow = "";
+
+    state.rejectTarget = null;
+    state.rejectInProgress = false;
+}
+
+
+async function confirmReject() {
+
+    if (state.rejectInProgress) return;
+    if (!state.rejectTarget) return;
+
+    const reason = String(DOM.rejectReason?.value || "").trim();
+
+    if (!reason) {
+
+        if (DOM.rejectMessage) {
+            DOM.rejectMessage.textContent =
+                "Please enter a reason for the rejection.";
+            DOM.rejectMessage.classList.remove("is-loading", "is-success");
+            DOM.rejectMessage.classList.add("is-error");
+        }
+
+        return;
+    }
+
+    state.rejectInProgress = true;
+
+    if (DOM.rejectConfirmBtn) {
+        DOM.rejectConfirmBtn.disabled = true;
+        DOM.rejectConfirmBtn.textContent = "Rejecting…";
+    }
+
+    if (DOM.rejectMessage) {
+        DOM.rejectMessage.textContent = "Saving rejection…";
+        DOM.rejectMessage.classList.remove("is-error", "is-success");
+        DOM.rejectMessage.classList.add("is-loading");
+    }
+
+    const target = state.rejectTarget;
+
+    try {
+
+        await updateDoc(
+            doc(db, "facilities", target.id),
+            {
+                verificationStatus: "Rejected",
+                rejectionReason: reason,
+                rejectedAt: new Date(),
+                rejectedBy: state.currentUser.uid,
+                verifiedAt: new Date(),
+                verifiedBy: state.currentUser.uid
+            }
+        );
+
+        const f = state.facilities.find(x => x.id === target.id);
+
+        if (f) {
+            f.verificationStatus = "Rejected";
+            f.rejectionReason = reason;
+        }
+
+        state.selectedIds.delete(target.id);
+
+        updateStats();
+        renderQueue();
+        closeRejectModal();
+
+    } catch (e) {
+
+        console.error("Reject failed:", e);
+
+        if (DOM.rejectMessage) {
+            DOM.rejectMessage.textContent =
+                "Could not save rejection: " + e.message;
+            DOM.rejectMessage.classList.remove("is-loading");
+            DOM.rejectMessage.classList.add("is-error");
+        }
+
+        if (DOM.rejectConfirmBtn) {
+            DOM.rejectConfirmBtn.disabled = false;
+            DOM.rejectConfirmBtn.textContent = "✗ Reject Facility";
+        }
+
+        state.rejectInProgress = false;
+    }
+}
+
+
+/* =========================================================================
    ACTIONS
    ========================================================================= */
 
@@ -648,6 +901,8 @@ async function setStatus(facilityId, status) {
             f.verificationStatus = status;
         }
 
+        state.selectedIds.delete(facilityId);
+
         updateStats();
         renderQueue();
 
@@ -657,6 +912,134 @@ async function setStatus(facilityId, status) {
 
         alert("Could not update status: " + e.message);
     }
+}
+
+
+async function approveSelected() {
+
+    const ids = Array.from(state.selectedIds);
+
+    if (!ids.length) return;
+
+    const ok = window.confirm(
+        `Approve ${ids.length} facilit${ids.length > 1 ? "ies" : "y"}?`
+    );
+
+    if (!ok) return;
+
+    if (DOM.bulkApproveBtn) {
+        DOM.bulkApproveBtn.disabled = true;
+        DOM.bulkApproveBtn.textContent =
+            `Approving ${ids.length}…`;
+    }
+
+    try {
+
+        for (const id of ids) {
+
+            await updateDoc(
+                doc(db, "facilities", id),
+                {
+                    verificationStatus: "Approved",
+                    verifiedAt: new Date(),
+                    verifiedBy: state.currentUser.uid
+                }
+            );
+
+            const f = state.facilities.find(x => x.id === id);
+            if (f) f.verificationStatus = "Approved";
+        }
+
+        state.selectedIds.clear();
+
+        updateStats();
+        renderQueue();
+
+    } catch (e) {
+
+        console.error("Bulk approve failed:", e);
+        alert("Bulk approve failed: " + e.message);
+
+    } finally {
+
+        if (DOM.bulkApproveBtn) {
+            DOM.bulkApproveBtn.disabled = false;
+            DOM.bulkApproveBtn.textContent = "✓ Approve Selected";
+        }
+    }
+}
+
+
+function exportFacilitiesCSV() {
+
+    if (!state.facilities.length) {
+        alert("No facilities to export.");
+        return;
+    }
+
+    const headers = [
+        "Name",
+        "Manager",
+        "Address",
+        "Type",
+        "Capacity",
+        "Current Occupancy",
+        "Status",
+        "Verification",
+        "Latitude",
+        "Longitude",
+        "Contact",
+        "Submitted By",
+        "Notes",
+        "Rejection Reason"
+    ];
+
+    const rows = state.facilities.map(f => [
+        f.name,
+        f.managerName,
+        f.address,
+        f.facilityType,
+        f.capacity,
+        f.currentOccupancy,
+        f.status,
+        f.verificationStatus,
+        f.latitude,
+        f.longitude,
+        f.contactNumber,
+        f.submittedByEmail,
+        f.notes,
+        f.rejectionReason || ""
+    ]);
+
+    const escape = (val) => {
+
+        if (val === null || val === undefined) return "";
+
+        const str = String(val).replace(/"/g, '""');
+
+        return /[",\n]/.test(str) ? `"${str}"` : str;
+    };
+
+    const csv = [
+        headers.map(escape).join(","),
+        ...rows.map(r => r.map(escape).join(","))
+    ].join("\n");
+
+    const blob = new Blob([csv], {
+        type: "text/csv;charset=utf-8;"
+    });
+
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+
+    const date = new Date().toISOString().slice(0, 10);
+
+    link.href = url;
+    link.download = `evacquick-facilities-${date}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
 }
 
 
@@ -698,6 +1081,7 @@ async function confirmDelete(f) {
         await deleteDoc(doc(db, "facilities", f.id));
 
         state.facilities = state.facilities.filter(x => x.id !== f.id);
+        state.selectedIds.delete(f.id);
 
         updateStats();
         renderQueue();
@@ -795,6 +1179,39 @@ function setupEvents() {
 
         await loadFacilities();
         await loadReports();
+    });
+
+
+    DOM.bulkApproveBtn?.addEventListener("click", approveSelected);
+
+    DOM.exportCsvBtn?.addEventListener("click", exportFacilitiesCSV);
+
+    DOM.selectAllCheckbox?.addEventListener("change", (e) => {
+
+        const checked = e.target.checked;
+
+        state.selectedIds.clear();
+
+        if (checked) {
+            state.facilities
+                .filter(f => f.verificationStatus === "Pending")
+                .forEach(f => state.selectedIds.add(f.id));
+        }
+
+        renderQueue();
+    });
+
+
+    DOM.rejectCloseBtn?.addEventListener("click", closeRejectModal);
+    DOM.rejectCancelBtn?.addEventListener("click", closeRejectModal);
+    DOM.rejectBackdrop?.addEventListener("click", closeRejectModal);
+    DOM.rejectConfirmBtn?.addEventListener("click", confirmReject);
+
+    document.addEventListener("keydown", e => {
+        if (e.key === "Escape" && DOM.rejectModal &&
+            !DOM.rejectModal.classList.contains("hidden")) {
+            closeRejectModal();
+        }
     });
 }
 

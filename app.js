@@ -1021,6 +1021,9 @@ function normalizeResidentFacility(documentSnapshot) {
         verificationStatus:
             data.verificationStatus || CONFIG.VERIFICATION_PENDING,
 
+        // ✅ NEW: read the rejection reason from Firestore
+        rejectionReason: data.rejectionReason || "",
+
         designation: CONFIG.RESIDENT_DESIGNATION,
 
         submittedBy: data.submittedBy || null
@@ -1345,7 +1348,15 @@ function getVerificationBadge(facility) {
     }
 
     if (status === "Rejected") {
-        return { text: "✗ Rejected", cls: "facility-badge is-rejected" };
+
+        const reason = facility.rejectionReason
+            ? ` — ${facility.rejectionReason}`
+            : "";
+
+        return {
+            text: `✗ Rejected${reason}`,
+            cls: "facility-badge is-rejected"
+        };
     }
 
     return { text: "⏳ Pending Verification", cls: "facility-badge is-pending" };
@@ -2032,6 +2043,19 @@ function openFacilityDetails(facility) {
 
         const badgeInfo = getVerificationBadge(facility);
         appendDetail(grid, "Verification", badgeInfo.text);
+
+        // ✅ NEW: show the rejection reason in the details modal
+        if (
+            facility.verificationStatus === "Rejected" &&
+            facility.rejectionReason
+        ) {
+            appendDetail(
+                grid,
+                "Reason for Rejection",
+                facility.rejectionReason,
+                true
+            );
+        }
 
         appendDetail(grid, "Notes", facility.notes || CONFIG.NOT_AVAILABLE, true);
         appendDetail(
@@ -3176,9 +3200,6 @@ function setupEventListeners() {
     });
 
     DOM.signOutButton?.addEventListener("click", async () => {
-
-        const confirmed = window.confirm("Sign out?");
-        if (!confirmed) return;
 
         try {
             await signOut(auth);

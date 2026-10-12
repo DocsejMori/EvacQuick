@@ -73,7 +73,7 @@
 
 
     <!-- =========================================================
-         ACCESS DENIED (shown if not admin)
+         ACCESS DENIED
          ========================================================= -->
 
     <main
@@ -104,10 +104,6 @@
         class="admin-dashboard hidden"
     >
 
-        <!-- =====================================================
-             STATS
-             ===================================================== -->
-
         <section class="admin-stats">
 
             <div class="admin-stat is-pending">
@@ -132,10 +128,6 @@
 
         </section>
 
-
-        <!-- =====================================================
-             TABS
-             ===================================================== -->
 
         <section class="admin-tabs">
 
@@ -187,6 +179,23 @@
 
             <button
                 type="button"
+                class="btn btn-primary admin-bulk-approve"
+                id="admin-bulk-approve-btn"
+                hidden
+            >
+                ✓ Approve Selected
+            </button>
+
+            <button
+                type="button"
+                class="btn btn-ghost"
+                id="admin-export-csv-btn"
+            >
+                📥 Export CSV
+            </button>
+
+            <button
+                type="button"
                 class="btn btn-ghost btn-sm admin-refresh"
                 id="admin-refresh-btn"
             >
@@ -196,9 +205,24 @@
         </section>
 
 
-        <!-- =====================================================
-             QUEUE
-             ===================================================== -->
+        <section
+            id="admin-bulk-bar"
+            class="admin-bulk-bar"
+            hidden
+        >
+            <label class="admin-bulk-select-all">
+                <input type="checkbox" id="admin-select-all">
+                <span>Select all pending</span>
+            </label>
+
+            <span
+                id="admin-selected-count"
+                class="admin-selected-count"
+            >
+                0 selected
+            </span>
+        </section>
+
 
         <section
             id="admin-queue"
@@ -207,6 +231,94 @@
         ></section>
 
     </main>
+
+
+    <!-- =========================================================
+         REJECTION REASON MODAL
+         ========================================================= -->
+
+    <div
+        id="admin-reject-modal"
+        class="admin-modal hidden"
+        aria-hidden="true"
+    >
+
+        <div
+            class="admin-modal-backdrop"
+            id="admin-reject-backdrop"
+        ></div>
+
+        <div
+            class="admin-modal-dialog"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="admin-reject-title"
+        >
+
+            <div class="admin-modal-header">
+
+                <div>
+                    <span class="admin-modal-eyebrow">
+                        REJECT FACILITY
+                    </span>
+
+                    <h2 id="admin-reject-title">
+                        Why are you rejecting this?
+                    </h2>
+
+                    <p id="admin-reject-subtitle">
+                        This reason will be saved and shown to the
+                        submitter.
+                    </p>
+                </div>
+
+                <button
+                    id="admin-reject-close-btn"
+                    class="admin-modal-close"
+                    type="button"
+                    aria-label="Close"
+                >
+                    &times;
+                </button>
+
+            </div>
+
+            <textarea
+                id="admin-reject-reason"
+                class="form-textarea"
+                rows="5"
+                placeholder="Example: ID photo is blurry and cannot be verified. Please retake and resubmit."
+            ></textarea>
+
+            <div
+                id="admin-reject-message"
+                class="form-message"
+                aria-live="polite"
+            ></div>
+
+            <div class="admin-modal-actions">
+
+                <button
+                    id="admin-reject-cancel-btn"
+                    class="btn btn-ghost"
+                    type="button"
+                >
+                    Cancel
+                </button>
+
+                <button
+                    id="admin-reject-confirm-btn"
+                    class="btn admin-reject-confirm"
+                    type="button"
+                >
+                    ✗ Reject Facility
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
 
 
     <!-- =========================================================
@@ -220,10 +332,6 @@
         <img id="admin-lightbox-img" src="" alt="Enlarged photo">
     </div>
 
-
-    <!-- =========================================================
-         ADMIN LOGIC
-         ========================================================= -->
 
     <script type="module" src="admin.js"></script>
 
