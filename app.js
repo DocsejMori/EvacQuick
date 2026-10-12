@@ -71,14 +71,6 @@ const CONFIG = {
         "Temporarily Closed"
     ],
 
-    REALTIME_STATUSES: [
-        "Accepting Evacuees Now",
-        "Open – Accepting Soon",
-        "Open – Standing By",
-        "At Capacity – Not Accepting",
-        "Closed Temporarily"
-    ],
-
     FACILITY_DESIGNATION: "Resident-Submitted Facility",
 
     RESIDENT_DESIGNATION: "Resident Submitted",
@@ -96,10 +88,10 @@ const CONFIG = {
 
 
 /* =========================================================================
-   2. RATE LIMITING (soft, per-browser)
+   2. RATE LIMITING
    ========================================================================= */
 
-const RATE_LIMIT_MS = 5 * 60 * 1000; /* 5 minutes */
+const RATE_LIMIT_MS = 5 * 60 * 1000;
 
 function checkRateLimit(key) {
 
@@ -131,7 +123,6 @@ function checkRateLimit(key) {
 
 
 function markRateLimit(key) {
-
     localStorage.setItem(key, String(Date.now()));
 }
 
@@ -146,8 +137,7 @@ function setButtonLoading(button, text) {
 
     button.disabled = true;
 
-    button.innerHTML =
-        `<span class="spinner"></span>${text}`;
+    button.innerHTML = `<span class="spinner"></span>${text}`;
 }
 
 
@@ -215,161 +205,111 @@ const DOM = {
 
     locateButton: document.getElementById("locate-btn"),
 
-    headerActions:
-        document.querySelector(".header-actions"),
+    headerActions: document.querySelector(".header-actions"),
 
-    authUserLabel:
-        document.getElementById("auth-user-label"),
+    authUserLabel: document.getElementById("auth-user-label"),
 
-    signInButton:
-        document.getElementById("signin-btn"),
+    signInButton: document.getElementById("signin-btn"),
 
-    signOutButton:
-        document.getElementById("signout-btn"),
+    signOutButton: document.getElementById("signout-btn"),
 
-    adminDashboardButton:
-        document.getElementById("admin-dashboard-btn"),
+    adminDashboardButton: document.getElementById("admin-dashboard-btn"),
 
-    locationStatus:
-        document.getElementById("location-status"),
+    locationStatus: document.getElementById("location-status"),
 
-    searchRadiusSelect:
-        document.getElementById("search-radius-select"),
+    searchRadiusSelect: document.getElementById("search-radius-select"),
 
-    facilityCount:
-        document.getElementById("facility-count"),
+    facilityCount: document.getElementById("facility-count"),
 
-    facilityList:
-        document.getElementById("facility-list"),
+    facilityList: document.getElementById("facility-list"),
 
-    sidebarMessages:
-        document.getElementById("sidebar-messages"),
+    sidebarMessages: document.getElementById("sidebar-messages"),
 
-    routeSummary:
-        document.getElementById("route-summary"),
+    routeSummary: document.getElementById("route-summary"),
 
-    routeDestination:
-        document.getElementById("route-dest-name"),
+    routeDestination: document.getElementById("route-dest-name"),
 
-    routeDistance:
-        document.getElementById("route-distance"),
+    routeDistance: document.getElementById("route-distance"),
 
-    routeDuration:
-        document.getElementById("route-duration"),
+    routeDuration: document.getElementById("route-duration"),
 
-    clearRouteButton:
-        document.getElementById("clear-route-btn"),
+    clearRouteButton: document.getElementById("clear-route-btn"),
 
-    facilityTypeFilter:
-        document.getElementById("facility-type-select"),
+    facilityTypeFilter: document.getElementById("facility-type-select"),
 
-    availabilityFilter:
-        document.getElementById("availability-select"),
+    availabilityFilter: document.getElementById("availability-select"),
 
-    capacityFilter:
-        document.getElementById("capacity-select"),
+    capacityFilter: document.getElementById("capacity-select"),
 
-    facilityModal:
-        document.getElementById("facility-modal"),
+    facilityModal: document.getElementById("facility-modal"),
 
-    facilityModalBackdrop:
-        document.getElementById("facility-modal-backdrop"),
+    facilityModalBackdrop: document.getElementById("facility-modal-backdrop"),
 
-    facilityModalTitle:
-        document.getElementById("facility-modal-title"),
+    facilityModalTitle: document.getElementById("facility-modal-title"),
 
-    facilityModalSubtitle:
-        document.getElementById("facility-modal-subtitle"),
+    facilityModalSubtitle: document.getElementById("facility-modal-subtitle"),
 
-    closeFacilityModalButton:
-        document.getElementById("close-facility-modal-btn"),
+    closeFacilityModalButton: document.getElementById("close-facility-modal-btn"),
 
-    cancelFacilityButton:
-        document.getElementById("cancel-facility-btn"),
+    cancelFacilityButton: document.getElementById("cancel-facility-btn"),
 
-    facilityForm:
-        document.getElementById("facility-submission-form"),
+    facilityForm: document.getElementById("facility-submission-form"),
 
-    facilityFormMessage:
-        document.getElementById("facility-form-message"),
+    facilityFormMessage: document.getElementById("facility-form-message"),
 
-    submitFacilityButton:
-        document.getElementById("submit-facility-btn"),
+    submitFacilityButton: document.getElementById("submit-facility-btn"),
 
-    photoSectionHelp:
-        document.getElementById("photo-section-help"),
+    photoSectionHelp: document.getElementById("photo-section-help"),
 
-    idPhotoRequired:
-        document.getElementById("id-photo-required"),
+    idPhotoRequired: document.getElementById("id-photo-required"),
 
-    centerPhotoRequired:
-        document.getElementById("center-photo-required"),
+    centerPhotoRequired: document.getElementById("center-photo-required"),
 
-    currentIdPhotoPreview:
-        document.getElementById("current-id-photo-preview"),
+    currentIdPhotoPreview: document.getElementById("current-id-photo-preview"),
 
-    currentCenterPhotoPreview:
-        document.getElementById("current-center-photo-preview"),
+    currentCenterPhotoPreview: document.getElementById("current-center-photo-preview"),
 
-    useMyLocationButton:
-        document.getElementById("use-my-location-btn"),
+    useMyLocationButton: document.getElementById("use-my-location-btn"),
 
-    submissionLocationStatus:
-        document.getElementById("submission-location-status"),
+    clearLocationButton: document.getElementById("clear-location-btn"),
 
-    facilityLatitude:
-        document.getElementById("facility-latitude"),
+    submissionLocationStatus: document.getElementById("submission-location-status"),
 
-    facilityLongitude:
-        document.getElementById("facility-longitude"),
+    facilityLatitude: document.getElementById("facility-latitude"),
 
-    zoomInButton:
-        document.getElementById("map-zoom-in"),
+    facilityLongitude: document.getElementById("facility-longitude"),
 
-    zoomOutButton:
-        document.getElementById("map-zoom-out"),
+    zoomInButton: document.getElementById("map-zoom-in"),
 
-    facilityDetailsModal:
-        document.getElementById("facility-details-modal"),
+    zoomOutButton: document.getElementById("map-zoom-out"),
 
-    facilityDetailsBackdrop:
-        document.getElementById("facility-details-backdrop"),
+    facilityDetailsModal: document.getElementById("facility-details-modal"),
 
-    facilityDetailsTitle:
-        document.getElementById("facility-details-title"),
+    facilityDetailsBackdrop: document.getElementById("facility-details-backdrop"),
 
-    facilityDetailsSubtitle:
-        document.getElementById("facility-details-subtitle"),
+    facilityDetailsTitle: document.getElementById("facility-details-title"),
 
-    facilityDetailsBody:
-        document.getElementById("facility-details-body"),
+    facilityDetailsSubtitle: document.getElementById("facility-details-subtitle"),
 
-    closeFacilityDetailsButton:
-        document.getElementById("close-facility-details-btn"),
+    facilityDetailsBody: document.getElementById("facility-details-body"),
 
-    reportModal:
-        document.getElementById("report-modal"),
+    closeFacilityDetailsButton: document.getElementById("close-facility-details-btn"),
 
-    reportModalBackdrop:
-        document.getElementById("report-modal-backdrop"),
+    reportModal: document.getElementById("report-modal"),
 
-    reportModalSubtitle:
-        document.getElementById("report-modal-subtitle"),
+    reportModalBackdrop: document.getElementById("report-modal-backdrop"),
 
-    closeReportModalButton:
-        document.getElementById("close-report-modal-btn"),
+    reportModalSubtitle: document.getElementById("report-modal-subtitle"),
 
-    cancelReportButton:
-        document.getElementById("cancel-report-btn"),
+    closeReportModalButton: document.getElementById("close-report-modal-btn"),
 
-    reportForm:
-        document.getElementById("report-form"),
+    cancelReportButton: document.getElementById("cancel-report-btn"),
 
-    reportFormMessage:
-        document.getElementById("report-form-message"),
+    reportForm: document.getElementById("report-form"),
 
-    submitReportButton:
-        document.getElementById("submit-report-btn")
+    reportFormMessage: document.getElementById("report-form-message"),
+
+    submitReportButton: document.getElementById("submit-report-btn")
 };
 
 
@@ -470,15 +410,142 @@ function initializeMap() {
         observer.observe(document.getElementById("map"));
     }
 
-
-    /* Hide the map loading overlay once Leaflet is ready */
-
     const overlay = document.getElementById("map-loading-overlay");
 
     if (overlay) {
         setTimeout(() => {
             overlay.classList.add("hidden");
         }, 400);
+    }
+}
+
+
+/* =========================================================================
+   5.5 SUBMISSION MINI-MAP
+   ========================================================================= */
+
+let submissionMap = null;
+let submissionMarker = null;
+
+function initializeSubmissionMap() {
+
+    const container = document.getElementById("submission-map");
+    if (!container) return;
+
+    if (submissionMap) {
+        setTimeout(() => submissionMap.invalidateSize(), 100);
+        return;
+    }
+
+    const startCenter = state.userLocation
+        ? [state.userLocation.latitude, state.userLocation.longitude]
+        : [CONFIG.FALLBACK_CENTER.latitude, CONFIG.FALLBACK_CENTER.longitude];
+
+    submissionMap = L.map(container, {
+        zoomControl: true,
+        attributionControl: false
+    }).setView(startCenter, 13);
+
+    L.tileLayer(
+        "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+        { maxZoom: 19 }
+    ).addTo(submissionMap);
+
+    submissionMap.on("click", event => {
+        setSubmissionLocation(
+            event.latlng.lat,
+            event.latlng.lng,
+            `Pin placed at ${event.latlng.lat.toFixed(5)}, ${event.latlng.lng.toFixed(5)}`
+        );
+    });
+
+    setTimeout(() => submissionMap.invalidateSize(), 200);
+}
+
+
+function setSubmissionLocation(latitude, longitude, message) {
+
+    document.getElementById("facility-latitude").value =
+        Number(latitude).toFixed(7);
+
+    document.getElementById("facility-longitude").value =
+        Number(longitude).toFixed(7);
+
+    if (submissionMap) {
+
+        if (!submissionMarker) {
+
+            submissionMarker = L.marker(
+                [latitude, longitude],
+                { draggable: true }
+            ).addTo(submissionMap);
+
+            submissionMarker.on("dragend", e => {
+
+                const pos = e.target.getLatLng();
+
+                document.getElementById("facility-latitude").value =
+                    pos.lat.toFixed(7);
+                document.getElementById("facility-longitude").value =
+                    pos.lng.toFixed(7);
+
+                updateSubmissionLocationStatus(
+                    `Pin at ${pos.lat.toFixed(5)}, ${pos.lng.toFixed(5)}`
+                );
+            });
+
+        } else {
+            submissionMarker.setLatLng([latitude, longitude]);
+        }
+
+        submissionMap.setView([latitude, longitude], 16);
+    }
+
+    const wrap = document.querySelector(".submission-map-wrap");
+    if (wrap) wrap.classList.add("has-pin");
+
+    const clearBtn = document.getElementById("clear-location-btn");
+    if (clearBtn) clearBtn.disabled = false;
+
+    updateSubmissionLocationStatus(message);
+}
+
+
+function updateSubmissionLocationStatus(message) {
+
+    const status = document.getElementById("submission-location-status");
+    if (!status) return;
+
+    status.textContent = message;
+    status.classList.add("is-success");
+    status.classList.remove("is-error");
+}
+
+
+function clearSubmissionLocation() {
+
+    if (submissionMarker && submissionMap) {
+        submissionMap.removeLayer(submissionMarker);
+        submissionMarker = null;
+    }
+
+    const latEl = document.getElementById("facility-latitude");
+    const lngEl = document.getElementById("facility-longitude");
+
+    if (latEl) latEl.value = "";
+    if (lngEl) lngEl.value = "";
+
+    const wrap = document.querySelector(".submission-map-wrap");
+    if (wrap) wrap.classList.remove("has-pin");
+
+    const clearBtn = document.getElementById("clear-location-btn");
+    if (clearBtn) clearBtn.disabled = true;
+
+    const status = document.getElementById("submission-location-status");
+
+    if (status) {
+        status.textContent = "No location selected yet.";
+        status.classList.remove("is-success", "is-error");
     }
 }
 
@@ -566,7 +633,6 @@ async function loadUserRole(user) {
 
 
 function isResident() {
-
     return (
         state.currentUser !== null &&
         state.currentUserRole === "resident"
@@ -575,7 +641,6 @@ function isResident() {
 
 
 function isAdmin() {
-
     return (
         state.currentUser !== null &&
         state.currentUserRole === "admin"
@@ -584,7 +649,6 @@ function isAdmin() {
 
 
 function isOwner(facility) {
-
     return (
         state.currentUser !== null &&
         facility &&
@@ -594,7 +658,6 @@ function isOwner(facility) {
 
 
 function canEdit(facility) {
-
     return isOwner(facility) || isAdmin();
 }
 
@@ -602,7 +665,6 @@ function canEdit(facility) {
 function applyAuthUI() {
 
     if (!DOM.headerActions) return;
-
 
     let existingAddBtn = document.getElementById("add-facility-btn");
 
@@ -629,33 +691,19 @@ function applyAuthUI() {
         }
     }
 
-
     const signedIn = !!state.currentUser;
 
-    if (DOM.signInButton) {
-        DOM.signInButton.hidden = signedIn;
-    }
-
-    if (DOM.signOutButton) {
-        DOM.signOutButton.hidden = !signedIn;
-    }
-
-    if (DOM.adminDashboardButton) {
-        DOM.adminDashboardButton.hidden = !isAdmin();
-    }
-
+    if (DOM.signInButton) DOM.signInButton.hidden = signedIn;
+    if (DOM.signOutButton) DOM.signOutButton.hidden = !signedIn;
+    if (DOM.adminDashboardButton) DOM.adminDashboardButton.hidden = !isAdmin();
 
     if (DOM.authUserLabel) {
 
         if (signedIn) {
-
             const email = state.currentUser.email || "";
             const role = state.currentUserRole || "user";
-
             DOM.authUserLabel.textContent = `${email} (${role})`;
-
         } else {
-
             DOM.authUserLabel.textContent = "Guest";
         }
     }
@@ -669,10 +717,8 @@ function watchAuthState() {
         state.currentUser = user || null;
 
         if (!user) {
-
             state.currentUserRole = null;
             state.isAuthResolved = true;
-
             applyAuthUI();
             return;
         }
@@ -698,21 +744,18 @@ function requestUserLocation() {
     if (state.isLocating) return;
 
     if (!navigator.geolocation) {
-
         handleLocationError({
             code: 0,
             message: "Geolocation is not supported by this browser."
         });
-
         return;
     }
-
 
     state.isLocating = true;
 
     if (DOM.locateButton) {
         DOM.locateButton.disabled = true;
-        DOM.locateButton.textContent = "Finding Location...";
+        DOM.locateButton.textContent = "Locating…";
     }
 
     if (DOM.locationStatus) {
@@ -720,7 +763,6 @@ function requestUserLocation() {
     }
 
     setStatus("Detecting location...", "loading");
-
 
     navigator.geolocation.getCurrentPosition(
 
@@ -730,12 +772,10 @@ function requestUserLocation() {
             const longitude = Number(position.coords.longitude);
 
             if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
-
                 handleLocationError({
                     code: 0,
                     message: "The browser returned an invalid location."
                 });
-
                 return;
             }
 
@@ -746,7 +786,7 @@ function requestUserLocation() {
             state.map.setView([latitude, longitude], CONFIG.USER_ZOOM);
 
             if (DOM.locationStatus) {
-                DOM.locationStatus.textContent = "Location detected.";
+                DOM.locationStatus.textContent = "Detecting place name…";
             }
 
             setStatus("Location detected.", "ok");
@@ -755,10 +795,19 @@ function requestUserLocation() {
 
             if (DOM.locateButton) {
                 DOM.locateButton.disabled = false;
-                DOM.locateButton.textContent = "Find My Location";
+                DOM.locateButton.textContent = "Update My Location";
             }
 
             fetchAndDisplayFacilities();
+
+            reverseGeocode(latitude, longitude).then(place => {
+
+                if (!DOM.locationStatus) return;
+
+                DOM.locationStatus.textContent = place
+                    ? `Detected: ${place}`
+                    : "Location detected.";
+            });
         },
 
         error => handleLocationError(error),
@@ -778,9 +827,8 @@ function handleLocationError(error) {
 
     if (DOM.locateButton) {
         DOM.locateButton.disabled = false;
-        DOM.locateButton.textContent = "Find My Location";
+        DOM.locateButton.textContent = "Retry Location";
     }
-
 
     let message = "Unable to determine your location.";
 
@@ -796,7 +844,6 @@ function handleLocationError(error) {
             break;
     }
 
-
     if (DOM.locationStatus) {
         DOM.locationStatus.textContent = "Location unavailable.";
     }
@@ -804,6 +851,53 @@ function handleLocationError(error) {
     setStatus("Location unavailable.", "error");
 
     showSidebarMessage(message, "error");
+}
+
+
+/* =========================================================================
+   8.5 REVERSE GEOCODING
+   ========================================================================= */
+
+async function reverseGeocode(latitude, longitude) {
+
+    try {
+
+        const url =
+            `https://nominatim.openstreetmap.org/reverse?` +
+            `lat=${latitude}&lon=${longitude}&format=json&zoom=16`;
+
+        const response = await fetch(url, {
+            headers: { "Accept": "application/json" }
+        });
+
+        if (!response.ok) return null;
+
+        const data = await response.json();
+
+        if (!data || !data.address) return null;
+
+        const a = data.address;
+
+        const parts = [
+            a.village || a.suburb || a.neighbourhood || a.hamlet,
+            a.town || a.city || a.municipality,
+            a.state || a.province
+        ].filter(Boolean);
+
+        if (!parts.length && data.display_name) {
+            return String(data.display_name)
+                .split(",")
+                .slice(0, 2)
+                .join(", ")
+                .trim();
+        }
+
+        return parts.join(", ") || null;
+
+    } catch (error) {
+        console.warn("Reverse geocoding failed:", error);
+        return null;
+    }
 }
 
 
@@ -821,7 +915,6 @@ function renderUserMarker() {
         iconSize: [18, 18],
         iconAnchor: [9, 9]
     });
-
 
     if (!state.userMarker) {
 
@@ -852,8 +945,7 @@ function normalizeCapacity(value) {
         return null;
     }
 
-    const numeric =
-        Number(String(value).replace(/,/g, "").trim());
+    const numeric = Number(String(value).replace(/,/g, "").trim());
 
     if (!Number.isFinite(numeric) || numeric <= 0) return null;
 
@@ -915,8 +1007,6 @@ function normalizeResidentFacility(documentSnapshot) {
 
         status: data.status || "Unknown",
 
-        realTimeStatus: data.realTimeStatus || "Unknown",
-
         openingTime: data.openingTime || null,
         closingTime: data.closingTime || null,
 
@@ -937,7 +1027,7 @@ function normalizeResidentFacility(documentSnapshot) {
 
 
 /* =========================================================================
-   11. LOAD FACILITIES (with query filtering to satisfy Firestore rules)
+   11. LOAD FACILITIES
    ========================================================================= */
 
 async function fetchResidentFacilities() {
@@ -955,67 +1045,44 @@ async function fetchResidentFacilities() {
     try {
 
         try {
-
             const approvedSnap = await getDocs(
                 query(col, where("verificationStatus", "==", "Approved"))
             );
-
-            approvedSnap.forEach(ds => {
-                results.set(ds.id, ds);
-            });
-
+            approvedSnap.forEach(ds => results.set(ds.id, ds));
         } catch (e) {
             console.warn("Could not read approved facilities:", e.message);
         }
 
-
         if (uid) {
-
             try {
-
                 const mineSnap = await getDocs(
                     query(col, where("submittedBy", "==", uid))
                 );
-
-                mineSnap.forEach(ds => {
-                    results.set(ds.id, ds);
-                });
-
+                mineSnap.forEach(ds => results.set(ds.id, ds));
             } catch (e) {
                 console.warn("Could not read own submissions:", e.message);
             }
         }
 
-
         if (admin) {
-
             try {
-
                 const allSnap = await getDocs(col);
-
-                allSnap.forEach(ds => {
-                    results.set(ds.id, ds);
-                });
-
+                allSnap.forEach(ds => results.set(ds.id, ds));
             } catch (e) {
                 console.warn("Could not read all facilities (admin):", e.message);
             }
         }
 
-
         const facilities = [];
 
         results.forEach(ds => {
-
             const facility = normalizeResidentFacility(ds);
-
             if (facility) facilities.push(facility);
         });
 
         return facilities;
 
     } catch (error) {
-
         console.error("Failed to load resident facilities:", error);
         return [];
     }
@@ -1240,23 +1307,14 @@ function getVerificationBadge(facility) {
     const status = facility.verificationStatus;
 
     if (status === "Approved") {
-        return {
-            text: "✓ Verified",
-            cls: "facility-badge is-verified"
-        };
+        return { text: "✓ Verified", cls: "facility-badge is-verified" };
     }
 
     if (status === "Rejected") {
-        return {
-            text: "✗ Rejected",
-            cls: "facility-badge is-rejected"
-        };
+        return { text: "✗ Rejected", cls: "facility-badge is-rejected" };
     }
 
-    return {
-        text: "⏳ Pending Verification",
-        cls: "facility-badge is-pending"
-    };
+    return { text: "⏳ Pending Verification", cls: "facility-badge is-pending" };
 }
 
 
@@ -1285,32 +1343,25 @@ function renderFacilityMarkers() {
         const isResident = facility.source === "Resident Submission";
 
         const icon = L.divIcon({
-
             className: "",
-
             html:
                 `<div class="facility-map-marker${isResident ? " is-resident" : ""}"></div>`,
-
             iconSize: [30, 30],
             iconAnchor: [15, 15],
             popupAnchor: [0, -15]
         });
-
 
         const marker = L.marker(
             [facility.latitude, facility.longitude],
             { icon }
         );
 
-
         marker.bindPopup(buildFacilityPopup(facility));
 
         marker.on("click", () => {
-
             state.selectedFacility = facility;
             renderFacilities();
         });
-
 
         marker.addTo(state.map);
         state.facilityMarkers.push(marker);
@@ -1327,22 +1378,18 @@ function buildFacilityPopup(facility) {
     const container = document.createElement("div");
     container.className = "map-popup";
 
-
     const name = document.createElement("h3");
     name.className = "map-popup-name";
     name.textContent = facility.name;
-
 
     const type = document.createElement("div");
     type.className = "map-popup-type";
     type.textContent = facility.facilityType;
 
-
     const designation = document.createElement("div");
     designation.className = "map-popup-designation";
     designation.textContent =
-        facility.realTimeStatus || facility.designation;
-
+        facility.status || facility.realTimeStatus || facility.designation;
 
     const viewButton = document.createElement("button");
     viewButton.type = "button";
@@ -1354,7 +1401,6 @@ function buildFacilityPopup(facility) {
         openFacilityDetails(facility);
     });
 
-
     const routeButton = document.createElement("button");
     routeButton.type = "button";
     routeButton.className = "btn btn-primary btn-sm map-popup-route";
@@ -1363,7 +1409,6 @@ function buildFacilityPopup(facility) {
     routeButton.addEventListener("click", () => {
         routeToFacility(facility);
     });
-
 
     container.appendChild(name);
     container.appendChild(type);
@@ -1403,13 +1448,11 @@ function renderFacilities() {
         return;
     }
 
-
     visibleFacilities.forEach((facility, index) => {
         DOM.facilityList.appendChild(
             buildFacilityCard(facility, index + 1)
         );
     });
-
 
     updateFacilityCount(visibleFacilities.length);
 }
@@ -1433,10 +1476,8 @@ function buildFacilityCard(facility, rank) {
         card.classList.add("is-selected");
     }
 
-
     const header = document.createElement("div");
     header.className = "facility-card-header";
-
 
     if (facility.centerPhotoUrl) {
 
@@ -1452,7 +1493,6 @@ function buildFacilityCard(facility, rank) {
 
         header.appendChild(thumb);
     }
-
 
     const titleWrap = document.createElement("div");
     titleWrap.className = "facility-card-title-wrap";
@@ -1470,11 +1510,9 @@ function buildFacilityCard(facility, rank) {
 
     header.appendChild(titleWrap);
 
-
     const type = document.createElement("div");
     type.className = "facility-type";
     type.textContent = facility.facilityType;
-
 
     const badgeInfo = getVerificationBadge(facility);
 
@@ -1482,18 +1520,18 @@ function buildFacilityCard(facility, rank) {
     designation.className = badgeInfo.cls;
     designation.textContent = badgeInfo.text;
 
-
     const metadata = document.createElement("div");
     metadata.className = "facility-meta";
 
     appendMetaRow(metadata, "Manager", facility.managerName);
-    appendMetaRow(metadata, "Status", facility.status);
-    appendMetaRow(metadata, "Real-Time", facility.realTimeStatus);
-
+    appendMetaRow(
+        metadata,
+        "Status",
+        facility.status || facility.realTimeStatus || "Unknown"
+    );
 
     const actions = document.createElement("div");
     actions.className = "facility-card-actions";
-
 
     const viewButton = document.createElement("button");
     viewButton.type = "button";
@@ -1505,7 +1543,6 @@ function buildFacilityCard(facility, rank) {
         openFacilityDetails(facility);
     });
 
-
     const routeButton = document.createElement("button");
     routeButton.type = "button";
     routeButton.className = "btn btn-primary";
@@ -1516,10 +1553,8 @@ function buildFacilityCard(facility, rank) {
         routeToFacility(facility);
     });
 
-
     actions.appendChild(viewButton);
     actions.appendChild(routeButton);
-
 
     if (canEdit(facility)) {
 
@@ -1536,16 +1571,18 @@ function buildFacilityCard(facility, rank) {
         actions.appendChild(editButton);
     }
 
-
     card.appendChild(header);
     card.appendChild(type);
     card.appendChild(designation);
     card.appendChild(metadata);
     card.appendChild(actions);
 
-
     card.addEventListener("click", () => selectFacility(facility));
 
+    // Stagger the entrance animation based on position
+    if (typeof rank === "number") {
+        card.style.animationDelay = `${Math.min(rank - 1, 12) * 35}ms`;
+    }
 
     item.appendChild(card);
 
@@ -1620,7 +1657,6 @@ function setSearchRadius(radiusKm) {
     const numeric = Number(radiusKm);
 
     if (!Number.isFinite(numeric) || numeric <= 0) return;
-
     if (!CONFIG.SEARCH_RADIUS_OPTIONS.includes(numeric)) return;
 
     state.searchRadiusKm = numeric;
@@ -1662,13 +1698,11 @@ async function fetchAndDisplayFacilities() {
 
     setStatus("Loading evacuation centers...", "loading");
 
-
     try {
 
         let facilities = await fetchResidentFacilities();
 
         if (state.userLocation) {
-
             facilities = calculateFacilityDistances(facilities)
                 .filter(f =>
                     Number.isFinite(f.distanceKm) &&
@@ -1683,7 +1717,6 @@ async function fetchAndDisplayFacilities() {
 
         renderFacilities();
         renderFacilityMarkers();
-
 
         if (!facilities.length) {
 
@@ -1701,7 +1734,6 @@ async function fetchAndDisplayFacilities() {
             );
         }
 
-
     } catch (error) {
 
         console.error("Facility loading error:", error);
@@ -1714,7 +1746,6 @@ async function fetchAndDisplayFacilities() {
         setStatus("Facility data unavailable.", "error");
 
     } finally {
-
         state.isSearching = false;
     }
 }
@@ -1780,15 +1811,12 @@ async function fetchRoute(origin, destination) {
         `${CONFIG.OSRM_BASE_URL}/${coordinates}` +
         "?overview=full&geometries=geojson";
 
-
     try {
 
         const response = await fetch(url, { signal: controller.signal });
 
         if (!response.ok) {
-            throw new Error(
-                `Routing request failed: ${response.status}`
-            );
+            throw new Error(`Routing request failed: ${response.status}`);
         }
 
         const json = await response.json();
@@ -1808,12 +1836,10 @@ async function fetchRoute(origin, destination) {
 async function routeToFacility(facility) {
 
     if (!state.userLocation) {
-
         showSidebarMessage(
             "Find your location before requesting a route.",
             "error"
         );
-
         return;
     }
 
@@ -1821,7 +1847,6 @@ async function routeToFacility(facility) {
     renderFacilities();
 
     setStatus("Calculating route...", "loading");
-
 
     try {
 
@@ -1868,7 +1893,6 @@ function renderRoute(route, facility) {
         }
     ).addTo(state.map);
 
-
     const bounds = state.routeLayer.getBounds();
 
     state.map.fitBounds(bounds, { padding: [30, 30] });
@@ -1882,13 +1906,11 @@ function renderRoute(route, facility) {
     }
 
     if (DOM.routeDistance) {
-        DOM.routeDistance.textContent =
-            (route.distance / 1000).toFixed(1);
+        DOM.routeDistance.textContent = (route.distance / 1000).toFixed(1);
     }
 
     if (DOM.routeDuration) {
-        DOM.routeDuration.textContent =
-            Math.round(route.duration / 60);
+        DOM.routeDuration.textContent = Math.round(route.duration / 60);
     }
 }
 
@@ -1922,8 +1944,11 @@ function openFacilityDetails(facility) {
         appendDetail(grid, "Manager in Charge", facility.managerName);
         appendDetail(grid, "Address", facility.address, true);
         appendDetail(grid, "Facility Type", facility.facilityType);
-        appendDetail(grid, "Availability Status", facility.status);
-        appendDetail(grid, "Real-Time Status", facility.realTimeStatus);
+        appendDetail(
+            grid,
+            "Availability",
+            facility.status || facility.realTimeStatus || CONFIG.NOT_AVAILABLE
+        );
         appendDetail(grid, "Capacity", formatCapacity(facility.capacity));
         appendDetail(grid, "Current Occupancy", formatOccupancy(facility));
         appendDetail(grid, "Operating Hours", formatOperatingHours(facility));
@@ -1941,7 +1966,6 @@ function openFacilityDetails(facility) {
         );
 
         DOM.facilityDetailsBody.appendChild(grid);
-
 
         const photoSection = document.createElement("div");
 
@@ -1975,10 +1999,8 @@ function openFacilityDetails(facility) {
 
         DOM.facilityDetailsBody.appendChild(photoSection);
 
-
         const actions = document.createElement("div");
         actions.className = "facility-details-actions";
-
 
         const routeButton = document.createElement("button");
         routeButton.type = "button";
@@ -1991,7 +2013,6 @@ function openFacilityDetails(facility) {
         });
 
         actions.appendChild(routeButton);
-
 
         if (state.currentUser && !isOwner(facility)) {
 
@@ -2010,7 +2031,6 @@ function openFacilityDetails(facility) {
             actions.appendChild(reportButton);
         }
 
-
         if (canEdit(facility)) {
 
             const editButton = document.createElement("button");
@@ -2024,7 +2044,6 @@ function openFacilityDetails(facility) {
             });
 
             actions.appendChild(editButton);
-
 
             const deleteButton = document.createElement("button");
             deleteButton.type = "button";
@@ -2040,10 +2059,8 @@ function openFacilityDetails(facility) {
             actions.appendChild(deleteButton);
         }
 
-
         DOM.facilityDetailsBody.appendChild(actions);
     }
-
 
     DOM.facilityDetailsModal.classList.remove("hidden");
     DOM.facilityDetailsModal.setAttribute("aria-hidden", "false");
@@ -2147,17 +2164,14 @@ function openLightbox(url) {
 function openFacilityModal(facility = null) {
 
     if (!isResident() && !isAdmin()) {
-
         showSidebarMessage(
             "Only signed-in residents can submit an evacuation center.",
             "error"
         );
-
         return;
     }
 
     if (!DOM.facilityModal) return;
-
 
     if (DOM.facilityForm) DOM.facilityForm.reset();
     clearFacilityFormMessage();
@@ -2166,16 +2180,24 @@ function openFacilityModal(facility = null) {
     if (DOM.facilityLongitude) DOM.facilityLongitude.value = "";
 
     if (DOM.submissionLocationStatus) {
-        DOM.submissionLocationStatus.textContent = "Location not selected.";
-        DOM.submissionLocationStatus.classList.remove(
-            "is-success",
-            "is-error"
-        );
+        DOM.submissionLocationStatus.textContent = "No location selected yet.";
+        DOM.submissionLocationStatus.classList.remove("is-success", "is-error");
     }
 
     if (DOM.currentIdPhotoPreview) DOM.currentIdPhotoPreview.innerHTML = "";
     if (DOM.currentCenterPhotoPreview) DOM.currentCenterPhotoPreview.innerHTML = "";
 
+    // Reset the submission mini-map
+    if (submissionMarker && submissionMap) {
+        submissionMap.removeLayer(submissionMarker);
+        submissionMarker = null;
+    }
+
+    const mapWrap = document.querySelector(".submission-map-wrap");
+    if (mapWrap) mapWrap.classList.remove("has-pin");
+
+    const clearBtn = document.getElementById("clear-location-btn");
+    if (clearBtn) clearBtn.disabled = true;
 
     if (facility) {
 
@@ -2207,7 +2229,6 @@ function openFacilityModal(facility = null) {
         const centerPhotoEl = document.getElementById("facility-center-photo");
         if (centerPhotoEl) centerPhotoEl.required = false;
 
-
         setField("facility-name", facility.name);
         setField("facility-manager", facility.managerName);
         setField("facility-address", facility.address);
@@ -2215,12 +2236,10 @@ function openFacilityModal(facility = null) {
         setField("facility-capacity", facility.capacity);
         setField("facility-current-occupancy", facility.currentOccupancy);
         setField("facility-status", facility.status);
-        setField("facility-real-time", facility.realTimeStatus);
         setField("facility-opening-time", facility.openingTime || "");
         setField("facility-closing-time", facility.closingTime || "");
         setField("facility-contact", facility.contactNumber || "");
         setField("facility-notes", facility.notes || "");
-
 
         if (DOM.facilityLatitude) {
             DOM.facilityLatitude.value = facility.latitude ?? "";
@@ -2242,7 +2261,6 @@ function openFacilityModal(facility = null) {
                 DOM.submissionLocationStatus.classList.remove("is-error");
             }
         }
-
 
         if (DOM.currentIdPhotoPreview && facility.idPhotoUrl) {
             DOM.currentIdPhotoPreview.appendChild(
@@ -2287,15 +2305,27 @@ function openFacilityModal(facility = null) {
         if (centerPhotoEl) centerPhotoEl.required = true;
     }
 
-
     DOM.facilityModal.classList.remove("hidden");
     DOM.facilityModal.setAttribute("aria-hidden", "false");
 
     document.body.style.overflow = "hidden";
 
     setTimeout(() => {
+        initializeSubmissionMap();
+
+        if (facility &&
+            Number.isFinite(facility.latitude) &&
+            Number.isFinite(facility.longitude)) {
+
+            setSubmissionLocation(
+                facility.latitude,
+                facility.longitude,
+                `Location already set: ${facility.latitude.toFixed(5)}, ${facility.longitude.toFixed(5)}`
+            );
+        }
+
         document.getElementById("facility-name")?.focus();
-    }, 50);
+    }, 150);
 }
 
 
@@ -2383,11 +2413,9 @@ function clearFacilityFormMessage() {
 function captureSubmissionLocation() {
 
     if (!navigator.geolocation) {
-
         setSubmissionLocationError(
             "Geolocation is not supported by this browser."
         );
-
         return;
     }
 
@@ -2397,16 +2425,10 @@ function captureSubmissionLocation() {
     }
 
     if (DOM.submissionLocationStatus) {
-
         DOM.submissionLocationStatus.textContent =
             "Detecting your current location...";
-
-        DOM.submissionLocationStatus.classList.remove(
-            "is-success",
-            "is-error"
-        );
+        DOM.submissionLocationStatus.classList.remove("is-success", "is-error");
     }
-
 
     navigator.geolocation.getCurrentPosition(
 
@@ -2415,29 +2437,20 @@ function captureSubmissionLocation() {
             const latitude = Number(position.coords.latitude);
             const longitude = Number(position.coords.longitude);
 
-            if (
-                !Number.isFinite(latitude) ||
-                !Number.isFinite(longitude)
-            ) {
-
+            if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
                 setSubmissionLocationError(
                     "The browser returned an invalid location."
                 );
-
                 return;
             }
 
-            DOM.facilityLatitude.value = latitude.toFixed(7);
-            DOM.facilityLongitude.value = longitude.toFixed(7);
+            initializeSubmissionMap();
 
-            if (DOM.submissionLocationStatus) {
-
-                DOM.submissionLocationStatus.textContent =
-                    `Location captured: ${latitude.toFixed(5)}, ${longitude.toFixed(5)}`;
-
-                DOM.submissionLocationStatus.classList.add("is-success");
-                DOM.submissionLocationStatus.classList.remove("is-error");
-            }
+            setSubmissionLocation(
+                latitude,
+                longitude,
+                `Location captured: ${latitude.toFixed(5)}, ${longitude.toFixed(5)}`
+            );
 
             if (DOM.useMyLocationButton) {
                 DOM.useMyLocationButton.disabled = false;
@@ -2455,13 +2468,11 @@ function captureSubmissionLocation() {
             }
 
             if (error.code === 2) {
-                message =
-                    "Your current location could not be determined.";
+                message = "Your current location could not be determined.";
             }
 
             if (error.code === 3) {
-                message =
-                    "Location detection timed out. Please try again.";
+                message = "Location detection timed out. Please try again.";
             }
 
             setSubmissionLocationError(message);
@@ -2479,9 +2490,7 @@ function captureSubmissionLocation() {
 function setSubmissionLocationError(message) {
 
     if (DOM.submissionLocationStatus) {
-
         DOM.submissionLocationStatus.textContent = message;
-
         DOM.submissionLocationStatus.classList.add("is-error");
         DOM.submissionLocationStatus.classList.remove("is-success");
     }
@@ -2504,7 +2513,6 @@ function validateFacilitySubmission(formData, isEditing) {
     const address = String(formData.get("address") || "").trim();
     const facilityType = String(formData.get("facilityType") || "").trim();
     const status = String(formData.get("status") || "").trim();
-    const realTimeStatus = String(formData.get("realTimeStatus") || "").trim();
 
     const capacity = Number(formData.get("capacity"));
     const currentOccupancy = Number(formData.get("currentOccupancy"));
@@ -2515,11 +2523,8 @@ function validateFacilitySubmission(formData, isEditing) {
     const idPhoto = formData.get("idPhoto");
     const centerPhoto = formData.get("centerPhoto");
 
-
     if (!name) return "Please enter the evacuation center name.";
-
     if (!managerName) return "Please enter the manager's full name.";
-
     if (!address) return "Please enter the address.";
 
     if (!CONFIG.FACILITY_TYPES.includes(facilityType)) {
@@ -2530,10 +2535,7 @@ function validateFacilitySubmission(formData, isEditing) {
         return "Capacity must be a positive number.";
     }
 
-    if (
-        !Number.isFinite(currentOccupancy) ||
-        currentOccupancy < 0
-    ) {
+    if (!Number.isFinite(currentOccupancy) || currentOccupancy < 0) {
         return "Current occupancy must be zero or greater.";
     }
 
@@ -2545,25 +2547,19 @@ function validateFacilitySubmission(formData, isEditing) {
         return "Please select a valid availability status.";
     }
 
-    if (!CONFIG.REALTIME_STATUSES.includes(realTimeStatus)) {
-        return "Please select a valid real-time status.";
-    }
-
     if (
         !Number.isFinite(latitude) ||
         !Number.isFinite(longitude) ||
         latitude < -90 || latitude > 90 ||
         longitude < -180 || longitude > 180
     ) {
-        return "Please use 'Use My Location' to capture the facility's coordinates.";
+        return "Please tap the map to place a pin, or click 'Use My Location'.";
     }
-
 
     const hasIdPhoto = idPhoto instanceof File && idPhoto.size > 0;
     const hasCenterPhoto = centerPhoto instanceof File && centerPhoto.size > 0;
 
     if (!isEditing) {
-
         if (!hasIdPhoto) return "Please upload a photo of a valid ID.";
         if (!hasCenterPhoto) return "Please upload a photo of the evacuation center.";
     }
@@ -2599,7 +2595,6 @@ async function submitFacility(event) {
     if (state.isSubmitting) return;
     if (!DOM.facilityForm) return;
 
-
     let isEditing = false;
     let existingFacility = null;
 
@@ -2616,7 +2611,6 @@ async function submitFacility(event) {
         }
     }
 
-
     if (!isEditing) {
 
         const rateCheck = checkRateLimit("evacquick:lastFacilitySubmit");
@@ -2627,7 +2621,6 @@ async function submitFacility(event) {
         }
     }
 
-
     const formData = new FormData(DOM.facilityForm);
 
     const validationError = validateFacilitySubmission(formData, isEditing);
@@ -2637,40 +2630,31 @@ async function submitFacility(event) {
         return;
     }
 
-
     const currentUser = auth.currentUser;
 
     if (!currentUser) {
-
         showFacilityFormMessage(
             "You must be signed in to submit an evacuation center.",
             "error"
         );
-
         return;
     }
 
     if (!isResident() && !isAdmin()) {
-
         showFacilityFormMessage(
             "Only authenticated residents can submit evacuation centers.",
             "error"
         );
-
         return;
     }
 
-
     if (isEditing && !canEdit(existingFacility)) {
-
         showFacilityFormMessage(
             "You can only edit facilities you submitted.",
             "error"
         );
-
         return;
     }
-
 
     state.isSubmitting = true;
 
@@ -2686,7 +2670,6 @@ async function submitFacility(event) {
         "loading"
     );
 
-
     try {
 
         const capacity = Number(formData.get("capacity"));
@@ -2697,7 +2680,6 @@ async function submitFacility(event) {
 
         const hasIdPhoto = idPhoto instanceof File && idPhoto.size > 0;
         const hasCenterPhoto = centerPhoto instanceof File && centerPhoto.size > 0;
-
 
         let idPhotoUrl = existingFacility?.idPhotoUrl || null;
         let centerPhotoUrl = existingFacility?.centerPhotoUrl || null;
@@ -2724,7 +2706,6 @@ async function submitFacility(event) {
             await Promise.all(uploads);
         }
 
-
         const facilityData = {
 
             name: String(formData.get("name")).trim(),
@@ -2739,7 +2720,6 @@ async function submitFacility(event) {
             currentOccupancy,
 
             status: String(formData.get("status")),
-            realTimeStatus: String(formData.get("realTimeStatus")),
 
             openingTime: String(formData.get("openingTime") || ""),
             closingTime: String(formData.get("closingTime") || ""),
@@ -2759,7 +2739,6 @@ async function submitFacility(event) {
             submittedBy: currentUser.uid,
             submittedByEmail: currentUser.email || ""
         };
-
 
         if (isEditing) {
 
@@ -2799,14 +2778,9 @@ async function submitFacility(event) {
             );
         }
 
-
         await refreshFacilitiesAfterSubmission();
 
-
-        setTimeout(() => {
-            closeFacilityModal();
-        }, 1400);
-
+        setTimeout(() => closeFacilityModal(), 1400);
 
     } catch (error) {
 
@@ -2884,12 +2858,7 @@ let reportingFacility = null;
 function openReportModal(facility) {
 
     if (!state.currentUser) {
-
-        showSidebarMessage(
-            "Please sign in to report a facility.",
-            "error"
-        );
-
+        showSidebarMessage("Please sign in to report a facility.", "error");
         return;
     }
 
@@ -2967,14 +2936,12 @@ async function submitReport(event) {
         return;
     }
 
-
     const rateCheck = checkRateLimit("evacquick:lastReportSubmit");
 
     if (!rateCheck.allowed) {
         showReportFormMessage(rateCheck.message, "error");
         return;
     }
-
 
     const formData = new FormData(DOM.reportForm);
 
@@ -2986,11 +2953,7 @@ async function submitReport(event) {
         return;
     }
 
-    setButtonLoading(
-        DOM.submitReportButton,
-        "Submitting…"
-    );
-
+    setButtonLoading(DOM.submitReportButton, "Submitting…");
     showReportFormMessage("Submitting report...", "loading");
 
     try {
@@ -3024,7 +2987,6 @@ async function submitReport(event) {
         );
 
     } finally {
-
         resetButton(DOM.submitReportButton, "Submit Report");
     }
 }
@@ -3055,7 +3017,6 @@ async function refreshFacilitiesAfterSubmission() {
         renderFacilityMarkers();
 
     } catch (error) {
-
         console.error("Facility refresh failed:", error);
     }
 }
@@ -3069,45 +3030,16 @@ function setupEventListeners() {
 
     DOM.locateButton?.addEventListener("click", requestUserLocation);
 
-    DOM.closeFacilityModalButton?.addEventListener(
-        "click",
-        closeFacilityModal
-    );
+    DOM.closeFacilityModalButton?.addEventListener("click", closeFacilityModal);
+    DOM.cancelFacilityButton?.addEventListener("click", closeFacilityModal);
+    DOM.facilityModalBackdrop?.addEventListener("click", closeFacilityModal);
 
-    DOM.cancelFacilityButton?.addEventListener(
-        "click",
-        closeFacilityModal
-    );
+    DOM.closeFacilityDetailsButton?.addEventListener("click", closeFacilityDetails);
+    DOM.facilityDetailsBackdrop?.addEventListener("click", closeFacilityDetails);
 
-    DOM.facilityModalBackdrop?.addEventListener(
-        "click",
-        closeFacilityModal
-    );
-
-    DOM.closeFacilityDetailsButton?.addEventListener(
-        "click",
-        closeFacilityDetails
-    );
-
-    DOM.facilityDetailsBackdrop?.addEventListener(
-        "click",
-        closeFacilityDetails
-    );
-
-    DOM.closeReportModalButton?.addEventListener(
-        "click",
-        closeReportModal
-    );
-
-    DOM.cancelReportButton?.addEventListener(
-        "click",
-        closeReportModal
-    );
-
-    DOM.reportModalBackdrop?.addEventListener(
-        "click",
-        closeReportModal
-    );
+    DOM.closeReportModalButton?.addEventListener("click", closeReportModal);
+    DOM.cancelReportButton?.addEventListener("click", closeReportModal);
+    DOM.reportModalBackdrop?.addEventListener("click", closeReportModal);
 
     DOM.reportForm?.addEventListener("submit", submitReport);
 
@@ -3138,6 +3070,11 @@ function setupEventListeners() {
         captureSubmissionLocation
     );
 
+    DOM.clearLocationButton?.addEventListener(
+        "click",
+        clearSubmissionLocation
+    );
+
     DOM.facilityForm?.addEventListener("submit", submitFacility);
 
     DOM.facilityTypeFilter?.addEventListener("change", applyFilters);
@@ -3150,14 +3087,8 @@ function setupEventListeners() {
 
     DOM.clearRouteButton?.addEventListener("click", clearRoute);
 
-    DOM.zoomInButton?.addEventListener("click", () => {
-        state.map?.zoomIn();
-    });
-
-    DOM.zoomOutButton?.addEventListener("click", () => {
-        state.map?.zoomOut();
-    });
-
+    DOM.zoomInButton?.addEventListener("click", () => state.map?.zoomIn());
+    DOM.zoomOutButton?.addEventListener("click", () => state.map?.zoomOut());
 
     DOM.signInButton?.addEventListener("click", () => {
         window.location.href = "index.html";
@@ -3166,7 +3097,6 @@ function setupEventListeners() {
     DOM.signOutButton?.addEventListener("click", async () => {
 
         const confirmed = window.confirm("Sign out?");
-
         if (!confirmed) return;
 
         try {
