@@ -1,0 +1,383 @@
+:root {
+    --color-bg: #f8fafc;
+    --color-surface: rgba(255, 255, 255, 0.92);
+    --color-surface-raised: #ffffff;
+    
+    --color-ink: #0f172a;
+    --color-ink-muted: #475569;
+    --color-ink-soft: #64748b;
+    
+    --color-navy: #0f172a;
+    --color-navy-dark: #020617;
+    
+    --color-orange: #f97316;
+    --color-orange-hover: #ea580c;
+    
+    --color-safe: #10b981;
+    --color-caution: #f59e0b;
+    --color-danger: #ef4444;
+    
+    --color-line: #e2e8f0;
+    --color-line-strong: #cbd5e1;
+    
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 18px;
+    
+    --shadow-card: 0 4px 20px -2px rgba(15, 23, 42, 0.08), 0 2px 6px -1px rgba(15, 23, 42, 0.04);
+    --shadow-card-hover: 0 12px 28px -4px rgba(15, 23, 42, 0.12);
+    --shadow-floating: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    
+    --backdrop-blur: blur(12px);
+    --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+    
+    --font-display: 'Barlow Condensed', -apple-system, sans-serif;
+    --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+/* =========================================================================
+   GLOBAL RESET & BASE
+   ========================================================================== */
+
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+    font-family: var(--font-body);
+    color: var(--color-ink);
+    background: var(--color-bg);
+    -webkit-font-smoothing: antialiased;
+}
+
+/* =========================================================================
+   APP SHELL LAYOUT
+   ========================================================================== */
+
+.app {
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+/* =========================================================================
+   HEADER
+   ========================================================================== */
+
+.app-header {
+    position: relative;
+    z-index: 600;
+    background: var(--color-navy);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 24px;
+    gap: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.brand-mark {
+    width: 36px;
+    height: 36px;
+    object-fit: contain;
+}
+
+.brand-text h1 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: #ffffff;
+}
+
+.brand-sub {
+    margin: 0;
+    font-size: 11px;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.status-line {
+    font-size: 13px;
+    color: #cbd5e1;
+    margin-right: 8px;
+}
+
+.auth-user-label {
+    font-size: 12px;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 4px 10px;
+    border-radius: 20px;
+    color: #e2e8f0;
+}
+
+/* BUTTONS */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: var(--radius-sm);
+    border: none;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.btn-primary {
+    background: var(--color-orange);
+    color: #ffffff;
+}
+
+.btn-primary:hover {
+    background: var(--color-orange-hover);
+    transform: translateY(-1px);
+}
+
+.btn-ghost {
+    background: transparent;
+    color: #e2e8f0;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.btn-ghost:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+}
+
+/* =========================================================================
+   EMERGENCY NOTICE BANNER
+   ========================================================================== */
+
+.emergency-notice {
+    position: absolute;
+    top: 72px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 500;
+    background: rgba(254, 243, 199, 0.95);
+    backdrop-filter: var(--backdrop-blur);
+    color: #92400e;
+    border: 1px solid #fde68a;
+    padding: 8px 18px;
+    border-radius: 30px;
+    font-size: 12px;
+    box-shadow: var(--shadow-card);
+    max-width: 90%;
+    text-align: center;
+}
+
+.emergency-notice strong {
+    color: #78350f;
+}
+
+/* =========================================================================
+   MAIN BODY & MAP CONTAINER
+   ========================================================================== */
+
+.app-body {
+    flex: 1;
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+#map {
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+}
+
+/* =========================================================================
+   FLOATING SIDEBAR (PANEL OVER MAP)
+   ========================================================================== */
+
+.sidebar {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    bottom: 20px;
+    width: 380px;
+    max-width: calc(100vw - 40px);
+    z-index: 400;
+    
+    background: var(--color-surface);
+    backdrop-filter: var(--backdrop-blur);
+    -webkit-backdrop-filter: var(--backdrop-blur);
+    
+    border-radius: var(--radius-lg);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    box-shadow: var(--shadow-floating);
+    
+    padding: 20px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* SECTIONS & CARDS */
+.sidebar section {
+    background: var(--color-surface-raised);
+    border-radius: var(--radius-md);
+    padding: 14px;
+    border: 1px solid var(--color-line);
+}
+
+.sidebar h2, .sidebar h3 {
+    margin: 0 0 10px 0;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-ink-soft);
+    font-weight: 700;
+}
+
+/* FORM CONTROLS */
+.select-group, .filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 10px;
+}
+
+label {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--color-ink-muted);
+}
+
+select, input {
+    width: 100%;
+    padding: 8px 12px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--color-line-strong);
+    background: #ffffff;
+    font-size: 13px;
+    color: var(--color-ink);
+    outline: none;
+    transition: border-color var(--transition-fast);
+}
+
+select:focus, input:focus {
+    border-color: var(--color-orange);
+    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.15);
+}
+
+/* FACILITY CARDS IN LIST */
+.facility-card {
+    background: #ffffff;
+    border-radius: var(--radius-md);
+    padding: 14px;
+    margin-bottom: 10px;
+    border: 1px solid var(--color-line);
+    box-shadow: var(--shadow-card);
+    transition: all var(--transition-fast);
+    cursor: pointer;
+}
+
+.facility-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-card-hover);
+    border-color: var(--color-line-strong);
+}
+
+/* CUSTOM SCROLLBAR */
+.sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background: var(--color-line-strong);
+    border-radius: 10px;
+}
+
+/* RESPONSIVE FLUID DESIGN FOR MOBILE */
+@media (max-width: 640px) {
+    .sidebar {
+        top: auto;
+        left: 10px;
+        right: 10px;
+        bottom: 10px;
+        width: auto;
+        max-height: 45vh;
+    }
+    
+    .emergency-notice {
+        top: 60px;
+        font-size: 11px;
+    }
+}
+/* =========================================================================
+   FACILITY CARD ACTION BUTTONS FIX
+   ========================================================================== */
+
+/* 1. Fix the layout of the button row */
+.facility-card-actions {
+    display: flex;
+    flex-wrap: wrap; /* Allows wrapping on very small screens */
+    align-items: center;
+    gap: 8px;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid var(--color-line);
+}
+
+/* 2. Force the buttons to share the space evenly */
+.facility-card-actions .btn {
+    flex: 1;
+    min-width: 80px; /* Prevents them from getting too squished */
+    padding: 8px 10px;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+/* 3. FIX: Make "View Details" and "Edit" visible (Dark text, light background) */
+.facility-card-actions .btn-ghost {
+    background: #f8fafc;
+    color: var(--color-navy); /* Dark text */
+    border: 1px solid var(--color-line-strong);
+    box-shadow: none;
+}
+
+.facility-card-actions .btn-ghost:hover {
+    background: #f1f5f9;
+    color: var(--color-orange);
+    border-color: var(--color-orange);
+}
+
+/* 4. Keep the "Route Here" button bright and prominent */
+.facility-card-actions .btn-primary {
+    background: var(--color-orange);
+    color: #ffffff;
+    border: 1px solid var(--color-orange);
+    box-shadow: 0 2px 4px rgba(249, 115, 22, 0.2);
+}
+
+.facility-card-actions .btn-primary:hover {
+    background: var(--color-orange-hover);
+}

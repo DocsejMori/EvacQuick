@@ -612,3 +612,426 @@
     }
 
 }
+
+
+/* =========================================================================
+   EVACQUICK DESIGN SYSTEM
+   ========================================================================== */
+
+.admin-login-page {
+    height: auto;
+    min-height: 100vh;
+    min-height: 100dvh;
+    overflow-x: hidden;
+    overflow-y: auto;
+    background:
+        radial-gradient(ellipse at 85% 10%, rgba(215, 231, 237, 0.7), transparent 34%),
+        var(--color-bg);
+}
+
+.admin-login-wrapper {
+    min-height: 100vh;
+    min-height: 100dvh;
+    grid-template-columns: minmax(0, 1.08fr) minmax(420px, 0.92fr);
+}
+
+.admin-info-panel {
+    position: relative;
+    overflow: hidden;
+    padding: clamp(36px, 6vw, 84px);
+    background:
+        radial-gradient(circle at 92% 12%, rgba(231, 104, 60, 0.18), transparent 28%),
+        linear-gradient(145deg, #0D263A, #19445E);
+}
+
+.admin-info-panel::after {
+    position: absolute;
+    right: -170px;
+    bottom: -230px;
+    width: 440px;
+    height: 440px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    content: "";
+}
+
+.admin-info-content {
+    position: relative;
+    z-index: 1;
+}
+
+.admin-brand-mark {
+    width: 50px;
+    height: 50px;
+    padding: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 13px;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.admin-brand-name,
+.admin-info-content h1,
+.admin-form-header h2 {
+    font-family: var(--font-body);
+    letter-spacing: -0.045em;
+}
+
+.admin-brand-name {
+    font-size: 28px;
+}
+
+.admin-brand-sub {
+    font-size: 11px;
+}
+
+.admin-badge {
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.18);
+    color: #FFD1BC;
+}
+
+.admin-info-content h1 {
+    line-height: 1.02;
+}
+
+.admin-form-panel {
+    padding: clamp(26px, 5vw, 68px);
+    background: transparent;
+}
+
+.admin-form-container {
+    max-width: 460px;
+    padding: 38px;
+    border: 1px solid var(--color-line);
+    border-radius: 20px;
+    background: #fff;
+    box-shadow: 0 16px 48px rgba(19, 48, 69, 0.09);
+}
+
+.admin-eyebrow {
+    font-family: var(--font-body);
+    font-size: 10px;
+}
+
+.admin-form-header h2 {
+    font-size: 36px;
+    line-height: 1.08;
+}
+
+.admin-input {
+    border-color: var(--color-line-strong);
+    border-radius: 10px;
+    background: #fff;
+}
+
+.admin-input:focus {
+    border-color: var(--color-orange);
+    box-shadow: var(--focus-ring);
+}
+
+.admin-signin-btn {
+    border-radius: 11px;
+    background: var(--color-orange);
+    transition: background-color 140ms ease, box-shadow 140ms ease, transform 140ms ease;
+}
+
+.admin-signin-btn:hover {
+    background: var(--color-orange-dark);
+    box-shadow: 0 8px 18px rgba(201, 79, 43, 0.2);
+    transform: translateY(-1px);
+}
+
+@media (max-width: 900px) {
+    .admin-login-wrapper {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-info-panel {
+        display: none;
+    }
+
+    .admin-form-panel {
+        min-height: 100dvh;
+        padding: 32px 24px;
+    }
+}
+
+@media (max-width: 480px) {
+    .admin-form-panel {
+        padding: 20px 16px;
+    }
+
+    .admin-form-container {
+        padding: 28px 22px;
+        border-radius: 16px;
+    }
+}
+
+/* Keep administrator access visually aligned with the other account pages. */
+.admin-login-page {
+    padding: 28px;
+    background:
+        linear-gradient(rgba(238, 242, 244, 0.68), rgba(238, 242, 244, 0.68)),
+        url("evac1.jpg") center / cover fixed no-repeat;
+}
+
+.admin-login-wrapper {
+    width: 100%;
+    max-width: 1280px;
+    min-height: min(820px, calc(100dvh - 56px));
+    margin: auto;
+    overflow: hidden;
+    border: 1px solid #DDE5E9;
+    border-radius: 16px;
+    background: transparent;
+    box-shadow: 0 12px 36px rgba(24, 46, 60, 0.08);
+}
+
+.admin-info-panel {
+    padding: clamp(36px, 5vw, 68px);
+    background:
+        linear-gradient(145deg, rgba(13, 38, 58, 0.91), rgba(25, 68, 94, 0.88)),
+        url("evac1.jpg") center / cover no-repeat;
+}
+
+.admin-info-panel::after {
+    display: none;
+}
+
+.admin-brand {
+    margin-bottom: 34px;
+}
+
+.admin-brand-mark {
+    width: 46px;
+    height: 46px;
+    border-radius: 9px;
+}
+
+.admin-brand-name {
+    font-size: 27px;
+}
+
+.admin-badge {
+    margin-bottom: 18px;
+    padding: 7px 10px;
+    border-radius: 5px;
+    background: rgba(255, 255, 255, 0.08);
+    color: #F4D8CA;
+    font-size: 10px;
+}
+
+.admin-info-content h1 {
+    max-width: 440px;
+    margin-bottom: 16px;
+    font-size: clamp(38px, 4vw, 52px);
+    line-height: 1.05;
+}
+
+.admin-description {
+    max-width: 450px;
+    font-size: 14px;
+}
+
+.admin-benefits {
+    gap: 14px;
+    margin-top: 28px;
+}
+
+.admin-benefit-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 7px;
+    color: #F1B69A;
+}
+
+.admin-benefit strong {
+    font-size: 12px;
+}
+
+.admin-benefit span {
+    font-size: 11px;
+}
+
+.admin-form-panel {
+    padding: clamp(24px, 4vw, 52px);
+    background: rgba(248, 250, 251, 0.86);
+}
+
+.admin-form-container {
+    max-width: 460px;
+    padding: clamp(24px, 3vw, 36px);
+    border-color: #E3E9EC;
+    border-radius: 13px;
+    box-shadow: 0 4px 16px rgba(24, 46, 60, 0.045);
+}
+
+.admin-form-header {
+    margin-bottom: 24px;
+}
+
+.admin-form-header h2 {
+    font-size: 31px;
+}
+
+.admin-input {
+    border-radius: 8px;
+    background: #fff;
+}
+
+.admin-signin-btn {
+    border-radius: 8px;
+    box-shadow: none;
+}
+
+.admin-signin-btn:hover {
+    box-shadow: 0 4px 10px rgba(201, 79, 43, 0.14);
+    transform: none;
+}
+
+@media (max-width: 900px) {
+    .admin-login-page {
+        padding: 20px;
+    }
+
+    .admin-login-wrapper {
+        max-width: 560px;
+        min-height: 0;
+        grid-template-columns: 1fr;
+    }
+
+    .admin-info-panel {
+        display: block;
+        padding: 26px;
+    }
+
+    .admin-brand {
+        margin-bottom: 20px;
+    }
+
+    .admin-info-content h1 {
+        font-size: 32px;
+    }
+
+    .admin-description,
+    .admin-benefits {
+        display: none;
+    }
+
+    .admin-form-panel {
+        min-height: 0;
+        padding: 24px;
+    }
+}
+
+@media (max-width: 480px) {
+    .admin-login-page {
+        padding: 0;
+        background-attachment: scroll;
+    }
+
+    .admin-login-wrapper {
+        min-height: 100dvh;
+        border: 0;
+        border-radius: 0;
+        box-shadow: none;
+    }
+
+    .admin-info-panel {
+        padding: 22px;
+    }
+
+    .admin-form-panel {
+        align-items: flex-start;
+        padding: 24px 18px;
+    }
+
+    .admin-form-container {
+        padding: 24px 20px;
+        border-radius: 12px;
+        box-shadow: none;
+    }
+}
+
+/* -------------------------------------------------------------------------
+   MODERN ADMIN LOGIN REFRESH
+   ------------------------------------------------------------------------- */
+
+.admin-login-page {
+    background:
+        radial-gradient(circle at top right, rgba(255, 188, 141, 0.18), transparent 18%),
+        linear-gradient(180deg, #edf4f8 0%, #f5f9fb 100%);
+}
+
+.admin-login-wrapper {
+    border: 1px solid rgba(15, 39, 55, 0.08);
+    border-radius: 26px;
+    box-shadow: 0 28px 65px rgba(16, 32, 44, 0.12);
+}
+
+.admin-info-panel {
+    background:
+        radial-gradient(circle at 84% 14%, rgba(255, 188, 141, 0.18), transparent 22%),
+        linear-gradient(135deg, #0e263b 0%, #123d5d 48%, #1a526f 100%);
+}
+
+.admin-form-container {
+    border: 1px solid #edf1f3;
+    border-radius: 18px;
+    background: rgba(255,255,255,0.86);
+    box-shadow: 0 18px 44px rgba(16, 32, 44, 0.06);
+}
+
+.admin-input {
+    border: 1px solid #dfe8ec;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.7);
+}
+
+.admin-input:focus {
+    border-color: rgba(238,115,74,0.6);
+    box-shadow: 0 0 0 4px rgba(238,115,74,0.12);
+}
+
+.admin-signin-btn {
+    border-radius: 12px;
+    background: linear-gradient(135deg, #ee734a 0%, #d7542c 100%);
+    box-shadow: 0 12px 24px rgba(218, 90, 58, 0.2);
+}
+
+.admin-signin-btn:hover {
+    background: linear-gradient(135deg, #f5845e 0%, #d7542c 100%);
+    box-shadow: 0 16px 28px rgba(218, 90, 58, 0.26);
+}
+
+.admin-login-message.error {
+    background: rgba(200, 30, 58, 0.06);
+    border: 1px solid rgba(200,30,58,0.12);
+    padding: 10px 12px;
+    border-radius: 10px;
+}
+
+.admin-login-message.success {
+    background: rgba(30, 113, 69, 0.06);
+    border: 1px solid rgba(30,113,69,0.12);
+    padding: 10px 12px;
+    border-radius: 10px;
+}
+
+@media (max-width: 900px) {
+    .admin-login-wrapper {
+        border-radius: 18px;
+    }
+}
+
+/* Shared EvacQuick operations styling */
+.admin-login-page { background: #F4F6F8; }
+.admin-login-wrapper { border: 0; border-radius: 0; box-shadow: none; }
+.admin-info-panel { background: #0B1F2C; }
+.admin-form-panel { background: #F4F6F8; }
+.admin-form-container { border: 0; border-radius: 0; box-shadow: none; background: transparent; }
+.admin-form-group input { border-radius: 6px; border-color: #C4D0D8; }
+.admin-form-group input:focus { border-color: #F0643B; box-shadow: 0 0 0 3px rgba(240,100,59,.14); }
+.admin-signin-btn { min-height: 44px; border-radius: 6px; background: #F0643B; box-shadow: none; }

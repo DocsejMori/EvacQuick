@@ -3,338 +3,373 @@
 
 <head>
     <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EvacQuick | Admin Dashboard</title>
-
-    <!-- Favicon -->
     <link rel="icon" type="image/png" href="logo.png">
-
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-    <link
-        href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap"
-        rel="stylesheet"
-    >
-
-    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Stylesheets -->
     <link rel="stylesheet" href="admin.css">
 </head>
 
 <body class="admin-page-body">
 
-    <!-- =========================================================
-         HEADER
-         ========================================================= -->
-
-    <header class="admin-header">
-
-        <div class="admin-brand">
-
-            <img
-                src="logo.png"
-                alt="EvacQuick logo"
-                class="brand-mark"
-            >
-
-            <div class="brand-text">
-                <h1>EvacQuick</h1>
-                <p class="brand-sub">Admin Dashboard</p>
-            </div>
-
-        </div>
-
-
-        <div class="admin-header-actions">
-
-            <span
-                id="admin-email"
-                class="admin-email"
-            >
-                Loading…
-            </span>
-
-            <button
-                id="admin-signout-btn"
-                class="btn btn-ghost admin-signout"
-                type="button"
-            >
-                Sign Out
-            </button>
-
-        </div>
-
-    </header>
-
-
-    <!-- =========================================================
-         ACCESS DENIED
-         ========================================================= -->
-
-    <main
-        id="admin-denied"
-        class="admin-denied hidden"
-    >
-
+    <!-- ACCESS DENIED -->
+    <main id="admin-denied" class="admin-denied hidden">
         <h2>Access Denied</h2>
-
-        <p>
-            You must be signed in as an administrator to view
-            this dashboard.
-        </p>
-
-        <a href="index.html" class="btn btn-primary">
-            Back to Sign In
-        </a>
-
+        <p>You must be signed in as an administrator to view this dashboard.</p>
+        <a href="index.html" class="btn btn-primary">Back to Sign In</a>
     </main>
 
+    <!-- DASHBOARD -->
+    <div id="admin-dashboard" class="admin-dashboard hidden">
 
-    <!-- =========================================================
-         DASHBOARD
-         ========================================================= -->
+        <aside class="admin-sidebar" aria-label="Admin navigation">
+            <button type="button" class="admin-sidebar-brand" id="admin-brand-btn" aria-label="Go to dashboard">
+                <img src="logo.png" alt="EvacQuick Logo" class="brand-mark">
+                <span>EvacQuick<small>Admin console</small></span>
+            </button>
 
-    <main
-        id="admin-dashboard"
-        class="admin-dashboard hidden"
-    >
+            <div class="admin-sidebar-label">Workspace</div>
 
-        <section class="admin-stats">
+            <nav class="admin-sidebar-nav" aria-label="Dashboard sections">
+                <button type="button" class="admin-tab" data-page="dashboard">
+                    <span class="admin-nav-icon"><i data-lucide="layout-dashboard"></i></span>
+                    <span>Dashboard</span>
+                </button>
+                <button type="button" class="admin-tab" data-page="all">
+                    <span class="admin-nav-icon"><i data-lucide="list"></i></span>
+                    <span>All Applications</span>
+                </button>
+                <button type="button" class="admin-tab" data-page="pending">
+                    <span class="admin-nav-icon"><i data-lucide="clock"></i></span>
+                    <span>Pending Applications</span>
+                </button>
+                <button type="button" class="admin-tab" data-page="approved">
+                    <span class="admin-nav-icon"><i data-lucide="check-circle"></i></span>
+                    <span>Approved Applications</span>
+                </button>
+                <button type="button" class="admin-tab" data-page="rejected">
+                    <span class="admin-nav-icon"><i data-lucide="x-circle"></i></span>
+                    <span>Rejected Applications</span>
+                </button>
+                <button type="button" class="admin-tab" data-page="reports">
+                    <span class="admin-nav-icon"><i data-lucide="bar-chart-2"></i></span>
+                    <span>Reports &amp; Analytics</span>
+                    <span id="report-count-badge" class="admin-tab-badge hidden">0</span>
+                </button>
+            </nav>
 
-            <div class="admin-stat is-pending">
-                <span class="admin-stat-value" id="stat-pending">0</span>
-                <span class="admin-stat-label">Pending</span>
+            <div class="admin-sidebar-footer">
+                <span class="admin-sidebar-footer-label">Administrator tools</span>
+                <span class="admin-sidebar-footer-copy">Manage evacuation center applications and reports.</span>
+                <button id="admin-signout-btn" class="admin-logout-btn" type="button">
+                    <span class="admin-nav-icon"><i data-lucide="log-out"></i></span>
+                    <span>Log out</span>
+                </button>
             </div>
+        </aside>
 
-            <div class="admin-stat is-approved">
-                <span class="admin-stat-value" id="stat-approved">0</span>
-                <span class="admin-stat-label">Approved</span>
-            </div>
-
-            <div class="admin-stat is-rejected">
-                <span class="admin-stat-value" id="stat-rejected">0</span>
-                <span class="admin-stat-label">Rejected</span>
-            </div>
-
-            <div class="admin-stat">
-                <span class="admin-stat-value" id="stat-total">0</span>
-                <span class="admin-stat-label">Total</span>
-            </div>
-
-        </section>
-
-
-        <section class="admin-tabs">
-
-            <button
-                type="button"
-                class="admin-tab is-active"
-                data-tab="Pending"
-            >
-                Pending
-            </button>
-
-            <button
-                type="button"
-                class="admin-tab"
-                data-tab="Approved"
-            >
-                Approved
-            </button>
-
-            <button
-                type="button"
-                class="admin-tab"
-                data-tab="Rejected"
-            >
-                Rejected
-            </button>
-
-            <button
-                type="button"
-                class="admin-tab"
-                data-tab="All"
-            >
-                All
-            </button>
-
-            <button
-                type="button"
-                class="admin-tab"
-                data-tab="Reports"
-            >
-                Reports
-                <span
-                    id="report-count-badge"
-                    class="admin-tab-badge hidden"
-                >
-                    0
-                </span>
-            </button>
-
-            <button
-                type="button"
-                class="btn btn-primary admin-bulk-approve"
-                id="admin-bulk-approve-btn"
-                hidden
-            >
-                ✓ Approve Selected
-            </button>
-
-            <button
-                type="button"
-                class="btn btn-ghost"
-                id="admin-export-csv-btn"
-            >
-                📥 Export CSV
-            </button>
-
-            <button
-                type="button"
-                class="btn btn-ghost btn-sm admin-refresh"
-                id="admin-refresh-btn"
-            >
-                Refresh
-            </button>
-
-        </section>
-
-
-        <section
-            id="admin-bulk-bar"
-            class="admin-bulk-bar"
-            hidden
-        >
-            <label class="admin-bulk-select-all">
-                <input type="checkbox" id="admin-select-all">
-                <span>Select all pending</span>
-            </label>
-
-            <span
-                id="admin-selected-count"
-                class="admin-selected-count"
-            >
-                0 selected
-            </span>
-        </section>
-
-
-        <section
-            id="admin-queue"
-            class="admin-queue"
-            aria-live="polite"
-        ></section>
-
-    </main>
-
-
-    <!-- =========================================================
-         REJECTION REASON MODAL
-         ========================================================= -->
-
-    <div
-        id="admin-reject-modal"
-        class="admin-modal hidden"
-        aria-hidden="true"
-    >
-
-        <div
-            class="admin-modal-backdrop"
-            id="admin-reject-backdrop"
-        ></div>
-
-        <div
-            class="admin-modal-dialog"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="admin-reject-title"
-        >
-
-            <div class="admin-modal-header">
-
-                <div>
-                    <span class="admin-modal-eyebrow">
-                        REJECT FACILITY
-                    </span>
-
-                    <h2 id="admin-reject-title">
-                        Why are you rejecting this?
-                    </h2>
-
-                    <p id="admin-reject-subtitle">
-                        This reason will be saved and shown to the
-                        submitter.
-                    </p>
+        <div class="admin-main">
+            <header class="admin-topbar">
+                <div class="admin-topbar-title">
+                    <span class="admin-topbar-eyebrow">EvacQuick workspace</span>
+                    <h1>Dashboard</h1>
                 </div>
+                <div class="admin-profile">
+                    <div class="admin-notification-wrap">
+                        <button id="admin-notification-toggle" class="admin-notification-toggle" type="button"
+                                aria-label="Notifications" aria-expanded="false" aria-controls="admin-notification-panel">
+                            <i data-lucide="bell"></i>
+                            <span id="admin-notification-count" class="admin-notification-count" hidden>0</span>
+                        </button>
+                        <section id="admin-notification-panel" class="admin-notification-panel" aria-label="Admin notifications" hidden>
+                            <header class="admin-notification-header">
+                                <div>
+                                    <strong>Notifications</strong>
+                                    <span id="admin-notification-summary">No unread notifications</span>
+                                </div>
+                                <button id="admin-notifications-read-all" type="button" class="admin-inline-link">Mark all as read</button>
+                            </header>
+                            <div id="admin-notification-list" class="admin-notification-list" aria-live="polite">
+                                <p class="admin-notification-empty">No notifications yet.</p>
+                            </div>
+                            <p class="admin-notification-footnote">Live notifications use application updates. Read status is saved in this browser.</p>
+                        </section>
+                    </div>
+                    <span class="admin-profile-avatar" aria-hidden="true">A</span>
+                    <span class="admin-profile-copy">
+                        <strong>Administrator</strong>
+                        <small id="admin-email">Loading…</small>
+                    </span>
+                </div>
+            </header>
 
-                <button
-                    id="admin-reject-close-btn"
-                    class="admin-modal-close"
-                    type="button"
-                    aria-label="Close"
-                >
-                    &times;
-                </button>
+            <main class="admin-content">
+                <!-- DASHBOARD VIEW -->
+                <section id="admin-page-dashboard" class="admin-page-view" data-page-view="dashboard">
+                    <section class="admin-welcome">
+                        <div>
+                            <h2>Overview</h2>
+                            <p>Monitor and manage evacuation center applications.</p>
+                        </div>
+                        <div class="admin-toolbar-actions">
+                            <button type="button" class="btn btn-ghost btn-sm admin-refresh" id="admin-refresh-btn">
+                                <i data-lucide="refresh-cw" style="width: 14px; height: 14px; margin-right: 6px;"></i>
+                                Refresh
+                            </button>
+                        </div>
+                    </section>
 
-            </div>
+                    <section class="admin-stats" aria-label="Application statistics">
+                        <article class="admin-stat admin-stat-total">
+                            <div class="admin-stat-heading">
+                                <span class="admin-stat-label">Total Applications</span>
+                                <span class="admin-stat-icon"><i data-lucide="files"></i></span>
+                            </div>
+                            <span class="admin-stat-value" id="stat-total">0</span>
+                            <span class="admin-stat-caption">Across all submissions</span>
+                        </article>
+                        <article class="admin-stat is-pending">
+                            <div class="admin-stat-heading">
+                                <span class="admin-stat-label">Pending Applications</span>
+                                <span class="admin-stat-icon"><i data-lucide="clock"></i></span>
+                            </div>
+                            <span class="admin-stat-value" id="stat-pending">0</span>
+                            <span class="admin-stat-caption" id="stat-pending-caption">Awaiting review</span>
+                        </article>
+                        <article class="admin-stat is-approved">
+                            <div class="admin-stat-heading">
+                                <span class="admin-stat-label">Approved Applications</span>
+                                <span class="admin-stat-icon"><i data-lucide="check-circle"></i></span>
+                            </div>
+                            <span class="admin-stat-value" id="stat-approved">0</span>
+                            <span class="admin-stat-caption">Verified centers</span>
+                        </article>
+                        <article class="admin-stat is-rejected">
+                            <div class="admin-stat-heading">
+                                <span class="admin-stat-label">Rejected Applications</span>
+                                <span class="admin-stat-icon"><i data-lucide="x-circle"></i></span>
+                            </div>
+                            <span class="admin-stat-value" id="stat-rejected">0</span>
+                            <span class="admin-stat-caption">Not approved</span>
+                        </article>
+                    </section>
 
-            <textarea
-                id="admin-reject-reason"
-                class="form-textarea"
-                rows="5"
-                placeholder="Example: ID photo is blurry and cannot be verified. Please retake and resubmit."
-            ></textarea>
+                    <div class="admin-live-status" aria-live="polite">
+                        <span class="admin-live-indicator" aria-hidden="true"></span>
+                        <span id="admin-data-status">Connecting to application data…</span>
+                        <span class="admin-live-separator" aria-hidden="true">·</span>
+                        <span>Last updated <time id="admin-last-updated">—</time></span>
+                    </div>
 
-            <div
-                id="admin-reject-message"
-                class="form-message"
-                aria-live="polite"
-            ></div>
+                    <section class="admin-charts" aria-label="Monthly application submissions">
+                        <article class="admin-chart-card admin-monthly-chart-card">
+                            <div class="admin-chart-heading">
+                                <div>
+                                    <span class="admin-section-eyebrow">SUBMISSION TRENDS</span>
+                                    <h2>Applications by Month</h2>
+                                    <p>Filter submissions by year, status, and time range.</p>
+                                </div>
+                            </div>
 
-            <div class="admin-modal-actions">
+                            <div class="admin-chart-filters" role="group" aria-label="Chart filters">
+                                <label>Year<select id="admin-chart-year"><option value="all">All years</option></select></label>
+                                <label>Status
+                                    <select id="admin-chart-status">
+                                        <option value="all">All statuses</option>
+                                        <option value="Pending">Pending</option>
+                                        <option value="Approved">Approved</option>
+                                        <option value="Rejected">Rejected</option>
+                                    </select>
+                                </label>
+                                <label>Granularity
+                                    <select id="admin-chart-granularity">
+                                        <option value="month">Monthly</option>
+                                        <option value="quarter">Quarterly</option>
+                                        <option value="week">Weekly</option>
+                                    </select>
+                                </label>
+                            </div>
 
-                <button
-                    id="admin-reject-cancel-btn"
-                    class="btn btn-ghost"
-                    type="button"
-                >
-                    Cancel
-                </button>
+                            <div class="admin-svg-chart-wrap">
+                                <svg id="admin-monthly-chart" class="admin-bar-svg" viewBox="0 0 760 280" role="img" aria-label="Applications submitted by month"></svg>
+                            </div>
+                            <p id="admin-monthly-chart-state" class="admin-chart-state" aria-live="polite">Loading application data…</p>
+                        </article>
+                    </section>
 
-                <button
-                    id="admin-reject-confirm-btn"
-                    class="btn admin-reject-confirm"
-                    type="button"
-                >
-                    ✗ Reject Facility
-                </button>
+                    <section class="admin-recent-applications admin-applications-section" aria-labelledby="admin-recent-title">
+                        <div class="admin-applications-heading">
+                            <div>
+                                <span class="admin-section-eyebrow">Latest submissions</span>
+                                <h2 id="admin-recent-title">Recent applications</h2>
+                            </div>
+                            <button type="button" class="btn btn-ghost admin-view-all" data-page-link="all">View all applications</button>
+                        </div>
+                        <div class="admin-table-shell">
+                            <div class="admin-table-header admin-recent-table-header" aria-hidden="true">
+                                <span>Facility</span><span>Manager</span><span>Location</span><span>Submitted</span><span>Status</span>
+                            </div>
+                            <div id="admin-recent-table" class="admin-recent-table" aria-live="polite">
+                                <p class="admin-chart-state">Loading recent applications…</p>
+                            </div>
+                        </div>
+                    </section>
+                </section>
 
-            </div>
+                <!-- APPLICATIONS VIEW -->
+                <section id="admin-page-applications" class="admin-page-view" data-page-view="applications" hidden>
+                    <section class="admin-applications-section" aria-labelledby="admin-applications-title">
+                        <div class="admin-applications-heading">
+                            <div>
+                                <span class="admin-section-eyebrow">Facility management</span>
+                                <h2 id="admin-applications-title">Applications</h2>
+                                <p id="admin-applications-description">Review and manage evacuation center applications.</p>
+                            </div>
+                            <div class="admin-application-tools">
+                                <label class="admin-search-field">
+                                    <span class="sr-only">Search applications</span>
+                                    <input id="admin-search" type="search" placeholder="Search facility or manager">
+                                </label>
+                                <button type="button" class="btn btn-ghost" id="admin-clear-filters" hidden>Clear filters</button>
+                                <label class="admin-sort-field">
+                                    <span class="sr-only">Sort applications</span>
+                                    <select id="admin-sort">
+                                        <option value="newest">Newest first</option>
+                                        <option value="oldest">Oldest first</option>
+                                        <option value="name">Facility name</option>
+                                    </select>
+                                </label>
+                            </div>
+                        </div>
 
+                        <section id="admin-bulk-bar" class="admin-bulk-bar" hidden>
+                            <label class="admin-bulk-select-all">
+                                <input type="checkbox" id="admin-select-all">
+                                <span id="admin-select-all-label">Select all pending</span>
+                            </label>
+                            <span id="admin-selected-count" class="admin-selected-count">0 selected</span>
+                            <button type="button" class="btn btn-ghost admin-bulk-reject" id="admin-bulk-reject-btn" hidden>✗ Reject Selected</button>
+                        </section>
+
+                        <div id="admin-active-date-filter" class="admin-active-date-filter" hidden>
+                            <span>Filtered to <strong id="admin-active-date-filter-label"></strong></span>
+                            <button type="button" class="btn btn-ghost admin-inline-link" id="admin-clear-date-filter">Clear date filter</button>
+                        </div>
+
+                        <div class="admin-table-shell">
+                            <div class="admin-table-header" aria-hidden="true">
+                                <span>Facility</span><span>Manager</span><span>Location</span><span>Submitted</span><span>Status</span><span>Quick actions</span>
+                            </div>
+                            <section id="admin-queue" class="admin-queue" aria-live="polite"></section>
+                        </div>
+
+                        <div class="admin-pagination">
+                            <span id="admin-page-summary">Showing 0 applications</span>
+                            <div>
+                                <button id="admin-page-previous" class="btn btn-ghost" type="button">Previous</button>
+                                <span id="admin-page-number" aria-live="polite">Page 1</span>
+                                <button id="admin-page-next" class="btn btn-ghost" type="button">Next</button>
+                            </div>
+                        </div>
+                    </section>
+                </section>
+
+                <!-- REPORTS VIEW -->
+                <section id="admin-page-reports" class="admin-page-view" data-page-view="reports" hidden>
+                    <section class="admin-welcome">
+                        <div>
+                            <span class="admin-section-eyebrow">Reports and analytics</span>
+                            <h2>Application reports</h2>
+                            <p>Current application totals and submitted community reports.</p>
+                        </div>
+                        <button type="button" class="btn btn-ghost" data-export-reports>
+                            <i data-lucide="download" style="width: 16px; height: 16px;"></i>
+                            Export to CSV
+                        </button>
+                    </section>
+
+                    <section class="admin-stats admin-report-stats" aria-label="Application report statistics">
+                        <article class="admin-stat admin-stat-total">
+                            <span class="admin-stat-label">Approval rate</span>
+                            <span class="admin-stat-value" id="report-approval-rate">0%</span>
+                            <span class="admin-stat-caption">Of all applications</span>
+                        </article>
+                        <article class="admin-stat is-rejected">
+                            <span class="admin-stat-label">Rejection rate</span>
+                            <span class="admin-stat-value" id="report-rejection-rate">0%</span>
+                            <span class="admin-stat-caption">Of all applications</span>
+                        </article>
+                        <article class="admin-stat is-pending">
+                            <span class="admin-stat-label">Pending reviews</span>
+                            <span class="admin-stat-value" id="report-pending-count">0</span>
+                            <span class="admin-stat-caption">Awaiting decision</span>
+                        </article>
+                        <article class="admin-stat is-approved">
+                            <span class="admin-stat-label">Total applications</span>
+                            <span class="admin-stat-value" id="report-total-count">0</span>
+                            <span class="admin-stat-caption">All recorded facilities</span>
+                        </article>
+                    </section>
+
+                    <section class="admin-applications-section" aria-labelledby="admin-reports-title">
+                        <div class="admin-applications-heading">
+                            <div>
+                                <span class="admin-section-eyebrow">COMMUNITY SUBMISSIONS</span>
+                                <h2 id="admin-reports-title">Facility reports</h2>
+                            </div>
+                        </div>
+                        <section id="admin-report-queue" class="admin-queue" aria-live="polite"></section>
+                    </section>
+                </section>
+
+                <!-- DETAILS VIEW -->
+                <section id="admin-page-details" class="admin-page-view" data-page-view="details" hidden>
+                    <button id="admin-details-back" type="button" class="btn btn-ghost admin-back-button">← Back to applications</button>
+                    <div id="admin-facility-details" class="admin-facility-details"></div>
+                </section>
+            </main>
         </div>
-
     </div>
 
+    <!-- REJECT MODAL -->
+    <div id="admin-reject-modal" class="admin-modal hidden" aria-hidden="true">
+        <div class="admin-modal-backdrop" id="admin-reject-backdrop"></div>
+        <div class="admin-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="admin-reject-title">
+            <div class="admin-modal-header">
+                <div>
+                    <span class="admin-modal-eyebrow">REJECT FACILITY</span>
+                    <h2 id="admin-reject-title">Why are you rejecting this?</h2>
+                    <p id="admin-reject-subtitle">This reason will be saved and shown to the submitter.</p>
+                </div>
+                <button id="admin-reject-close-btn" class="admin-modal-close" type="button" aria-label="Close">&times;</button>
+            </div>
+            <textarea id="admin-reject-reason" class="form-textarea" rows="5" placeholder="Example: ID photo is blurry and cannot be verified. Please retake and resubmit."></textarea>
+            <div id="admin-reject-message" class="form-message" aria-live="polite"></div>
+            <div class="admin-modal-actions">
+                <button id="admin-reject-cancel-btn" class="btn btn-ghost" type="button">Cancel</button>
+                <button id="admin-reject-confirm-btn" class="btn admin-reject-confirm" type="button">✗ Reject Facility</button>
+            </div>
+        </div>
+    </div>
 
-    <!-- =========================================================
-         PHOTO LIGHTBOX
-         ========================================================= -->
-
-    <div
-        id="admin-lightbox"
-        class="photo-lightbox hidden"
-    >
+    <!-- LIGHTBOX -->
+    <div id="admin-lightbox" class="photo-lightbox hidden"> 
         <img id="admin-lightbox-img" src="" alt="Enlarged photo">
     </div>
 
-
     <script type="module" src="admin.js"></script>
-
+    <script>
+        // Initialize Lucide icons after DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+        });
+    </script>
 </body>
-
 </html>

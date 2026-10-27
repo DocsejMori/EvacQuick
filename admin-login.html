@@ -1,550 +1,426 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Sign In | EvacQuick</title>
-
+    
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="logo.png">
 
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
 
-    <link
-        href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap"
-        rel="stylesheet"
-    >
-
+    <!-- Stylesheets (Using the exact same CSS as resident login) -->
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="admin-login.css">
+    <link rel="stylesheet" href="resident-login.css">
+    
+    <style>
+        /* 1. Make the logo look exactly like your screenshot */
+        .brand-logo-box {
+            background: #1e293b !important; 
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            border-radius: 14px !important; 
+            padding: 8px !important; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3) !important;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .brand-logo-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+            filter: drop-shadow(0 0 2px rgba(249, 115, 22, 0.3)); 
+        }
+
+        /* 2. Force the Lucide Icons to render in the dark boxes */
+        .benefit-icon {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            width: 36px !important;
+            height: 36px !important;
+            flex-shrink: 0 !important;
+            background: rgba(255, 255, 255, 0.05) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            border-radius: var(--radius-sm) !important;
+        }
+        .benefit-icon svg {
+            width: 18px !important;
+            height: 18px !important;
+            stroke: var(--color-orange) !important;
+            stroke-width: 2 !important;
+            display: block !important;
+        }
+
+        /* 3. Form Card Styling */
+        .form-card {
+            background: var(--color-surface-light);
+            padding: 40px;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-card);
+            border: 1px solid var(--color-border);
+            width: 100%;
+            max-width: 440px;
+        }
+
+        .divider {
+            margin: 24px 0;
+            display: flex;
+            align-items: center;
+            text-align: center;
+            color: var(--color-ink-soft);
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid var(--color-border);
+        }
+        .divider span {
+            padding: 0 12px;
+            background: var(--color-surface-light);
+        }
+
+        /* 4. Success Button State */
+        .submit-btn.success {
+            background: #10b981 !important;
+            box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.4) !important;
+            pointer-events: none;
+        }
+
+        /* 5. Remember Me Checkbox Styling */
+        .remember-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--color-ink-muted);
+            cursor: pointer;
+            user-select: none;
+            font-weight: 500;
+        }
+
+        .checkbox-label input[type="checkbox"] {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            border: 1.5px solid var(--color-border);
+            border-radius: 4px;
+            background: #ffffff;
+            cursor: pointer;
+            position: relative;
+            outline: none;
+            transition: all 0.2s ease;
+            padding: 0;
+            margin: 0;
+        }
+
+        .checkbox-label input[type="checkbox"]:checked {
+            background-color: var(--color-orange);
+            border-color: var(--color-orange);
+        }
+
+        .checkbox-label input[type="checkbox"]:checked::after {
+            content: '';
+            position: absolute;
+            left: 4.5px;
+            top: 1.5px;
+            width: 4px;
+            height: 8px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+
+        .checkbox-label input[type="checkbox"]:focus-visible {
+            box-shadow: 0 0 0 4px var(--color-orange-glow);
+        }
+    </style>
 </head>
+<body class="resident-login-page">
 
+    <main class="login-wrapper">
 
-<body class="admin-login-page">
-
-    <main class="admin-login-wrapper">
-
-
-        <!-- LEFT INFORMATION PANEL -->
-
-        <section class="admin-info-panel">
-
-            <div class="admin-info-content">
-
-
-                <!-- BRAND -->
-
-                <div class="admin-brand">
-
-                    <img
-                        src="logo.png"
-                        alt="EvacQuick logo"
-                        class="admin-brand-mark"
-                    >
-
-                    <div>
-
-                        <h2 class="admin-brand-name">
-                            EvacQuick
-                        </h2>
-
-                        <p class="admin-brand-sub">
-                            Disaster Evacuation Facility Locator
-                        </p>
-
-                    </div>
-
+        <!-- LEFT PANEL: HERO & BRAND -->
+        <section class="hero-panel">
+            <div class="brand-header">
+                <div class="brand-logo-box">
+                    <img src="logo.png" alt="EvacQuick Logo">
                 </div>
-
-
-                <!-- BADGE -->
-
-                <div class="admin-badge">
-                    ADMINISTRATOR
+                <div>
+                    <h2 class="brand-name">EvacQuick</h2>
+                    <p class="brand-sub">Disaster Evacuation Locator</p>
                 </div>
-
-
-                <!-- HEADING -->
-
-                <h1>
-                    Manage
-                    EvacQuick.
-                </h1>
-
-
-                <p class="admin-description">
-
-                    Authorized administrators can sign in
-                    to manage evacuation facility information,
-                    monitor system data, and maintain the
-                    EvacQuick platform.
-
-                </p>
-
-
-                <!-- ADMIN FUNCTIONS -->
-
-                <div class="admin-benefits">
-
-
-                    <div class="admin-benefit">
-
-                        <div class="admin-benefit-icon">
-                            ◆
-                        </div>
-
-                        <div>
-
-                            <strong>
-                                Facility Management
-                            </strong>
-
-                            <span>
-                                Maintain evacuation facility information.
-                            </span>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="admin-benefit">
-
-                        <div class="admin-benefit-icon">
-                            ✓
-                        </div>
-
-                        <div>
-
-                            <strong>
-                                System Monitoring
-                            </strong>
-
-                            <span>
-                                Monitor important EvacQuick data.
-                            </span>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="admin-benefit">
-
-                        <div class="admin-benefit-icon">
-                            →
-                        </div>
-
-                        <div>
-
-                            <strong>
-                                Administrative Access
-                            </strong>
-
-                            <span>
-                                Access authorized management features.
-                            </span>
-
-                        </div>
-
-                    </div>
-
-
-                </div>
-
             </div>
 
-        </section>
-
-
-        <!-- RIGHT LOGIN PANEL -->
-
-        <section class="admin-form-panel">
-
-            <div class="admin-form-container">
-
-
-                <!-- FORM HEADER -->
-
-                <div class="admin-form-header">
-
-                    <span class="admin-eyebrow">
-                        ADMINISTRATOR ACCESS
-                    </span>
-
-                    <h2>
-                        Admin Sign In
-                    </h2>
-
-                    <p>
-                        Sign in using your authorized administrator account.
-                    </p>
-
+            <div class="hero-content">
+                <div class="badge">
+                    <i data-lucide="shield"></i>
+                    <span>Administrator Access</span>
                 </div>
 
+                <h1 class="hero-title">Manage EvacQuick.</h1>
 
-                <!-- LOGIN FORM -->
+                <p class="hero-description">
+                    Authorized administrators can sign in to manage evacuation facility information, monitor system data, and maintain the EvacQuick platform.
+                </p>
 
-                <form
-                    id="adminLoginForm"
-                    novalidate
-                >
-
-
-                    <!-- EMAIL -->
-
-                    <div class="admin-form-group">
-
-                        <label for="adminEmail">
-                            Administrator Email
-                        </label>
-
-                        <input
-                            type="email"
-                            id="adminEmail"
-                            class="admin-input"
-                            placeholder="Enter administrator email"
-                            autocomplete="email"
-                            required
-                        >
-
+                <div class="benefits-list">
+                    <div class="benefit-card">
+                        <div class="benefit-icon">
+                            <i data-lucide="database"></i>
+                        </div>
+                        <div class="benefit-text">
+                            <strong>Facility Management</strong>
+                            <span>Maintain evacuation facility information.</span>
+                        </div>
                     </div>
 
-
-                    <!-- PASSWORD -->
-
-                    <div class="admin-form-group">
-
-                        <div class="admin-password-label">
-
-                            <label for="adminPassword">
-                                Password
-                            </label>
-
-                            <button
-                                type="button"
-                                class="admin-forgot-password"
-                                id="adminForgotPasswordBtn"
-                            >
-                                Forgot password?
-                            </button>
-
+                    <div class="benefit-card">
+                        <div class="benefit-icon">
+                            <i data-lucide="activity"></i>
                         </div>
+                        <div class="benefit-text">
+                            <strong>System Monitoring</strong>
+                            <span>Monitor important EvacQuick data.</span>
+                        </div>
+                    </div>
 
+                    <div class="benefit-card">
+                        <div class="benefit-icon">
+                            <i data-lucide="shield-check"></i>
+                        </div>
+                        <div class="benefit-text">
+                            <strong>Administrative Access</strong>
+                            <span>Access authorized management features.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-                        <div class="admin-password-wrapper">
+            <div class="panel-footer">
+                <span class="status-indicator"></span>
+                <span>System Active & Monitoring</span>
+            </div>
+        </section>
 
-                            <input
-                                type="password"
-                                id="adminPassword"
-                                class="admin-input"
-                                placeholder="Enter administrator password"
-                                autocomplete="current-password"
+        <!-- RIGHT PANEL: ADMIN FORM -->
+        <section class="form-panel">
+            <div class="form-card">
+
+                <div class="form-header">
+                    <span class="eyebrow">Administrator Access</span>
+                    <h2>Admin Sign In</h2>
+                    <p>Sign in using your authorized administrator account.</p>
+                </div>
+
+                <form id="adminLoginForm" novalidate>
+                    
+                    <div class="form-group">
+                        <label for="adminEmail">Administrator Email</label>
+                        <div class="input-wrapper">
+                            <i data-lucide="mail" class="input-icon"></i>
+                            <input 
+                                type="email" 
+                                id="adminEmail" 
+                                placeholder="Enter administrator email" 
+                                autocomplete="email" 
                                 required
                             >
-
-                            <button
-                                type="button"
-                                class="admin-toggle-password"
-                                id="toggleAdminPassword"
-                            >
-                                Show
-                            </button>
-
                         </div>
-
                     </div>
 
+                    <div class="form-group">
+                        <label for="adminPassword">Password</label>
+                        <div class="input-wrapper">
+                            <i data-lucide="lock" class="input-icon"></i>
+                            <input 
+                                type="password" 
+                                id="adminPassword" 
+                                placeholder="Enter administrator password" 
+                                autocomplete="current-password" 
+                                required
+                            >
+                            <button type="button" id="toggleAdminPassword" class="toggle-password-btn" aria-label="Toggle password visibility">
+                                <i data-lucide="eye" id="eyeIcon"></i>
+                            </button>
+                        </div>
+                    </div>
 
-                    <!-- LOGIN MESSAGE -->
+                    <!-- Remember Me Checkbox -->
+                    <div class="remember-row">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="rememberMe">
+                            Remember me
+                        </label>
+                    </div>
 
-                    <div
-                        id="adminLoginMessage"
-                        class="admin-login-message"
-                        role="alert"
-                        aria-live="polite"
-                    ></div>
+                    <div id="adminLoginMessage" class="login-message" role="alert" aria-live="polite" style="color: #ef4444; font-size: 13px; margin-bottom: 10px; display: none;"></div>
 
-
-                    <!-- SIGN IN BUTTON -->
-
-                    <button
-                        type="submit"
-                        class="admin-signin-btn"
-                        id="adminSignInBtn"
-                    >
-
-                        <span>
-                            Sign In
-                        </span>
-
-                        <span>
-                            →
-                        </span>
-
+                    <button type="submit" id="adminSignInBtn" class="submit-btn">
+                        <span id="submitBtnText">Sign In</span>
+                        <i data-lucide="arrow-right" id="submitIcon"></i>
                     </button>
 
                 </form>
 
-
-                <!-- SECURITY NOTICE -->
-
-                <div class="admin-security-notice">
-
-                    <span class="admin-security-icon">
-                        🔒
-                    </span>
-
-                    <p>
-                        Administrator access is restricted to
-                        authorized accounts.
-                    </p>
-
+                <div class="divider">
+                    <span>Restricted Access</span>
                 </div>
 
+                <div class="form-actions">
+                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; border-radius: 8px; display: flex; gap: 10px; align-items: flex-start; margin-bottom: 12px;">
+                        <i data-lucide="lock" style="width: 16px; height: 16px; color: #f97316; flex-shrink: 0; margin-top: 2px;"></i>
+                        <span style="font-size: 12px; color: #64748b; line-height: 1.4;">Administrator access is restricted to authorized accounts.</span>
+                    </div>
 
-                <!-- BACK -->
-
-                <div class="admin-back-to-access">
-
-                    <button
-                        type="button"
-                        id="backToAccessBtn"
-                    >
-                        ← Back to access options
-                    </button>
-
+                    <a href="index.html" class="back-link">
+                        <i data-lucide="chevron-left"></i>
+                        <span>Back to access options</span>
+                    </a>
                 </div>
 
-
-                <!-- FOOTER -->
-
-                <div class="admin-footer">
-
-                    <span class="admin-footer-line"></span>
-
-                    <span>EVACQUICK</span>
-
-                    <span class="admin-footer-line"></span>
-
+                <div class="brand-watermark">
+                    <span>EvacQuick Safety Portal</span>
                 </div>
 
             </div>
-
         </section>
 
     </main>
 
-
+    <!-- FIREBASE LOGIN LOGIC -->
     <script type="module">
-
         import {
             loginUser,
-            resetPassword,
             getFriendlyAuthError
         } from "./auth.js";
 
+        // Initialize Lucide Icons
+        lucide.createIcons();
 
-        // =========================
-        // ELEMENTS
-        // =========================
+        const loginForm = document.getElementById("adminLoginForm");
+        const emailInput = document.getElementById("adminEmail");
+        const passwordInput = document.getElementById("adminPassword");
+        const togglePassword = document.getElementById("toggleAdminPassword");
+        const message = document.getElementById("adminLoginMessage");
+        const rememberMeCheckbox = document.getElementById("rememberMe");
+        
+        // UI Elements
+        const submitBtn = document.getElementById("adminSignInBtn");
+        const submitBtnText = document.getElementById("submitBtnText");
+        const submitIcon = document.getElementById("submitIcon");
+        const eyeIcon = document.getElementById("eyeIcon");
 
-        const loginForm =
-            document.getElementById("adminLoginForm");
+        // 1. Check if admin email was saved previously
+        const savedEmail = localStorage.getItem('evacAdminRememberedEmail');
+        if (savedEmail) {
+            emailInput.value = savedEmail;
+            rememberMeCheckbox.checked = true;
+        }
 
-        const emailInput =
-            document.getElementById("adminEmail");
-
-        const passwordInput =
-            document.getElementById("adminPassword");
-
-        const togglePassword =
-            document.getElementById("toggleAdminPassword");
-
-        const forgotPasswordBtn =
-            document.getElementById("adminForgotPasswordBtn");
-
-        const backToAccessBtn =
-            document.getElementById("backToAccessBtn");
-
-        const message =
-            document.getElementById("adminLoginMessage");
-
-
-        // =========================
-        // SHOW / HIDE PASSWORD
-        // =========================
-
+        // 2. Show / hide password
         togglePassword.addEventListener("click", function () {
-
             if (passwordInput.type === "password") {
-
                 passwordInput.type = "text";
-                togglePassword.textContent = "Hide";
-
+                eyeIcon.setAttribute("data-lucide", "eye-off");
             } else {
-
                 passwordInput.type = "password";
-                togglePassword.textContent = "Show";
-
+                eyeIcon.setAttribute("data-lucide", "eye");
             }
-
+            lucide.createIcons();
         });
 
+        // 3. Reset Form Function
+        function resetFormState() {
+            submitBtn.disabled = false;
+            submitBtn.classList.remove('success');
+            submitBtnText.textContent = "Sign In";
+            submitIcon.outerHTML = `<i data-lucide="arrow-right" id="submitIcon"></i>`;
+            message.style.display = "none";
+            lucide.createIcons();
+        }
 
-        // =========================
-        // ADMIN LOGIN
-        // =========================
-
+        // 4. Admin Login
         loginForm.addEventListener("submit", async function (event) {
-
             event.preventDefault();
 
-            const email =
-                emailInput.value.trim();
+            const email = emailInput.value.trim();
+            const password = passwordInput.value;
 
-            const password =
-                passwordInput.value;
-
+            message.style.display = "none";
 
             if (!email || !password) {
-
-                message.textContent =
-                    "Please enter your email and password.";
-
-                message.className =
-                    "admin-login-message error";
-
+                message.textContent = "Please enter your email and password.";
+                message.style.display = "block";
                 return;
             }
 
+            // Handle "Remember Me"
+            if (rememberMeCheckbox.checked) {
+                localStorage.setItem('evacAdminRememberedEmail', email);
+            } else {
+                localStorage.removeItem('evacAdminRememberedEmail');
+            }
 
-            message.textContent =
-                "Signing in...";
+            // Loading State
+            submitBtn.disabled = true;
+            submitBtnText.textContent = "Signing in...";
+            submitIcon.outerHTML = `<i data-lucide="loader-2" class="animate-spin" id="submitIcon"></i>`;
+            lucide.createIcons();
 
-            message.className =
-                "admin-login-message";
-
-
-            const result =
-                await loginUser(email, password);
-
+            const result = await loginUser(email, password);
 
             if (result.success) {
-
-                message.textContent =
-                    "Sign in successful!";
-
-                message.className =
-                    "admin-login-message success";
-
-                console.log(
-                    "Admin User ID:",
-                    result.user.uid
-                );
-
+                // Success State
+                submitBtn.classList.add('success');
+                submitBtnText.textContent = "Sign in successful!";
+                document.getElementById('submitIcon').outerHTML = `<i data-lucide="check-circle" id="submitIcon"></i>`;
+                lucide.createIcons();
 
                 setTimeout(function () {
-
-                    window.location.href =
-                        "admin.html";
-
+                    window.location.replace("admin.html");
                 }, 1000);
 
-
             } else {
-
                 console.error(result.error);
+                message.textContent = getFriendlyAuthError(result.error);
+                message.style.display = "block";
 
-                message.textContent =
-                    getFriendlyAuthError(result.error);
-
-                message.className =
-                    "admin-login-message error";
-
+                // Reset Button on Error
+                submitBtn.disabled = false;
+                submitBtnText.textContent = "Sign In";
+                submitBtn.classList.remove('success');
+                document.getElementById('submitIcon').outerHTML = `<i data-lucide="arrow-right" id="submitIcon"></i>`;
+                lucide.createIcons();
             }
-
         });
 
-
-        // =========================
-        // FORGOT PASSWORD
-        // =========================
-
-        forgotPasswordBtn.addEventListener("click", async function () {
-
-            const email =
-                emailInput.value.trim();
-
-
-            if (!email) {
-
-                message.textContent =
-                    "Enter your administrator email first.";
-
-                message.className =
-                    "admin-login-message error";
-
-                emailInput.focus();
-
-                return;
+        // 5. THE FIX: Reset the page if the user navigates back (bfcache)
+        window.addEventListener("pageshow", (event) => {
+            if (event.persisted) {
+                resetFormState();
             }
-
-
-            message.textContent =
-                "Sending password reset email...";
-
-            message.className =
-                "admin-login-message";
-
-
-            const result =
-                await resetPassword(email);
-
-
-            if (result.success) {
-
-                message.textContent =
-                    "Password reset instructions have been sent to your email.";
-
-                message.className =
-                    "admin-login-message success";
-
-            } else {
-
-                console.error(result.error);
-
-                message.textContent =
-                    getFriendlyAuthError(result.error);
-
-                message.className =
-                    "admin-login-message error";
-
-            }
-
         });
-
-
-        // =========================
-        // BACK TO ACCESS
-        // =========================
-
-        backToAccessBtn.addEventListener("click", function () {
-
-            window.location.href =
-                "index.html";
-
-        });
-
     </script>
-
 </body>
-
 </html>
