@@ -1419,3 +1419,72 @@ html, body.admin-page-body {
     color: var(--text-subtle) !important;
     border-color: var(--border-light) !important;
 }
+/* =========================================================================
+   ACCESS DENIED SCREEN
+   ========================================================================= */
+
+#admin-denied {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 24px;
+    background-color: var(--bg-canvas);
+}
+
+#admin-denied.hidden {
+    display: none !important;
+}
+
+.admin-denied-card {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    padding: 48px;
+    max-width: 440px;
+    width: 100%;
+    text-align: center;
+    animation: fadeSlideUp 0.4s ease both;
+}
+
+.admin-denied-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 64px;
+    height: 64px;
+    background-color: var(--status-rose-bg);
+    color: var(--status-rose-text);
+    border-radius: 50%;
+    margin-bottom: 24px;
+}
+
+.admin-denied-icon svg {
+    width: 32px;
+    height: 32px;
+    stroke-width: 2;
+}
+
+.admin-denied-card h2 {
+    margin: 0 0 12px;
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--text-main);
+    letter-spacing: -0.02em;
+}
+
+.admin-denied-card p {
+    margin: 0 0 32px;
+    font-size: 15px;
+    color: var(--text-muted);
+    line-height: 1.6;
+}
+
+.admin-denied-card .btn-primary {
+    width: 100%;
+    justify-content: center;
+    padding: 12px 24px;
+    font-size: 15px;
+}

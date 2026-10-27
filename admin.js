@@ -15,7 +15,9 @@ import {
     serverTimestamp,
     onSnapshot,
     writeBatch,
-    addDoc
+    addDoc,
+    query,
+    where
 } from "./firebase-config.js";
 
 import {
@@ -46,6 +48,7 @@ const state = {
     rejectTarget: null,
     rejectInProgress: false,
     facilitiesLoaded: false,
+        pageLoadTime: Date.now(),
     facilitiesUnsubscribe: null,
     reportsUnsubscribe: null,
     notificationsUnsubscribe: null,
@@ -273,13 +276,36 @@ function mapFacilitySnapshot(snap) {
 }
 
 function subscribeFacilities() {
-    if (state.facilitiesUnsubscribe) return;
+ if (state.facilitiesUnsubscribe) return;
     updateDataStatus("Connecting to application data…", "loading");
 
     state.facilitiesUnsubscribe = onSnapshot(
         collection(db, "facilities"),
         snap => {
-            state.facilities = mapFacilitySnapshot(snap);
+            const newFacilities = mapFacilitySnapshot(snap);
+
+            // 🔥 CHECK FOR NEW SUBMISSIONS
+            if (state.facilitiesLoaded) {
+                snap.docChanges().forEach(change => {
+                    if (change.type === "added") {
+                        const data = change.doc.data();
+                        if (data.verificationStatus === "Pending") {
+                            // Check if it was submitted after the admin opened the page
+                            const submittedAt = data.submittedAt?.toDate()?.getTime() || Date.now();
+                            
+                            if (submittedAt > state.pageLoadTime) {
+                                pushNotificationToDB(
+                                    "New Facility Submitted",
+                                    `${data.name || "A facility"} was submitted by ${data.managerName || "a resident"} and is pending review.`,
+                                    change.doc.id
+                                );
+                            }
+                        }
+                    }
+                });
+            }
+
+            state.facilities = newFacilities;
             state.facilitiesLoaded = true;
             updateDataStatus("Live updates connected");
             markDataUpdated();
@@ -1435,12 +1461,7 @@ async function setStatus(facilityId, status) {
 
         await updateDoc(doc(db, "facilities", facilityId), payload);
         
-        // 🔥 SEND NOTIFICATION TO FIRESTORE
-        await pushNotificationToDB(
-            `Application ${status.toLowerCase()}`,
-            `${facility.name} was ${status.toLowerCase()}.`,
-            facilityId
-        );
+        // REMOVED REDUNDANT NOTIFICATION
 
         facility.verificationStatus = status;
         facility.statusUpdatedAt = new Date();
@@ -1512,12 +1533,7 @@ async function bulkUpdateStatus(ids, status) {
             await batch.commit();
         }
         
-        // 🔥 SEND NOTIFICATION TO FIRESTORE
-        await pushNotificationToDB(
-            `Bulk applications ${status.toLowerCase()}`,
-            `${ids.length} facilities were ${status.toLowerCase()} in bulk.`,
-            ""
-        );
+        // REMOVED REDUNDANT BULK NOTIFICATION
 
         for (const id of ids) {
             const f = state.facilities.find(x => x.id === id);
@@ -1630,12 +1646,7 @@ async function confirmReject() {
 
         await updateDoc(doc(db, "facilities", target.id), payload);
         
-        // 🔥 SEND NOTIFICATION TO FIRESTORE
-        await pushNotificationToDB(
-            "Application rejected",
-            `${target.name} was rejected. Reason: ${reason}`,
-            target.id
-        );
+        // REMOVED REDUNDANT REJECTION NOTIFICATION
 
         const f = state.facilities.find(x => x.id === target.id);
         if (f) {
@@ -1905,7 +1916,7 @@ function setupEvents() {
         }
     });
 
-        document.querySelectorAll("[data-export-reports]").forEach(btn => {
+    document.querySelectorAll("[data-export-reports]").forEach(btn => {
         btn.addEventListener("click", exportFacilitiesCSV);
     });
 

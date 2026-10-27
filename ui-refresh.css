@@ -381,3 +381,46 @@ select:focus, input:focus {
 .facility-card-actions .btn-primary:hover {
     background: var(--color-orange-hover);
 }
+/* =========================================================================
+   SUBMISSION MODAL: LOCATION BUTTONS FIX
+   ========================================================================= */
+
+/* Target the specific location buttons inside the submission modal */
+.location-actions .location-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 42px;
+    padding: 10px 16px;
+    background-color: #ffffff !important;
+    color: var(--color-navy, #102B3F) !important; /* Dark text */
+    border: 1px solid var(--color-line-strong, #C4D0D8) !important;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+/* Hover state - light blue/grey background */
+.location-actions .location-button:hover:not(:disabled) {
+    background-color: #f8fafc !important;
+    border-color: #94a3b8 !important;
+    color: var(--color-orange, #f97316) !important; /* Optional: turns orange on hover */
+}
+
+/* Disabled state (e.g., Clear Pin when no pin is placed) */
+.location-actions .location-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: #f1f5f9 !important;
+    color: #94a3b8 !important;
+    border-color: #e2e8f0 !important;
+}
+
+/* Ensure the emoji icons inside the buttons look good */
+.location-actions .location-button span {
+    font-size: 16px;
+}
