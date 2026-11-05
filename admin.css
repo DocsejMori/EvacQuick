@@ -72,6 +72,10 @@ html, body.admin-page-body {
     -webkit-font-smoothing: antialiased;
 }
 
+body.admin-page-body.admin-modal-open {
+    overflow: hidden !important;
+}
+
 /* CRITICAL FIXES FOR DYNAMIC CONTENT AND HIDDEN VIEWS */
 [data-page-view][hidden],
 .hidden,
@@ -1108,6 +1112,256 @@ html, body.admin-page-body {
     display: flex;
     justify-content: flex-end;
     gap: 12px;
+}
+
+.admin-confirmation-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+}
+
+.admin-confirmation-modal.hidden {
+    display: none;
+}
+
+.admin-confirmation-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.58);
+    backdrop-filter: blur(6px);
+    animation: confirmationFadeIn 0.18s ease both;
+}
+
+.admin-confirmation-dialog {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 52px minmax(0, 1fr);
+    column-gap: 16px;
+    row-gap: 24px;
+    width: min(100%, 460px);
+    padding: 28px;
+    border: 1px solid rgba(226, 232, 240, 0.9);
+    border-radius: 20px;
+    background: var(--bg-surface);
+    box-shadow: 0 24px 70px rgba(15, 23, 42, 0.28);
+    animation: confirmationEnter 0.22s cubic-bezier(0.2, 0.75, 0.3, 1) both;
+}
+
+.admin-confirmation-icon {
+    display: grid;
+    width: 52px;
+    height: 52px;
+    place-items: center;
+    border-radius: 15px;
+    background: var(--status-blue-bg);
+    color: var(--primary);
+}
+
+.admin-confirmation-icon svg {
+    width: 25px;
+    height: 25px;
+    stroke: currentColor;
+}
+
+.admin-confirmation-icon.is-approve {
+    background: var(--status-emerald-bg);
+    color: var(--status-emerald-text);
+}
+
+.admin-confirmation-icon.is-reject,
+.admin-confirmation-icon.is-delete {
+    background: var(--status-rose-bg);
+    color: var(--status-rose-text);
+}
+
+.admin-confirmation-copy {
+    align-self: center;
+}
+
+.admin-confirmation-copy h2 {
+    margin: 0 0 7px;
+    color: var(--text-main);
+    font-size: 20px;
+    line-height: 1.3;
+}
+
+.admin-confirmation-copy p {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 14px;
+    line-height: 1.65;
+    overflow-wrap: anywhere;
+}
+
+.admin-confirmation-actions {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding-top: 18px;
+    border-top: 1px solid var(--border-subtle);
+}
+
+.admin-confirmation-actions .btn {
+    min-width: 116px;
+    justify-content: center;
+}
+
+.admin-confirmation-confirm {
+    background: var(--primary);
+    color: #ffffff;
+}
+
+.admin-confirmation-confirm:hover {
+    background: var(--primary-hover);
+}
+
+.admin-confirmation-confirm.is-approve {
+    background: var(--status-emerald-text);
+}
+
+.admin-confirmation-confirm.is-approve:hover {
+    background: #047857;
+}
+
+.admin-confirmation-confirm.is-reject,
+.admin-confirmation-confirm.is-delete {
+    background: #dc2626;
+}
+
+.admin-confirmation-confirm.is-reject:hover,
+.admin-confirmation-confirm.is-delete:hover {
+    background: #b91c1c;
+}
+
+.admin-confirmation-confirm:disabled,
+.admin-confirmation-actions .btn:disabled {
+    opacity: 0.65;
+    cursor: wait;
+}
+
+.admin-confirmation-modal.is-closing .admin-confirmation-backdrop {
+    animation: confirmationFadeOut 0.16s ease both;
+}
+
+.admin-confirmation-modal.is-closing .admin-confirmation-dialog {
+    animation: confirmationExit 0.16s ease both;
+}
+
+.admin-toast-region {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    z-index: 1200;
+    display: grid;
+    gap: 10px;
+    width: min(380px, calc(100vw - 32px));
+    pointer-events: none;
+}
+
+.admin-toast {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 16px;
+    border: 1px solid var(--border-light);
+    border-left: 4px solid var(--primary);
+    border-radius: 12px;
+    background: var(--bg-surface);
+    color: var(--text-main);
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.16);
+    font-size: 14px;
+    line-height: 1.5;
+    animation: confirmationEnter 0.2s ease both;
+}
+
+.admin-toast::before {
+    content: "";
+    flex: 0 0 9px;
+    width: 9px;
+    height: 9px;
+    margin-top: 6px;
+    border-radius: 50%;
+    background: var(--primary);
+}
+
+.admin-toast.is-success {
+    border-left-color: var(--status-emerald-text);
+}
+
+.admin-toast.is-success::before {
+    background: var(--status-emerald-text);
+}
+
+.admin-toast.is-error {
+    border-left-color: var(--status-rose-text);
+}
+
+.admin-toast.is-error::before {
+    background: var(--status-rose-text);
+}
+
+@keyframes confirmationFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes confirmationFadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+@keyframes confirmationEnter {
+    from { opacity: 0; transform: translateY(8px) scale(0.985); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes confirmationExit {
+    from { opacity: 1; transform: translateY(0) scale(1); }
+    to { opacity: 0; transform: translateY(5px) scale(0.99); }
+}
+
+@media (max-width: 520px) {
+    .admin-confirmation-modal {
+        padding: 16px;
+    }
+
+    .admin-confirmation-dialog {
+        padding: 22px;
+        grid-template-columns: 44px minmax(0, 1fr);
+        column-gap: 13px;
+    }
+
+    .admin-confirmation-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 13px;
+    }
+
+    .admin-confirmation-actions .btn {
+        min-width: 0;
+        flex: 1;
+    }
+
+    .admin-toast-region {
+        right: 16px;
+        bottom: 16px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .admin-confirmation-backdrop,
+    .admin-confirmation-dialog,
+    .admin-confirmation-modal.is-closing .admin-confirmation-backdrop,
+    .admin-confirmation-modal.is-closing .admin-confirmation-dialog,
+    .admin-toast {
+        animation-duration: 0.01ms;
+    }
 }
 
 /* -------------------------------------------------------------------------

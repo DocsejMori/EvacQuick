@@ -11,7 +11,7 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,600;0,700;0,800;1,700;1,800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -101,74 +101,113 @@
             pointer-events: none;
         }
     </style>
+    <link rel="stylesheet" href="access.css">
 </head>
 <body class="resident-login-page">
 
-    <main class="login-wrapper">
+    <main class="login-wrapper access-layout">
 
-        <!-- LEFT PANEL: HERO & BRAND -->
+        <!-- Shared EvacQuick hero -->
         <section class="hero-panel">
-            <div class="brand-header">
-                <div class="brand-logo-box">
-                    <img src="logo.png" alt="EvacQuick Logo">
-                </div>
-                <div>
-                    <h2 class="brand-name">EvacQuick</h2>
-                    <p class="brand-sub">Disaster Evacuation Locator</p>
-                </div>
+            <div class="hero-bg-wrapper">
+                <div class="hero-image"></div>
+                <div class="hero-overlay"></div>
             </div>
 
             <div class="hero-content">
-                <div class="badge">
-                    <i data-lucide="user-plus"></i>
-                    <span>Resident Registration</span>
-                </div>
+                <header class="brand">
+                    <div class="brand-logo-wrapper">
+                        <img class="brand-logo-image" src="logo.png" alt="EvacQuick">
+                    </div>
+                    <div class="brand-text">
+                        <span class="brand-name">EVAC<span>QUICK</span></span>
+                        <span class="brand-tagline">EMERGENCY RESPONSE SYSTEM</span>
+                    </div>
+                </header>
 
-                <h1 class="hero-title">Help your community.</h1>
+                <div class="hero-message">
+                    <h1>
+                        PREPARE<br>
+                        BEFORE THE<br>
+                        MOMENT <span class="highlight">ARRIVES.</span>
+                    </h1>
 
-                <p class="hero-description">
-                    Register as a resident to add evacuation centers, update their real-time availability, and help neighbors find shelter during emergencies.
-                </p>
+                    <div class="hero-divider"></div>
 
-                <div class="benefits-list">
-                    <!-- The Lucide icons are placed here -->
-                    <div class="benefit-card">
-                        <div class="benefit-icon">
-                            <i data-lucide="map-pin"></i>
+                    <p class="hero-description">
+                        Create your resident account to reach evacuation routes, shelters, and local emergency information when you need it.
+                    </p>
+
+                    <div class="feature-list">
+                        <div class="feature">
+                            <div class="feature-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M12 21s7-4.5 7-11V5l-7-3-7 3v5c0 6.5 7 11 7 11Z"/>
+                                    <path d="m9 12 2 2 4-4"/>
+                                </svg>
+                            </div>
+                            <div class="feature-text">
+                                <strong>Know your routes</strong>
+                                <span>Plan a safer way for your household.</span>
+                            </div>
                         </div>
-                        <div class="benefit-text">
-                            <strong>Register evacuation centers</strong>
-                            <span>Add verified facilities to the map.</span>
+                        <div class="feature">
+                            <div class="feature-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/>
+                                    <circle cx="12" cy="10" r="2.5"/>
+                                </svg>
+                            </div>
+                            <div class="feature-text">
+                                <strong>Find support nearby</strong>
+                                <span>See where your community can gather.</span>
+                            </div>
+                        </div>
+                        <div class="feature">
+                            <div class="feature-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11Z"/>
+                                    <path d="M12 7v5"/>
+                                    <path d="M12 16h.01"/>
+                                </svg>
+                            </div>
+                            <div class="feature-text">
+                                <strong>Get updates that matter</strong>
+                                <span>Stay connected as conditions change.</span>
+                            </div>
                         </div>
                     </div>
-
-                    <div class="benefit-card">
-                        <div class="benefit-icon">
-                            <i data-lucide="refresh-cw"></i>
-                        </div>
-                        <div class="benefit-text">
-                            <strong>Keep status up to date</strong>
-                            <span>Manage capacity and real-time availability.</span>
-                        </div>
-                    </div>
                 </div>
-            </div>
 
-            <div class="panel-footer">
-                <span class="status-indicator"></span>
-                <span>System Active & Monitoring</span>
+                <footer class="hero-footer">
+                    <span>PREPAREDNESS STARTS WITH YOU</span>
+                    <span class="footer-line"></span>
+                    <span>EVACQUICK © 2026</span>
+                </footer>
             </div>
         </section>
 
-        <!-- RIGHT PANEL: REGISTER FORM -->
-        <section class="form-panel">
-            <div class="form-card">
-
-                <div class="form-header">
-                    <span class="eyebrow">Resident Registration</span>
-                    <h2>Create account</h2>
-                    <p>Fill in the details below to register as a resident.</p>
+        <section class="form-panel access-panel auth-form-panel">
+            <div class="access-topbar">
+                <div class="topbar-left">
+                    <svg class="shield-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 4 11 8 11Z"/>
+                        <path d="m9 12 2 2 4-4"/>
+                    </svg>
+                    <span class="access-label">YOUR SAFETY STARTS HERE</span>
                 </div>
+                <div class="access-indicator"><span class="dot"></span>ACCESS PORTAL</div>
+            </div>
+
+            <div class="auth-form-content">
+                <header class="welcome-section auth-welcome-section">
+                    <div class="welcome-mark">EQ<span>.</span></div>
+                    <p class="section-kicker">RESIDENT REGISTRATION</p>
+                    <h1>Create your account.</h1>
+                    <p>Register to support your community during emergencies.</p>
+                </header>
+
+            <div class="form-card">
 
                 <form id="registerForm">
                     
@@ -230,6 +269,14 @@
                 </div>
 
             </div>
+            </div>
+
+            <footer class="access-footer">
+                <span>BUILT FOR SAFER COMMUNITIES.</span>
+                <span class="footer-divider"></span>
+                <span>STAY SAFE. STAY READY.</span>
+            </footer>
+
         </section>
 
     </main>

@@ -47,6 +47,10 @@ const state = {
     statusUpdatesInProgress: new Set(),
     rejectTarget: null,
     rejectInProgress: false,
+    confirmation: null,
+    confirmationInProgress: false,
+    confirmationCloseTimer: null,
+    confirmationOpener: null,
     facilitiesLoaded: false,
         pageLoadTime: Date.now(),
     facilitiesUnsubscribe: null,
@@ -129,7 +133,15 @@ const DOM = {
     rejectConfirmBtn: document.getElementById("admin-reject-confirm-btn"),
     rejectReason: document.getElementById("admin-reject-reason"),
     rejectMessage: document.getElementById("admin-reject-message"),
-    rejectSubtitle: document.getElementById("admin-reject-subtitle")
+    rejectSubtitle: document.getElementById("admin-reject-subtitle"),
+    confirmationModal: document.getElementById("admin-confirmation-modal"),
+    confirmationBackdrop: document.getElementById("admin-confirmation-backdrop"),
+    confirmationTitle: document.getElementById("admin-confirmation-title"),
+    confirmationDescription: document.getElementById("admin-confirmation-description"),
+    confirmationIcon: document.getElementById("admin-confirmation-icon"),
+    confirmationCancelBtn: document.getElementById("admin-confirmation-cancel"),
+    confirmationConfirmBtn: document.getElementById("admin-confirmation-confirm"),
+    toastRegion: document.getElementById("admin-toast-region")
 };
 
 
@@ -1068,12 +1080,12 @@ function buildFacilityCard(f) {
     actions.appendChild(makeBtn("View", "", () => viewFacility(f.id)));
 
     if (f.verificationStatus === "Pending") {
-        actions.appendChild(makeBtn("Approve", "admin-approve", () => setStatus(f.id, "Approved")));
-        actions.appendChild(makeBtn("Reject", "admin-reject", () => openRejectModal(f)));
+        actions.appendChild(makeBtn("Approve", "admin-approve", () => requestApprove(f)));
+        actions.appendChild(makeBtn("Reject", "admin-reject", () => requestReject(f)));
     } else if (f.verificationStatus === "Approved") {
-        actions.appendChild(makeBtn("Reject instead", "admin-reject", () => openRejectModal(f)));
+        actions.appendChild(makeBtn("Reject instead", "admin-reject", () => requestReject(f)));
     } else if (f.verificationStatus === "Rejected") {
-        actions.appendChild(makeBtn("Approve instead", "admin-approve", () => setStatus(f.id, "Approved")));
+        actions.appendChild(makeBtn("Approve instead", "admin-approve", () => requestApprove(f)));
     }
 
     actions.appendChild(makeBtn("Delete", "admin-delete", () => confirmDelete(f)));
@@ -1164,16 +1176,27 @@ function buildReportCard(r) {
     deleteBtn.type = "button";
     deleteBtn.className = "btn btn-ghost admin-delete";
     deleteBtn.textContent = "🗑 Delete report";
-    deleteBtn.addEventListener("click", async () => {
-        if (!confirm("Delete this report?")) return;
-        try {
-            await deleteDoc(doc(db, "reports", r.id));
-            await loadReports();
-            if (state.currentPage === "reports") renderReports();
-        } catch (e) {
-            console.error(e);
-            alert("Failed to delete report: " + e.message);
-        }
+    deleteBtn.addEventListener("click", () => {
+        openConfirmationModal({
+            title: "Delete Report?",
+            description: "Are you sure you want to permanently delete this report? This action cannot be undone.",
+            icon: "delete",
+            confirmText: "Yes, Delete",
+            tone: "delete",
+            onConfirm: async () => {
+                try {
+                    await deleteDoc(doc(db, "reports", r.id));
+                    await loadReports();
+                    if (state.currentPage === "reports") renderReports();
+                    showAdminToast("Report deleted.", "success");
+                    return true;
+                } catch (e) {
+                    console.error("Failed to delete report:", e);
+                    showAdminToast("Could not delete report: " + e.message, "error");
+                    return false;
+                }
+            }
+        });
     });
     actions.appendChild(deleteBtn);
 
@@ -1319,12 +1342,12 @@ function renderFacilityDetails() {
     };
 
     if (facility.verificationStatus === "Pending") {
-        actions.appendChild(makeAction("Approve application", "btn-primary", () => setStatus(facility.id, "Approved")));
-        actions.appendChild(makeAction("Reject application", "btn-ghost admin-reject", () => openRejectModal(facility)));
+        actions.appendChild(makeAction("Approve application", "btn-primary", () => requestApprove(facility)));
+        actions.appendChild(makeAction("Reject application", "btn-ghost admin-reject", () => requestReject(facility)));
     } else if (facility.verificationStatus === "Approved") {
-        actions.appendChild(makeAction("Reject instead", "btn-ghost admin-reject", () => openRejectModal(facility)));
+        actions.appendChild(makeAction("Reject instead", "btn-ghost admin-reject", () => requestReject(facility)));
     } else if (facility.verificationStatus === "Rejected") {
-        actions.appendChild(makeAction("Approve instead", "btn-primary admin-approve", () => setStatus(facility.id, "Approved")));
+        actions.appendChild(makeAction("Approve instead", "btn-primary admin-approve", () => requestApprove(facility)));
     }
 
     actions.appendChild(makeAction("Delete application", "btn-ghost admin-delete", () => confirmDelete(facility)));
@@ -1428,13 +1451,98 @@ function syncPageFromHash() {
    ACTIONS — STATUS CHANGES + NOTIFICATIONS
    ========================================================================= */
 
-async function setStatus(facilityId, status) {
-    if (state.statusUpdatesInProgress.has(facilityId)) return;
-    const facility = state.facilities.find(item => item.id === facilityId);
-    if (!facility || facility.verificationStatus === status) return;
+const confirmationIcons = {
+    approve: '<svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.1V12a10 10 0 1 1-5.9-9.1"/><path d="m9 11 3 3L22 4"/></svg>',
+    reject: '<svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 2.5 17.4A2 2 0 0 0 4.2 20h15.6a2 2 0 0 0 1.7-2.6L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>',
+    delete: '<svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="m19 6-1 14H6L5 6"/><path d="M10 11v5"/><path d="M14 11v5"/></svg>'
+};
 
-    const verb = status === "Approved" ? "Approve" : "Reject";
-    if (!window.confirm(`${verb} "${facility.name}"?`)) return;
+function openConfirmationModal(options) {
+    if (!DOM.confirmationModal || state.confirmationInProgress) return;
+    clearTimeout(state.confirmationCloseTimer);
+    state.confirmation = options;
+    state.confirmationOpener = document.activeElement;
+    DOM.confirmationTitle.textContent = options.title;
+    DOM.confirmationDescription.textContent = options.description;
+    DOM.confirmationIcon.innerHTML = confirmationIcons[options.icon] || confirmationIcons.approve;
+    DOM.confirmationIcon.className = `admin-confirmation-icon is-${options.tone || "approve"}`;
+    DOM.confirmationConfirmBtn.className = `btn admin-confirmation-confirm is-${options.tone || "approve"}`;
+    DOM.confirmationConfirmBtn.textContent = options.confirmText || "Confirm";
+    DOM.confirmationConfirmBtn.disabled = false;
+    DOM.confirmationCancelBtn.disabled = false;
+    DOM.confirmationModal.classList.remove("hidden", "is-closing");
+    DOM.confirmationModal.setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden";
+    document.body.classList.add("admin-modal-open");
+    DOM.confirmationCancelBtn.focus();
+}
+
+function closeConfirmationModal(afterClose) {
+    if (!DOM.confirmationModal || state.confirmationInProgress) return;
+    const opener = state.confirmationOpener;
+    state.confirmation = null;
+    state.confirmationOpener = null;
+    DOM.confirmationModal.setAttribute("aria-hidden", "true");
+    DOM.confirmationModal.classList.add("is-closing");
+    clearTimeout(state.confirmationCloseTimer);
+    state.confirmationCloseTimer = setTimeout(() => {
+        DOM.confirmationModal.classList.add("hidden");
+        DOM.confirmationModal.classList.remove("is-closing");
+        const rejectionOpen = DOM.rejectModal && !DOM.rejectModal.classList.contains("hidden");
+        document.body.style.overflow = rejectionOpen ? "hidden" : "";
+        document.body.classList.toggle("admin-modal-open", Boolean(rejectionOpen));
+        if (afterClose) afterClose();
+        else if (opener?.isConnected) opener.focus();
+    }, 160);
+}
+
+async function confirmAdminAction() {
+    const action = state.confirmation;
+    if (!action || state.confirmationInProgress) return;
+    state.confirmationInProgress = true;
+    DOM.confirmationConfirmBtn.disabled = true;
+    DOM.confirmationCancelBtn.disabled = true;
+    DOM.confirmationConfirmBtn.textContent = action.processingText || "Working…";
+
+    try {
+        const succeeded = await action.onConfirm();
+        if (succeeded !== false) {
+            state.confirmationInProgress = false;
+            closeConfirmationModal(action.afterConfirm);
+            return;
+        }
+    } catch (error) {
+        console.error("Confirmed action failed:", error);
+        showAdminToast("Could not complete the action: " + error.message, "error");
+    }
+
+    state.confirmationInProgress = false;
+    DOM.confirmationConfirmBtn.disabled = false;
+    DOM.confirmationCancelBtn.disabled = false;
+    DOM.confirmationConfirmBtn.textContent = action.confirmText || "Confirm";
+}
+
+function showAdminToast(message, type = "success") {
+    if (!DOM.toastRegion) return;
+    const toast = document.createElement("div");
+    toast.className = `admin-toast is-${type}`;
+    toast.setAttribute("role", type === "error" ? "alert" : "status");
+    toast.textContent = message;
+    DOM.toastRegion.appendChild(toast);
+    setTimeout(() => toast.remove(), 5000);
+}
+
+async function setStatus(facilityId, status) {
+    if (state.statusUpdatesInProgress.has(facilityId)) return false;
+    const facility = state.facilities.find(item => item.id === facilityId);
+    if (!facility) {
+        showAdminToast("This application is no longer available.", "error");
+        return false;
+    }
+    if (facility.verificationStatus === status) {
+        showAdminToast(`"${facility.name}" is already ${status.toLowerCase()}.`, "error");
+        return false;
+    }
 
     state.statusUpdatesInProgress.add(facilityId);
     renderQueue();
@@ -1480,10 +1588,13 @@ async function setStatus(facilityId, status) {
         updateStats();
         renderQueue();
         if (state.currentPage === "details") renderFacilityDetails();
+        showAdminToast(`"${facility.name}" ${status.toLowerCase()}.`, "success");
+        return true;
 
     } catch (e) {
         console.error("Failed to update status:", e);
-        alert("Could not update status: " + e.message);
+        showAdminToast("Could not update status: " + e.message, "error");
+        return false;
     } finally {
         state.statusUpdatesInProgress.delete(facilityId);
         renderQueue();
@@ -1500,8 +1611,23 @@ async function bulkUpdateStatus(ids, status) {
     if (!ids.length) return;
 
     const verb = status === "Approved" ? "Approve" : "Reject";
-    if (!window.confirm(`${verb} ${ids.length} facilit${ids.length > 1 ? "ies" : "y"}?`)) return;
+    const facilities = ids.map(id => state.facilities.find(facility => facility.id === id)).filter(Boolean);
+    const description = facilities.length === 1
+        ? `Are you sure you want to ${verb.toLowerCase()} "${facilities[0].name}"?`
+        : `Are you sure you want to ${verb.toLowerCase()} these ${ids.length} selected facilities?`;
+    openConfirmationModal({
+        title: `${verb} ${ids.length === 1 ? "Application" : "Applications"}?`,
+        description,
+        icon: status === "Approved" ? "approve" : "reject",
+        confirmText: `Yes, ${verb}`,
+        tone: status === "Approved" ? "approve" : "reject",
+        processingText: `${verb}ing…`,
+        onConfirm: () => performBulkUpdateStatus(ids, status)
+    });
+}
 
+async function performBulkUpdateStatus(ids, status) {
+    const verb = status === "Approved" ? "Approve" : "Reject";
     const chunks = [];
     for (let i = 0; i < ids.length; i += 400) chunks.push(ids.slice(i, i + 400));
 
@@ -1552,9 +1678,12 @@ async function bulkUpdateStatus(ids, status) {
         state.selectedIds.clear();
         updateStats();
         renderQueue();
+        showAdminToast(`${ids.length} application${ids.length === 1 ? "" : "s"} ${status.toLowerCase()}.`, "success");
+        return true;
     } catch (e) {
         console.error("Bulk update failed:", e);
-        alert("Bulk update failed: " + e.message);
+        showAdminToast("Bulk update failed: " + e.message, "error");
+        return false;
     } finally {
         if (btn) {
             btn.disabled = false;
@@ -1570,6 +1699,29 @@ async function rejectSelected() { await bulkUpdateStatus(Array.from(state.select
 /* =========================================================================
    REJECT MODAL
    ========================================================================= */
+
+function requestApprove(facility) {
+    openConfirmationModal({
+        title: "Approve Application?",
+        description: `Are you sure you want to approve "${facility.name}"? This application will be moved to Approved Applications and may become visible to residents.`,
+        icon: "approve",
+        confirmText: "Yes, Approve",
+        tone: "approve",
+        onConfirm: () => setStatus(facility.id, "Approved")
+    });
+}
+
+function requestReject(facility) {
+    openConfirmationModal({
+        title: "Reject Application?",
+        description: `Are you sure you want to reject "${facility.name}"? This application will be moved to Rejected Applications and will not be visible to residents.`,
+        icon: "reject",
+        confirmText: "Yes, Reject",
+        tone: "reject",
+        afterConfirm: () => openRejectModal(facility),
+        onConfirm: async () => true
+    });
+}
 
 function openRejectModal(f) {
     if (!DOM.rejectModal) return;
@@ -1591,14 +1743,19 @@ function openRejectModal(f) {
     DOM.rejectModal.classList.remove("hidden");
     DOM.rejectModal.setAttribute("aria-hidden", "false");
     document.body.style.overflow = "hidden";
+    document.body.classList.add("admin-modal-open");
     setTimeout(() => DOM.rejectReason?.focus(), 50);
 }
 
-function closeRejectModal() {
-    if (!DOM.rejectModal) return;
+function closeRejectModal(force = false) {
+    if (!DOM.rejectModal || (state.rejectInProgress && !force)) return;
     DOM.rejectModal.classList.add("hidden");
     DOM.rejectModal.setAttribute("aria-hidden", "true");
     document.body.style.overflow = "";
+    document.body.classList.toggle(
+        "admin-modal-open",
+        Boolean(DOM.confirmationModal && !DOM.confirmationModal.classList.contains("hidden"))
+    );
     state.rejectTarget = null;
     state.rejectInProgress = false;
 }
@@ -1662,9 +1819,11 @@ async function confirmReject() {
         updateStats();
         renderQueue();
         if (state.currentPage === "details") renderFacilityDetails();
-        closeRejectModal();
+        showAdminToast(`"${target.name}" rejected.`, "success");
+        closeRejectModal(true);
     } catch (e) {
         console.error("Reject failed:", e);
+        showAdminToast("Could not save rejection: " + e.message, "error");
         if (DOM.rejectMessage) {
             DOM.rejectMessage.textContent = "Could not save rejection: " + e.message;
             DOM.rejectMessage.classList.remove("is-loading");
@@ -1683,10 +1842,18 @@ async function confirmReject() {
    DELETE
    ========================================================================= */
 
-async function confirmDelete(f) {
-    const ok = window.confirm(`Delete "${f.name}"?\n\nThis cannot be undone.`);
-    if (!ok) return;
+function confirmDelete(f) {
+    openConfirmationModal({
+        title: "Delete Application?",
+        description: `Are you sure you want to permanently delete "${f.name}"? This action cannot be undone.`,
+        icon: "delete",
+        confirmText: "Yes, Delete",
+        tone: "delete",
+        onConfirm: () => deleteFacility(f)
+    });
+}
 
+async function deleteFacility(f) {
     try {
         await deleteDoc(doc(db, "facilities", f.id));
         state.facilities = state.facilities.filter(x => x.id !== f.id);
@@ -1699,9 +1866,12 @@ async function confirmDelete(f) {
 
         updateStats();
         renderQueue();
+        showAdminToast(`"${f.name}" deleted.`, "success");
+        return true;
     } catch (e) {
         console.error("Delete failed:", e);
-        alert("Could not delete: " + e.message);
+        showAdminToast("Could not delete application: " + e.message, "error");
+        return false;
     }
 }
 
@@ -1712,7 +1882,7 @@ async function confirmDelete(f) {
 
 function exportFacilitiesCSV() {
     if (!state.facilities.length) {
-        alert("No facilities to export.");
+        showAdminToast("There are no facilities to export.", "error");
         return;
     }
 
@@ -1760,9 +1930,10 @@ async function setReportStatus(reportId, status) {
         if (r) r.status = status;
         await loadReports();
         if (state.currentPage === "reports") renderReports();
+        showAdminToast(`Report marked ${status}.`, "success");
     } catch (e) {
         console.error("Failed to update report:", e);
-        alert("Could not update report: " + e.message);
+        showAdminToast("Could not update report: " + e.message, "error");
     }
 }
 
@@ -1941,9 +2112,17 @@ function setupEvents() {
     DOM.rejectCancelBtn?.addEventListener("click", closeRejectModal);
     DOM.rejectBackdrop?.addEventListener("click", closeRejectModal);
     DOM.rejectConfirmBtn?.addEventListener("click", confirmReject);
+    DOM.confirmationCancelBtn?.addEventListener("click", () => closeConfirmationModal());
+    DOM.confirmationBackdrop?.addEventListener("click", () => closeConfirmationModal());
+    DOM.confirmationConfirmBtn?.addEventListener("click", confirmAdminAction);
 
     document.addEventListener("keydown", e => {
-        if (e.key === "Escape" && DOM.rejectModal && !DOM.rejectModal.classList.contains("hidden")) closeRejectModal();
+        if (e.key !== "Escape") return;
+        if (DOM.confirmationModal && !DOM.confirmationModal.classList.contains("hidden")) {
+            closeConfirmationModal();
+        } else if (DOM.rejectModal && !DOM.rejectModal.classList.contains("hidden")) {
+            closeRejectModal();
+        }
     });
 }
 

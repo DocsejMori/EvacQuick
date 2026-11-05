@@ -344,7 +344,27 @@
         </div>
     </div>
 
-    <!-- REJECT MODAL -->
+    <!-- ACTION CONFIRMATION MODAL -->
+    <div id="admin-confirmation-modal" class="admin-confirmation-modal hidden" aria-hidden="true">
+        <div id="admin-confirmation-backdrop" class="admin-confirmation-backdrop"></div>
+        <section class="admin-confirmation-dialog" role="dialog" aria-modal="true"
+                 aria-labelledby="admin-confirmation-title" aria-describedby="admin-confirmation-description"
+                 tabindex="-1">
+            <div id="admin-confirmation-icon" class="admin-confirmation-icon" aria-hidden="true"></div>
+            <div class="admin-confirmation-copy">
+                <h2 id="admin-confirmation-title">Confirm action</h2>
+                <p id="admin-confirmation-description"></p>
+            </div>
+            <div class="admin-confirmation-actions">
+                <button id="admin-confirmation-cancel" class="btn btn-ghost" type="button">Cancel</button>
+                <button id="admin-confirmation-confirm" class="btn admin-confirmation-confirm" type="button">Confirm</button>
+            </div>
+        </section>
+    </div>
+
+    <div id="admin-toast-region" class="admin-toast-region" aria-live="polite" aria-relevant="additions"></div>
+
+    <!-- REJECT REASON MODAL -->
     <div id="admin-reject-modal" class="admin-modal hidden" aria-hidden="true">
         <div class="admin-modal-backdrop" id="admin-reject-backdrop"></div>
         <div class="admin-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="admin-reject-title">
