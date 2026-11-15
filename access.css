@@ -588,6 +588,18 @@ a:focus-visible {
     font-family: var(--font-sub);
 }
 
+.admin-text a {
+    color: var(--text-main);
+    text-decoration: underline;
+    text-decoration-color: var(--card-border-strong);
+    text-underline-offset: 0.15em;
+    overflow-wrap: anywhere;
+}
+
+.admin-text a:hover {
+    color: var(--accent-orange-deep);
+}
+
 .admin-link {
     display: inline-flex;
     align-items: center;
