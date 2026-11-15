@@ -128,7 +128,6 @@ const DOM = {
     clearDateFilter: document.getElementById("admin-clear-date-filter"),
     rejectModal: document.getElementById("admin-reject-modal"),
     rejectBackdrop: document.getElementById("admin-reject-backdrop"),
-    rejectCloseBtn: document.getElementById("admin-reject-close-btn"),
     rejectCancelBtn: document.getElementById("admin-reject-cancel-btn"),
     rejectConfirmBtn: document.getElementById("admin-reject-confirm-btn"),
     rejectReason: document.getElementById("admin-reject-reason"),
@@ -2108,7 +2107,6 @@ function setupEvents() {
         renderQueue();
     });
 
-    DOM.rejectCloseBtn?.addEventListener("click", closeRejectModal);
     DOM.rejectCancelBtn?.addEventListener("click", closeRejectModal);
     DOM.rejectBackdrop?.addEventListener("click", closeRejectModal);
     DOM.rejectConfirmBtn?.addEventListener("click", confirmReject);
