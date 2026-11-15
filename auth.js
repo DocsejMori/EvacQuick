@@ -64,6 +64,9 @@ export function getFriendlyAuthError(error) {
         case "auth/popup-blocked":
             return "Your browser blocked the sign-in popup. Allow popups and try again.";
 
+        case "auth/account-exists-with-different-credential":
+            return "An account already uses this email with another sign-in method. Sign in using that method.";
+
         default:
             return (
                 error?.message ||

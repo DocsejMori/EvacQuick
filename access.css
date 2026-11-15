@@ -967,6 +967,41 @@ a:focus-visible {
     background: var(--accent-orange-deep);
 }
 
+.auth-form-panel .google-signin-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.7rem;
+    width: 100%;
+    min-height: 2.9rem;
+    padding: 0.65rem 1rem;
+    border: 1px solid var(--card-border-strong);
+    border-radius: 0.65rem;
+    background: #fff;
+    color: var(--text-main);
+    font: inherit;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.auth-form-panel .google-signin-btn:hover:not(:disabled) {
+    background: #f7f9fc;
+    border-color: #b7c3d0;
+}
+
+.auth-form-panel .google-signin-btn:disabled {
+    cursor: wait;
+    opacity: 0.7;
+}
+
+.auth-form-panel .google-signin-btn svg {
+    width: 1.15rem;
+    height: 1.15rem;
+    flex-shrink: 0;
+}
+
 .auth-form-panel .form-card .form-header {
     display: none;
 }

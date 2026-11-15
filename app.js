@@ -163,6 +163,8 @@ const state = {
 
     selectedFacility: null,
 
+    routeRequestController: null,
+
     editingFacilityId: null,
 
     userMarker: null,
@@ -1856,6 +1858,11 @@ function applyFilters() {
 
 function clearRoute() {
 
+    if (state.routeRequestController) {
+        state.routeRequestController.abort();
+        state.routeRequestController = null;
+    }
+
     if (state.routeLayer && state.map) {
         state.map.removeLayer(state.routeLayer);
     }
@@ -1867,6 +1874,10 @@ function clearRoute() {
         DOM.routeSummary.classList.add("hidden");
     }
 
+    if (DOM.clearRouteButton) {
+        DOM.clearRouteButton.textContent = "Clear Route";
+    }
+
     renderFacilities();
 }
 
@@ -1875,9 +1886,16 @@ function clearRoute() {
    27. OSRM ROUTING
    ========================================================================= */
 
-async function fetchRoute(origin, destination) {
+async function fetchRoute(origin, destination, signal) {
 
     const controller = new AbortController();
+    const abortFromCaller = () => controller.abort();
+
+    if (signal?.aborted) {
+        controller.abort();
+    } else {
+        signal?.addEventListener("abort", abortFromCaller, { once: true });
+    }
 
     const timeout = setTimeout(
         () => controller.abort(),
@@ -1911,6 +1929,7 @@ async function fetchRoute(origin, destination) {
 
     } finally {
         clearTimeout(timeout);
+        signal?.removeEventListener("abort", abortFromCaller);
     }
 }
 
@@ -1925,8 +1944,23 @@ async function routeToFacility(facility) {
         return;
     }
 
+    state.routeRequestController?.abort();
+
+    if (state.routeLayer && state.map) {
+        state.map.removeLayer(state.routeLayer);
+        state.routeLayer = null;
+    }
+
+    const requestController = new AbortController();
+    state.routeRequestController = requestController;
     state.selectedFacility = facility;
     renderFacilities();
+
+    DOM.routeSummary?.classList.remove("hidden");
+    if (DOM.routeDestination) DOM.routeDestination.textContent = facility.name;
+    if (DOM.routeDistance) DOM.routeDistance.textContent = "—";
+    if (DOM.routeDuration) DOM.routeDuration.textContent = "—";
+    if (DOM.clearRouteButton) DOM.clearRouteButton.textContent = "Cancel Route";
 
     setStatus("Calculating route...", "loading");
 
@@ -1937,8 +1971,11 @@ async function routeToFacility(facility) {
             {
                 latitude: facility.latitude,
                 longitude: facility.longitude
-            }
+            },
+            requestController.signal
         );
+
+        if (state.routeRequestController !== requestController) return;
 
         renderRoute(route, facility);
 
@@ -1946,14 +1983,21 @@ async function routeToFacility(facility) {
 
     } catch (error) {
 
+        if (state.routeRequestController !== requestController) return;
+
         console.error("Routing error:", error);
 
+        clearRoute();
         showSidebarMessage(
             "Unable to calculate a route to this facility.",
             "error"
         );
 
         setStatus("Route unavailable.", "error");
+    } finally {
+        if (state.routeRequestController === requestController) {
+            state.routeRequestController = null;
+        }
     }
 }
 
@@ -1993,6 +2037,10 @@ function renderRoute(route, facility) {
 
     if (DOM.routeDuration) {
         DOM.routeDuration.textContent = Math.round(route.duration / 60);
+    }
+
+    if (DOM.clearRouteButton) {
+        DOM.clearRouteButton.textContent = "Clear Route";
     }
 }
 
@@ -3190,7 +3238,11 @@ function setupEventListeners() {
         setSearchRadius(event.target.value);
     });
 
-    DOM.clearRouteButton?.addEventListener("click", clearRoute);
+    DOM.clearRouteButton?.addEventListener("click", () => {
+        const isCalculating = state.routeRequestController !== null;
+        clearRoute();
+        setStatus(isCalculating ? "Route canceled." : "Route cleared.", "ok");
+    });
 
     DOM.zoomInButton?.addEventListener("click", () => state.map?.zoomIn());
     DOM.zoomOutButton?.addEventListener("click", () => state.map?.zoomOut());

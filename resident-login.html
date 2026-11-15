@@ -269,6 +269,20 @@
                 </form>
 
                 <div class="divider">
+                    <span>or</span>
+                </div>
+
+                <button type="button" id="googleSignInBtn" class="google-signin-btn">
+                    <svg viewBox="0 0 48 48" aria-hidden="true">
+                        <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5Z"/>
+                        <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.72 7.18l7.64 5.93c4.46-4.12 7.12-10.2 7.12-17.58Z"/>
+                        <path fill="#FBBC05" d="M10.53 28.59a14.4 14.4 0 0 1 0-9.18l-7.98-6.19a23.95 23.95 0 0 0 0 21.56l7.98-6.19Z"/>
+                        <path fill="#34A853" d="M24 48c6.47 0 11.9-2.13 15.86-5.87l-7.64-5.93c-2.13 1.43-4.84 2.3-8.22 2.3-6.26 0-11.57-4.22-13.46-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48Z"/>
+                    </svg>
+                    <span id="googleSignInBtnText">Continue with Google</span>
+                </button>
+
+                <div class="divider">
                     <span>New here?</span>
                 </div>
 
@@ -304,8 +318,9 @@
 
     <!-- Firebase & Lucide Logic -->
     <script type="module">
-        import { auth } from "./auth.js";
-        import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+        import { auth, getFriendlyAuthError } from "./auth.js";
+        import { db, doc, getDoc, setDoc, serverTimestamp } from "./firebase-config.js";
+        import { GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 
         lucide.createIcons();
 
@@ -316,17 +331,20 @@
         const loginForm = document.getElementById('residentLoginForm');
         const submitBtn = document.getElementById('submitBtn');
         const submitBtnText = document.getElementById('submitBtnText');
-        const submitIcon = document.getElementById('submitIcon');
         const loginError = document.getElementById('loginError');
         const emailInput = document.getElementById('email');
         const rememberMeCheckbox = document.getElementById('rememberMe');
+        const googleSignInBtn = document.getElementById('googleSignInBtn');
+        const googleSignInBtnText = document.getElementById('googleSignInBtnText');
 
         // Reset function for form state
         function resetFormState() {
             submitBtn.disabled = false;
+            googleSignInBtn.disabled = false;
             submitBtn.classList.remove('success');
             submitBtnText.textContent = "Sign In";
-            submitIcon.outerHTML = `<i data-lucide="arrow-right" id="submitIcon"></i>`;
+            googleSignInBtnText.textContent = "Continue with Google";
+            document.getElementById('submitIcon').outerHTML = `<i data-lucide="arrow-right" id="submitIcon"></i>`;
             loginError.style.display = 'none';
             lucide.createIcons();
         }
@@ -363,10 +381,11 @@
             // 1. Reset UI to loading state
             loginError.style.display = 'none';
             submitBtn.disabled = true;
+            googleSignInBtn.disabled = true;
             submitBtnText.textContent = "Signing in...";
             
             // Change icon to a loading spinner
-            submitIcon.outerHTML = `<i data-lucide="loader-2" class="animate-spin" id="submitIcon"></i>`;
+            document.getElementById('submitIcon').outerHTML = `<i data-lucide="loader-2" class="animate-spin" id="submitIcon"></i>`;
             lucide.createIcons();
 
             try {
@@ -391,18 +410,45 @@
                 
                 // Show error message
                 loginError.style.display = 'block';
-                
-                if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
-                    loginError.textContent = "Invalid email or password.";
-                } else {
-                    loginError.textContent = error.message;
-                }
+                loginError.textContent = getFriendlyAuthError(error);
 
                 // Reset button back to normal
                 submitBtn.disabled = false;
+                googleSignInBtn.disabled = false;
                 submitBtnText.textContent = "Sign In";
                 document.getElementById('submitIcon').outerHTML = `<i data-lucide="arrow-right" id="submitIcon"></i>`;
                 lucide.createIcons();
+            }
+        });
+
+        googleSignInBtn.addEventListener('click', async () => {
+            loginError.style.display = 'none';
+            submitBtn.disabled = true;
+            googleSignInBtn.disabled = true;
+            googleSignInBtnText.textContent = "Connecting to Google...";
+
+            try {
+                const provider = new GoogleAuthProvider();
+                const { user } = await signInWithPopup(auth, provider);
+                const profileRef = doc(db, "users", user.uid);
+                const profileSnapshot = await getDoc(profileRef);
+
+                if (!profileSnapshot.exists()) {
+                    await setDoc(profileRef, {
+                        email: user.email,
+                        role: "resident",
+                        createdAt: serverTimestamp()
+                    });
+                }
+
+                window.location.assign("map.html");
+            } catch (error) {
+                console.error("Google sign-in failed:", error);
+                loginError.textContent = getFriendlyAuthError(error);
+                loginError.style.display = 'block';
+                submitBtn.disabled = false;
+                googleSignInBtn.disabled = false;
+                googleSignInBtnText.textContent = "Continue with Google";
             }
         });
 
