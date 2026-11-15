@@ -163,6 +163,8 @@ const state = {
 
     selectedFacility: null,
 
+    routeFacilityId: null,
+
     routeRequestController: null,
 
     editingFacilityId: null,
@@ -1450,11 +1452,12 @@ function buildFacilityPopup(facility) {
 
     const routeButton = document.createElement("button");
     routeButton.type = "button";
-    routeButton.className = "btn btn-primary btn-sm map-popup-route";
-    routeButton.textContent = "Route Here";
+    routeButton.className = "btn btn-primary btn-sm map-popup-route route-facility-btn";
+    routeButton.dataset.routeFacilityId = String(facility.id);
+    routeButton.textContent = getRouteButtonLabel(facility);
 
     routeButton.addEventListener("click", () => {
-        routeToFacility(facility);
+        toggleFacilityRoute(facility);
     });
 
     container.appendChild(name);
@@ -1502,6 +1505,22 @@ function renderFacilities() {
     });
 
     updateFacilityCount(visibleFacilities.length);
+}
+
+function getRouteButtonLabel(facility) {
+    return String(state.routeFacilityId) === String(facility.id)
+        ? "Cancel Route"
+        : "Route Here";
+}
+
+
+function updateRouteButtons() {
+    document.querySelectorAll(".route-facility-btn").forEach(button => {
+        button.textContent =
+            button.dataset.routeFacilityId === String(state.routeFacilityId)
+                ? "Cancel Route"
+                : "Route Here";
+    });
 }
 
 
@@ -1596,12 +1615,13 @@ function buildFacilityCard(facility, rank) {
 
     const routeButton = document.createElement("button");
     routeButton.type = "button";
-    routeButton.className = "btn btn-primary";
-    routeButton.textContent = "Route Here";
+    routeButton.className = "btn btn-primary route-facility-btn";
+    routeButton.dataset.routeFacilityId = String(facility.id);
+    routeButton.textContent = getRouteButtonLabel(facility);
 
     routeButton.addEventListener("click", event => {
         event.stopPropagation();
-        routeToFacility(facility);
+        toggleFacilityRoute(facility);
     });
 
     actions.appendChild(viewButton);
@@ -1868,6 +1888,7 @@ function clearRoute() {
     }
 
     state.routeLayer = null;
+    state.routeFacilityId = null;
     state.selectedFacility = null;
 
     if (DOM.routeSummary) {
@@ -1879,6 +1900,7 @@ function clearRoute() {
     }
 
     renderFacilities();
+    updateRouteButtons();
 }
 
 
@@ -1953,8 +1975,10 @@ async function routeToFacility(facility) {
 
     const requestController = new AbortController();
     state.routeRequestController = requestController;
+    state.routeFacilityId = facility.id;
     state.selectedFacility = facility;
     renderFacilities();
+    updateRouteButtons();
 
     DOM.routeSummary?.classList.remove("hidden");
     if (DOM.routeDestination) DOM.routeDestination.textContent = facility.name;
@@ -1999,6 +2023,17 @@ async function routeToFacility(facility) {
             state.routeRequestController = null;
         }
     }
+}
+
+function toggleFacilityRoute(facility) {
+    if (String(state.routeFacilityId) === String(facility.id)) {
+        const isCalculating = state.routeRequestController !== null;
+        clearRoute();
+        setStatus(isCalculating ? "Route canceled." : "Route cleared.", "ok");
+        return;
+    }
+
+    routeToFacility(facility);
 }
 
 
@@ -2152,12 +2187,13 @@ function openFacilityDetails(facility) {
 
         const routeButton = document.createElement("button");
         routeButton.type = "button";
-        routeButton.className = "btn btn-primary";
-        routeButton.textContent = "Route Here";
+        routeButton.className = "btn btn-primary route-facility-btn";
+        routeButton.dataset.routeFacilityId = String(facility.id);
+        routeButton.textContent = getRouteButtonLabel(facility);
 
         routeButton.addEventListener("click", () => {
             closeFacilityDetails();
-            routeToFacility(facility);
+            toggleFacilityRoute(facility);
         });
 
         actions.appendChild(routeButton);
