@@ -1,0 +1,113 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return signedIn()
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "admin";
+    }
+
+    function isResident() {
+      return signedIn()
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "resident";
+    }
+
+    match /users/{userId} {
+      allow read: if signedIn() && request.auth.uid == userId;
+
+      allow create: if signedIn()
+        && request.auth.uid == userId
+        && request.resource.data.role == "resident";
+
+      allow update: if signedIn()
+        && request.auth.uid == userId
+        && request.resource.data.get("role", "") == resource.data.get("role", "");
+    }
+
+    match /facilities/{facilityId} {
+      function canReadFacility() {
+        return resource.data.verificationStatus == "Approved"
+          || (signedIn()
+            && (resource.data.submittedBy == request.auth.uid || isAdmin()));
+      }
+
+      allow get: if canReadFacility();
+      allow list: if isAdmin()
+        || resource.data.verificationStatus == "Approved"
+        || (signedIn() && resource.data.submittedBy == request.auth.uid);
+
+      allow create: if isResident()
+        && request.resource.data.submittedBy == request.auth.uid
+        && request.resource.data.verificationStatus == "Pending"
+        && !("verifiedAt" in request.resource.data)
+        && !("verifiedBy" in request.resource.data)
+        && request.resource.data.name is string
+        && request.resource.data.name.size() > 0
+        && request.resource.data.address is string
+        && request.resource.data.address.size() > 0
+        && request.resource.data.capacity is number
+        && request.resource.data.capacity > 0;
+
+      allow update: if isAdmin()
+        || (signedIn()
+          && resource.data.submittedBy == request.auth.uid
+          && request.resource.data.submittedBy == resource.data.submittedBy
+          && request.resource.data.verificationStatus == "Pending"
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+            "name",
+            "managerName",
+            "address",
+            "facilityType",
+            "capacity",
+            "currentOccupancy",
+            "status",
+            "openingTime",
+            "closingTime",
+            "contactNumber",
+            "notes",
+            "latitude",
+            "longitude",
+            "idPhotoUrl",
+            "centerPhotoUrl",
+            "statusUpdatedAt",
+            "submittedByEmail",
+            "updatedAt",
+            "verificationStatus"
+          ]));
+
+      allow delete: if isAdmin()
+        || (signedIn() && resource.data.submittedBy == request.auth.uid);
+    }
+
+    match /reports/{reportId} {
+      allow get: if signedIn()
+        && (resource.data.reportedBy == request.auth.uid || isAdmin());
+      allow list: if isAdmin();
+
+      allow create: if signedIn()
+        && request.resource.data.reportedBy == request.auth.uid
+        && request.resource.data.status == "open"
+        && request.resource.data.reason is string
+        && request.resource.data.reason.size() > 0
+        && request.resource.data.facilityId is string
+        && request.resource.data.facilityId.size() > 0;
+
+      allow update, delete: if isAdmin();
+    }
+
+    match /notifications/{notificationId} {
+      allow get, list, create: if isAdmin();
+
+      allow update: if isAdmin()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(["read"])
+        && request.resource.data.read is bool;
+
+      allow delete: if isAdmin();
+    }
+  }
+}

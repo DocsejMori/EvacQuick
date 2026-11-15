@@ -287,16 +287,17 @@ function mapFacilitySnapshot(snap) {
 }
 
 function subscribeFacilities() {
- if (state.facilitiesUnsubscribe) return;
+    if (state.facilitiesUnsubscribe) return;
     updateDataStatus("Connecting to application data…", "loading");
+
+    let isInitialSnapshot = true;
 
     state.facilitiesUnsubscribe = onSnapshot(
         collection(db, "facilities"),
         snap => {
             const newFacilities = mapFacilitySnapshot(snap);
 
-            // 🔥 CHECK FOR NEW SUBMISSIONS
-            if (state.facilitiesLoaded) {
+            if (!isInitialSnapshot && state.facilitiesLoaded) {
                 snap.docChanges().forEach(change => {
                     if (change.type === "added") {
                         const data = change.doc.data();
@@ -315,6 +316,7 @@ function subscribeFacilities() {
                     }
                 });
             }
+            isInitialSnapshot = false;
 
             state.facilities = newFacilities;
             state.facilitiesLoaded = true;
@@ -328,6 +330,7 @@ function subscribeFacilities() {
             if (state.currentPage === "details") renderFacilityDetails();
         },
         error => {
+            state.facilitiesUnsubscribe = null;
             console.error("Facility subscription failed:", error);
             showFacilityLoadError(error);
         }
@@ -447,6 +450,7 @@ function subscribeNotifications() {
             renderNotifications();
         },
         error => {
+            state.notificationsUnsubscribe = null;
             console.error("Notification subscription failed:", error);
         }
     );
@@ -606,7 +610,10 @@ function subscribeReports() {
     state.reportsUnsubscribe = onSnapshot(
         collection(db, "reports"),
         renderReportSnapshot,
-        error => console.error("Report subscription failed:", error)
+        error => {
+            state.reportsUnsubscribe = null;
+            console.error("Report subscription failed:", error);
+        }
     );
 }
 
@@ -2091,6 +2098,9 @@ function setupEvents() {
     });
 
     DOM.refreshBtn?.addEventListener("click", async () => {
+        if (!state.facilitiesUnsubscribe) subscribeFacilities();
+        if (!state.reportsUnsubscribe) subscribeReports();
+        if (!state.notificationsUnsubscribe) subscribeNotifications();
         await loadFacilities();
         await loadReports();
     });
